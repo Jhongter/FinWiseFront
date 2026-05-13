@@ -1,0 +1,19 @@
+[debug] [2025-10-25T02:48:38.546Z] ----------------------------------------------------------------------
+[debug] [2025-10-25T02:48:38.552Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\joaop\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js init
+[debug] [2025-10-25T02:48:38.552Z] CLI Version:   14.22.0
+[debug] [2025-10-25T02:48:38.552Z] Platform:      win32
+[debug] [2025-10-25T02:48:38.553Z] Node Version:  v22.14.0
+[debug] [2025-10-25T02:48:38.553Z] Time:          Fri Oct 24 2025 23:48:38 GMT-0300 (Horário Padrão de Brasília)
+[debug] [2025-10-25T02:48:38.553Z] ----------------------------------------------------------------------
+[debug] 
+[info] 
+     ######## #### ########  ######## ########     ###     ######  ########
+     ##        ##  ##     ## ##       ##     ##  ##   ##  ##       ##
+     ######    ##  ########  ######   ########  #########  ######  ######
+     ##        ##  ##    ##  ##       ##     ## ##     ##       ## ##
+     ##       #### ##     ## ######## ########  ##     ##  ######  ########
+
+You're about to initialize a Firebase project in this directory:
+
+  C:\Users\joaop\Downloads\Project_DensenvolvimentoWeb-main\Project_DensenvolvimentoWeb-main
+

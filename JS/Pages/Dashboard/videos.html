@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinWise - Plataforma Educativa</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="dashboard-style.css">
+    <style>
+        .videos-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+        .videos-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .videos-header a {
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+            color: var(--accent, #66cc99);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: .95rem;
+            padding: .5rem .9rem;
+            border: 2px solid var(--accent, #66cc99);
+            border-radius: 8px;
+            transition: background .2s, color .2s;
+        }
+        .videos-header a:hover {
+            background: var(--accent, #66cc99);
+            color: #fff;
+        }
+        .videos-header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-primary, #1a1a2e);
+        }
+        .videos-header h2 span { color: var(--accent, #66cc99); }
+
+        .category-section { margin-bottom: 2.5rem; }
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary, #1a1a2e);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            padding-bottom: .5rem;
+            border-bottom: 2px solid var(--accent, #66cc99);
+        }
+        .category-title i { color: var(--accent, #66cc99); }
+
+        .videos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .video-card {
+            background: var(--card-bg, #fff);
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,.08);
+            transition: transform .25s, box-shadow .25s;
+        }
+        .video-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0,0,0,.14);
+        }
+        .video-embed {
+            position: relative;
+            padding-top: 56.25%;
+            background: #000;
+        }
+        .video-embed iframe {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .video-info {
+            padding: 1rem;
+        }
+        .video-info h4 {
+            font-size: .95rem;
+            font-weight: 600;
+            color: var(--text-primary, #1a1a2e);
+            margin-bottom: .3rem;
+        }
+        .video-info p {
+            font-size: .82rem;
+            color: var(--text-secondary, #777);
+        }
+        .video-tag {
+            display: inline-block;
+            background: rgba(102,204,153,.15);
+            color: var(--accent, #66cc99);
+            border-radius: 20px;
+            font-size: .75rem;
+            font-weight: 600;
+            padding: .2rem .7rem;
+            margin-bottom: .5rem;
+        }
+        @media (max-width: 640px) {
+            .videos-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard-container">
+
+    <!-- Cabeçalho igual ao dashboard -->
+    <header class="dashboard-header">
+        <div class="logo">Fin<span>Wise</span></div>
+        <div class="user-controls">
+            <button id="darkModeToggle" class="btn-icon dark-mode-toggle" title="Alternar tema">
+                <span class="dark-mode-icon">🌙</span>
+                <span class="light-mode-icon">☀️</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="dashboard-main">
+        <div class="videos-wrapper">
+
+            <div class="videos-header">
+                <a href="dashboard.html"><i class="fas fa-arrow-left"></i> Voltar</a>
+                <h2><i class="fas fa-play-circle" style="color:var(--accent,#66cc99);margin-right:.4rem"></i>Plataforma <span>Educativa</span></h2>
+            </div>
+
+            <!-- CATEGORIA: ORÇAMENTO -->
+            <section class="category-section">
+                <div class="category-title">
+                    <i class="fas fa-wallet"></i> Orçamento e Controle Financeiro
+                </div>
+                <div class="videos-grid">
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe src="https://www.youtube.com/embed/1j_rMkNfCpQ"
+                                title="Como organizar as finanças pessoais"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <span class="video-tag">Orçamento</span>
+                            <h4>Como Organizar as Finanças do Zero</h4>
+                            <p>Passo a passo para estruturar seu orçamento pessoal e sair do vermelho.</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe src="https://www.youtube.com/embed/vpEY-s95p5k"
+                                title="Método 50 30 20"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <span class="video-tag">Orçamento</span>
+                            <h4>Método 50-30-20 para Iniciantes</h4>
+                            <p>Aprenda a dividir sua renda de forma inteligente com essa regra simples.</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe src="https://www.youtube.com/embed/PbEZVIPl9mQ"
+                                title="Planilha de gastos"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <span class="video-tag">Orçamento</span>
+                            <h4>Planilha de Gastos Mensais</h4>
+                            <p>Como montar e usar uma planilha de controle financeiro no dia a dia.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- CATEGORIA: INVESTIMENTOS -->
+            <section class="category-section">
+                <div class="category-title">
+                    <i class="fas fa-chart-line"></i> Investimentos para Iniciantes
+                </div>
+                <div class="videos-grid">
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe src="https://www.youtube.com/embed/ISCV9-lTvq4"
+                                title="Como começar a investir"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <span class="video-tag">Investimentos</span>
+                            <h4>Como Começar a Investir com Pouco Dinheiro</h4>
+                            <p>Estratégias acessíveis para quem está dando os primeiros passos.</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe src="https://www.youtube.com/embed/XlC8oubuEgI"
+                                title="Tesouro Direto explicado"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <span class="video-tag">Renda Fixa</span>
+                            <h4>Tesouro Direto: O Que É e Como Funciona</h4>
+                            <p>Entenda a opção de investimento mais segura do mercado brasileiro.</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe src="https://www.youtube.com/embed/G8G7bEn1BcY"
+                                title="CDB LCI LCA diferenças"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <span class="video-tag">Renda Fixa</span>
+                            <h4>CDB, LCI e LCA: Qual Escolher?</h4>
+                            <p>Comparativo entre as principais opções de renda fixa disponíveis.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- CATEGORIA: DÍVIDAS -->
+            <section class="category-section">
+                <div class="category-title">
+                    <i class="fas fa-hand-holding-usd"></i> Sair das Dívidas
+                </div>
+                <div class="videos-grid">
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe src="https://www.youtube.com/embed/gQrjcDxpMF8"
+                                title="Como sair das dívidas"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <span class="video-tag">Dívidas</span>
+                            <h4>Como Sair das Dívidas de Vez</h4>
+                            <p>Método prático para quitar dívidas e nunca mais se endividar.</p>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-embed">
+                            <iframe src="https://www.youtube.com/embed/NxFKKP9sKsw"
+                                title="Juros do cartão de crédito"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="video-info">
+                            <span class="video-tag">Dívidas</span>
+                            <h4>Perigos do Cartão de Crédito e Juros Rotativos</h4>
+                            <p>Por que o rotativo do cartão pode destruir suas finanças.</p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<script>
+    // Dark mode simples para a página de vídeos
+    const toggle = document.getElementById('darkModeToggle');
+    const html = document.documentElement;
+    const saved = localStorage.getItem('theme');
+    if (saved) html.setAttribute('data-theme', saved);
+
+    if (toggle) {
+        toggle.addEventListener('click', () => {
+            const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+        });
+    }
+</script>
+</body>
+</html>

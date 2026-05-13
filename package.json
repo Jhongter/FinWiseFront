@@ -1,0 +1,36 @@
+{
+  "name": "project_densenvolvimentoweb",
+  "version": "1.0.0",
+  "main": "JS/app.js",
+  "scripts": {
+    "start": "node JS/app.js",
+    "dev": "nodemon JS/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andresrp4/Project_DensenvolvimentoWeb.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/andresrp4/Project_DensenvolvimentoWeb/issues"
+  },
+  "homepage": "https://github.com/andresrp4/Project_DensenvolvimentoWeb#readme",
+  "description": "",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "chart.js": "^4.4.9",
+    "express": "^4.18.2",
+    "express-session": "^1.18.1",
+    "firebase": "^12.4.0",
+    "firebase-admin": "^13.7.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "type": "module"
+}
