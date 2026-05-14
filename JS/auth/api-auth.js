@@ -1,7 +1,7 @@
 // api-auth.js - Autenticação com Spring Boot JWT
 // Substitui o firebase.js — importe este arquivo onde antes usava firebase.js
 
-const API_BASE = "https://finwiseback.onrender.com";
+const API_BASE = "http://localhost:8081";
 
 // ─────────────────────────────────────────────
 // Funções principais de autenticação
@@ -60,7 +60,10 @@ export function logout() {
  * Retorna o token JWT salvo, ou null se não houver sessão.
  */
 export function getToken() {
-  return localStorage.getItem("jwtToken");
+  return (
+    localStorage.getItem("jwtToken") ||
+    sessionStorage.getItem("jwtToken")
+  );
 }
 
 /**
@@ -126,7 +129,6 @@ export async function fetchAutenticado(url, options = {}) {
 // Privado
 // ─────────────────────────────────────────────
 function _salvarSessao({ token, nome, email }) {
-  localStorage.setItem("jwtToken", token);
   localStorage.setItem("userName", nome);
   localStorage.setItem("userEmail", email);
 }

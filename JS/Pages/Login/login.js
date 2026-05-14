@@ -31,21 +31,34 @@ document.addEventListener("DOMContentLoaded", function () {
       btn.textContent = "Entrando...";
       btn.disabled = true;
 
-      try {
-        const { nome, token } = await login(email, senha);
+  try {
+  const { nome, token } = await login(email, senha);
 
-        // "Lembrar-me" já fica no localStorage por padrão;
-        // se NÃO marcado, limpa ao fechar o navegador via sessionStorage
-        if (!lembrar) {
-          // move token para sessionStorage (não persiste após fechar aba)
-          sessionStorage.setItem("jwtToken", token);
-          localStorage.removeItem("jwtToken");
-        }
+  // Salva corretamente o token
+if (lembrar) {
+  localStorage.setItem("jwtToken", token);
+  localStorage.setItem("userName", nome);
+  localStorage.setItem("userEmail", email);
 
-        alert(`✅ Bem-vindo, ${nome}!\n\nRedirecionando para o dashboard...`);
-        setTimeout(() => {
-          window.location.href = "../Dashboard/dashboard.html";
-        }, 1500);
+  sessionStorage.removeItem("jwtToken");
+  sessionStorage.removeItem("userName");
+  sessionStorage.removeItem("userEmail");
+
+} else {
+  sessionStorage.setItem("jwtToken", token);
+  sessionStorage.setItem("userName", nome);
+  sessionStorage.setItem("userEmail", email);
+
+  localStorage.removeItem("jwtToken");
+  localStorage.removeItem("userName");
+  localStorage.removeItem("userEmail");
+}
+
+  alert(`✅ Bem-vindo, ${nome}!\n\nRedirecionando para o dashboard...`);
+
+  setTimeout(() => {
+    window.location.href = "../Dashboard/dashboard.html";
+  }, 1500);
 
       } catch (error) {
         console.error("❌ Erro no login:", error);
