@@ -1,7 +1,7 @@
 // api-auth.js - Autenticação com Spring Boot JWT
 // Substitui o firebase.js — importe este arquivo onde antes usava firebase.js
 
-const API_BASE = "http://localhost:8081";
+const API_BASE = "https://finwiseback.onrender.com";
 
 // ─────────────────────────────────────────────
 // Funções principais de autenticação
