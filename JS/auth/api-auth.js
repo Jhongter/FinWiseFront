@@ -1,101 +1,76 @@
 // api-auth.js - Autenticação com Spring Boot JWT
-// Substitui o firebase.js — importe este arquivo onde antes usava firebase.js
+const API_BASE = "https://finwiseback.onrender.com";
 
-const API_BASE = "http://localhost:8081";
+// ── Autenticação ──────────────────────────────────────────
 
-// ─────────────────────────────────────────────
-// Funções principais de autenticação
-// ─────────────────────────────────────────────
-
-/**
- * Faz login e salva token + dados do usuário no localStorage.
- * @returns {Promise<{token, nome, email}>}
- */
 export async function login(email, senha) {
   const response = await fetch(`${API_BASE}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, senha }),
   });
-
   if (!response.ok) {
     const erro = await response.json().catch(() => ({}));
     throw new Error(erro.message || "Credenciais inválidas");
   }
-
-  const data = await response.json(); // { token, nome, email }
+  const data = await response.json();
   _salvarSessao(data);
   return data;
 }
 
-/**
- * Cadastra um novo usuário (endpoint público POST /usuarios).
- * @returns {Promise<{id, nome, email}>}
- */
 export async function cadastrar(nome, email, senha) {
   const response = await fetch(`${API_BASE}/usuarios`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ nome, email, senha }),
   });
-
   if (!response.ok) {
     const erro = await response.json().catch(() => ({}));
     throw new Error(erro.message || "Erro ao criar conta");
   }
-
   return response.json();
 }
 
-/**
- * Remove os dados de sessão do localStorage (logout).
- */
+export async function trocarSenha(senhaAtual, novaSenha) {
+  const response = await fetchAutenticado(`${API_BASE}/usuarios/senha`, {
+    method: "PUT",
+    body: JSON.stringify({ senhaAtual, novaSenha }),
+  });
+  if (!response.ok) {
+    const erro = await response.json().catch(() => ({}));
+    throw new Error(erro.message || "Erro ao trocar senha");
+  }
+}
+
 export function logout() {
   localStorage.removeItem("jwtToken");
   localStorage.removeItem("userName");
   localStorage.removeItem("userEmail");
 }
 
-/**
- * Retorna o token JWT salvo, ou null se não houver sessão.
- */
 export function getToken() {
-  return (
-    localStorage.getItem("jwtToken") ||
-    sessionStorage.getItem("jwtToken")
-  );
+  return localStorage.getItem("jwtToken") || sessionStorage.getItem("jwtToken");
 }
 
-/**
- * Retorna objeto { nome, email } do usuário logado, ou null.
- */
 export function getCurrentUser() {
   const token = getToken();
   if (!token) return null;
   return {
-    nome: localStorage.getItem("userName"),
-    email: localStorage.getItem("userEmail"),
-    // displayName compatível com o padrão Firebase usado no dashboard
-    displayName: localStorage.getItem("userName"),
+    nome: localStorage.getItem("userName") || sessionStorage.getItem("userName"),
+    email: localStorage.getItem("userEmail") || sessionStorage.getItem("userEmail"),
+    displayName: localStorage.getItem("userName") || sessionStorage.getItem("userName"),
   };
 }
 
-/**
- * Verifica se há sessão ativa e redireciona para login se não houver.
- * Substitui o onAuthStateChanged do Firebase.
- */
 export function checkAuthOrRedirect(redirectPath = "../Login/login.html") {
   const user = getCurrentUser();
-  if (!user) {
-    window.location.href = redirectPath;
-    return null;
-  }
+  if (!user) { window.location.href = redirectPath; return null; }
   return user;
 }
 
 /**
- * Faz uma requisição autenticada com o token JWT.
- * Redireciona para login se token expirado (401).
+ * Faz fetch autenticado. Aceita URL relativa (ex: /transacoes)
+ * ou absoluta (ex: https://...).
  */
 export async function fetchAutenticado(url, options = {}) {
   const token = getToken();
@@ -103,6 +78,9 @@ export async function fetchAutenticado(url, options = {}) {
     window.location.href = "../Login/login.html";
     throw new Error("Usuário não autenticado");
   }
+
+  // Prepend API_BASE se URL relativa
+  const fullUrl = url.startsWith("/") ? `${API_BASE}${url}` : url;
 
   options.headers = {
     ...options.headers,
@@ -114,7 +92,7 @@ export async function fetchAutenticado(url, options = {}) {
     options.body = JSON.stringify(options.body);
   }
 
-  const response = await fetch(url, options);
+  const response = await fetch(fullUrl, options);
 
   if (response.status === 401) {
     logout();
@@ -125,10 +103,8 @@ export async function fetchAutenticado(url, options = {}) {
   return response;
 }
 
-// ─────────────────────────────────────────────
-// Privado
-// ─────────────────────────────────────────────
 function _salvarSessao({ token, nome, email }) {
+  localStorage.setItem("jwtToken", token);
   localStorage.setItem("userName", nome);
   localStorage.setItem("userEmail", email);
 }

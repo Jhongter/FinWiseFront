@@ -140,8 +140,8 @@ async function loadUserData() {
         console.log("🔄 Carregando dados do usuário...");
         
         const [summaryRes, transRes] = await Promise.all([
-            fetchAutenticado('/api/summary'),
-            fetchAutenticado('/api/transactions')
+            fetchAutenticado('/transacoes/resumo'),
+            fetchAutenticado('/transacoes')
         ]);
 
         if (!summaryRes.ok || !transRes.ok) {
@@ -537,7 +537,7 @@ function setupEventListeners() {
             }
             
             try {
-                const response = await fetchAutenticado("/api/salary", {
+                const response = await fetchAutenticado("/salario", {
                     method: "POST",
                     body: { amount: newSalary },
                 });
@@ -570,7 +570,7 @@ function setupEventListeners() {
             }
 
             try {
-                const response = await fetchAutenticado("/api/transactions", {
+                const response = await fetchAutenticado("/transacoes", {
                     method: "POST",
                     body: { type, description, amount, category, date },
                 });
@@ -660,7 +660,7 @@ function showDeleteConfirmation(transactionId, deleteButton) {
         setTimeout(() => confirmation.remove(), 300);
         
         try {
-            const response = await fetchAutenticado(`/api/transactions/${transactionId}`, {
+            const response = await fetchAutenticado(`/transacoes/${transactionId}`, {
                 method: "DELETE",
             });
 
