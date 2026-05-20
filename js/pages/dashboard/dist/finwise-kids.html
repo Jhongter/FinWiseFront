@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinWise Kids 🌟</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fredoka+One&display=swap" rel="stylesheet">
+  <script src="pwa-init.js"></script>
+  <style>
+  /* ══════════════════════════════════════════════
+     FINWISE KIDS — Design System
+     Público: 4–12 anos
+     Estética: alegre, cartoon, vibrante, seguro
+  ══════════════════════════════════════════════ */
+  :root {
+    --sun:      #FFD93D;
+    --sun-dark: #F4B400;
+    --sky:      #4FC3F7;
+    --sky-dark: #0288D1;
+    --grass:    #66BB6A;
+    --grass-dark:#388E3C;
+    --coral:    #FF7043;
+    --coral-dark:#E64A19;
+    --lavender: #AB47BC;
+    --lavender-dark:#7B1FA2;
+    --mint:     #26C6DA;
+    --white:    #FFFFFF;
+    --cream:    #FFFBF0;
+    --ink:      #2D3436;
+    --ink-light:#636E72;
+
+    --card-r:   20px;
+    --btn-r:    50px;
+    --shadow:   0 6px 20px rgba(0,0,0,.12);
+    --shadow-lg:0 12px 40px rgba(0,0,0,.16);
+
+    --font-title: 'Fredoka One', cursive;
+    --font-body:  'Nunito', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Fundo animado com bolinhas ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: -1;
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,217,61,.25) 0%, transparent 35%),
+      radial-gradient(circle at 85% 10%, rgba(79,195,247,.2) 0%, transparent 30%),
+      radial-gradient(circle at 50% 80%, rgba(102,187,106,.15) 0%, transparent 40%),
+      radial-gradient(circle at 90% 75%, rgba(255,112,67,.15) 0%, transparent 30%);
+    background-color: #FFFBF0;
+  }
+
+  /* ══════════════════════════════════════════════
+     HEADER / TOPBAR
+  ══════════════════════════════════════════════ */
+  .kids-header {
+    background: linear-gradient(135deg, var(--sky) 0%, var(--sky-dark) 100%);
+    padding: 0 1.5rem;
+    height: 68px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 4px 16px rgba(2,136,209,.3);
+    position: sticky; top: 0; z-index: 200;
+  }
+  .kids-logo {
+    font-family: var(--font-title);
+    font-size: 1.7rem; color: #fff;
+    display: flex; align-items: center; gap: .4rem;
+    letter-spacing: .5px;
+    text-shadow: 0 2px 8px rgba(0,0,0,.15);
+  }
+  .kids-logo .star { color: var(--sun); font-size: 1.3rem; }
+  .back-btn {
+    display: flex; align-items: center; gap: .55rem;
+    background: linear-gradient(135deg, rgba(255,255,255,.32), rgba(255,255,255,.18));
+    border: 2px solid rgba(255,255,255,.55);
+    color: #fff; border-radius: 50px;
+    padding: .5rem 1.2rem; font-size: .88rem;
+    font-weight: 700; cursor: pointer;
+    font-family: var(--font-body);
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,.15), inset 0 1px 0 rgba(255,255,255,.3);
+    backdrop-filter: blur(6px);
+    transition: all .22s cubic-bezier(.4,0,.2,1);
+    letter-spacing: .02em;
+  }
+  .back-btn i { font-size: .95rem; transition: transform .22s; }
+  .back-btn:hover {
+    background: linear-gradient(135deg, rgba(255,255,255,.48), rgba(255,255,255,.28));
+    box-shadow: 0 6px 20px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.4);
+    transform: translateY(-1px);
+  }
+  .back-btn:hover i { transform: translateX(-3px); }
+  .back-btn:active { transform: translateY(0); }
+  .back-to-dashboard {
+    display: flex; align-items: center; gap: .55rem;
+    background: linear-gradient(135deg, #fff 0%, #e8f0fe 100%);
+    border: 2px solid rgba(255,255,255,.7);
+    color: #3a7bd5; border-radius: 50px;
+    padding: .5rem 1.2rem; font-size: .88rem;
+    font-weight: 700; cursor: pointer;
+    font-family: var(--font-body);
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.9);
+    transition: all .22s cubic-bezier(.4,0,.2,1);
+    letter-spacing: .02em;
+  }
+  .back-to-dashboard i { font-size: .95rem; transition: transform .22s; }
+  .back-to-dashboard:hover {
+    background: linear-gradient(135deg, #dce8ff 0%, #c8d8ff 100%);
+    box-shadow: 0 6px 20px rgba(58,123,213,.25);
+    transform: translateY(-1px);
+  }
+  .back-to-dashboard:hover i { transform: translateX(-3px); }
+  .header-btns { display: flex; gap: .6rem; align-items: center; }
+
+  /* ══════════════════════════════════════════════
+     HERO — personagem Coin
+  ══════════════════════════════════════════════ */
+  .kids-hero {
+    background: linear-gradient(180deg, var(--sky) 0%, var(--sky-dark) 60%, var(--grass) 100%);
+    padding: 3rem 1.5rem 5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .kids-hero::after {
+    content: '';
+    position: absolute; bottom: -2px; left: 0; right: 0;
+    height: 60px;
+    background: var(--cream);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+
+  /* Nuvens */
+  .cloud {
+    position: absolute;
+    background: rgba(255,255,255,.85);
+    border-radius: 50px;
+    animation: floatCloud linear infinite;
+  }
+  .cloud::before, .cloud::after {
+    content: ''; position: absolute;
+    background: rgba(255,255,255,.85);
+    border-radius: 50%;
+  }
+  .cloud-1 { width:80px;height:30px;top:15%;left:-10%;animation-duration:18s; }
+  .cloud-1::before { width:40px;height:40px;top:-20px;left:10px; }
+  .cloud-1::after  { width:30px;height:30px;top:-12px;left:40px; }
+  .cloud-2 { width:60px;height:22px;top:35%;left:-8%;animation-duration:25s;animation-delay:-8s; }
+  .cloud-2::before { width:30px;height:30px;top:-15px;left:8px; }
+  .cloud-2::after  { width:22px;height:22px;top:-8px;left:32px; }
+  @keyframes floatCloud { from { left:-15%; } to { left:110%; } }
+
+  /* Estrelas flutuantes */
+  .floating-star {
+    position: absolute;
+    font-size: 1.5rem;
+    animation: floatStar 3s ease-in-out infinite;
+    opacity: .8;
+  }
+  .floating-star:nth-child(1) { top:20%;left:8%;animation-delay:0s; }
+  .floating-star:nth-child(2) { top:40%;right:10%;animation-delay:.7s; }
+  .floating-star:nth-child(3) { top:15%;right:20%;animation-delay:1.4s; }
+  @keyframes floatStar {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    50%      { transform: translateY(-14px) rotate(15deg); }
+  }
+
+  /* Personagem Coin */
+  .coin-character {
+    width: 130px; height: 130px;
+    background: linear-gradient(135deg, var(--sun) 0%, var(--sun-dark) 100%);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem;
+    box-shadow: 0 8px 30px rgba(244,180,0,.5), inset 0 -4px 12px rgba(0,0,0,.12);
+    animation: coinBounce 2.5s ease-in-out infinite;
+    position: relative;
+    border: 5px solid rgba(255,255,255,.6);
+  }
+  .coin-character::after {
+    content: '★';
+    position: absolute; top:-8px; right:-8px;
+    width: 32px; height: 32px;
+    background: var(--coral);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem; color: #fff;
+    box-shadow: var(--shadow);
+    border: 3px solid #fff;
+  }
+  @keyframes coinBounce {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-12px); }
+  }
+
+  .hero-title {
+    font-family: var(--font-title);
+    font-size: 2.6rem; color: #fff;
+    text-shadow: 0 3px 12px rgba(0,0,0,.2);
+    margin-bottom: .5rem;
+    line-height: 1.1;
+  }
+  .hero-subtitle {
+    font-size: 1.1rem; color: rgba(255,255,255,.9);
+    font-weight: 700; margin-bottom: 1.5rem;
+  }
+  .hero-speech {
+    display: inline-block;
+    background: #fff;
+    border-radius: 20px;
+    padding: .75rem 1.5rem;
+    font-size: .95rem; font-weight: 700;
+    color: var(--sky-dark);
+    box-shadow: var(--shadow);
+    position: relative;
+    max-width: 340px;
+  }
+  .hero-speech::before {
+    content: '';
+    position: absolute; top: -14px; left: 50%;
+    transform: translateX(-50%);
+    border: 7px solid transparent;
+    border-bottom-color: #fff;
+  }
+
+  /* ══════════════════════════════════════════════
+     SELETOR DE PERFIL (QUEM VAI JOGAR)
+  ══════════════════════════════════════════════ */
+  .profile-section {
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    max-width: 700px; margin: 0 auto;
+  }
+  .section-badge {
+    display: inline-flex; align-items: center; gap: .4rem;
+    background: var(--sun); color: var(--ink);
+    font-family: var(--font-title); font-size: 1rem;
+    padding: .35rem 1rem; border-radius: var(--btn-r);
+    margin-bottom: 1rem;
+    box-shadow: 0 3px 10px rgba(255,217,61,.4);
+  }
+  .section-title {
+    font-family: var(--font-title); font-size: 1.8rem;
+    color: var(--ink); margin-bottom: .4rem;
+  }
+  .section-sub { font-size: .95rem; color: var(--ink-light); margin-bottom: 2rem; font-weight: 600; }
+
+  .profile-cards {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+  }
+  .profile-card {
+    background: #fff; border-radius: var(--card-r);
+    padding: 1.5rem 1.2rem;
+    box-shadow: var(--shadow);
+    border: 3px solid transparent;
+    cursor: pointer; transition: all .2s;
+    width: 160px; text-align: center;
+    position: relative;
+  }
+  .profile-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+  .profile-card.selected { border-color: var(--sky); background: #E1F5FE; }
+  .profile-card .p-icon { font-size: 3rem; margin-bottom: .6rem; display: block; }
+  .profile-card .p-name { font-family: var(--font-title); font-size: 1.1rem; color: var(--ink); margin-bottom: .3rem; }
+  .profile-card .p-age { font-size: .8rem; font-weight: 700; color: var(--ink-light); }
+  .profile-card .p-check {
+    display: none; position: absolute; top: -10px; right: -10px;
+    width: 28px; height: 28px;
+    background: var(--grass); border-radius: 50%;
+    align-items: center; justify-content: center;
+    color: #fff; font-size: .85rem;
+    box-shadow: var(--shadow); border: 3px solid #fff;
+  }
+  .profile-card.selected .p-check { display: flex; }
+
+  .start-btn {
+    display: inline-flex; align-items: center; gap: .6rem;
+    background: linear-gradient(135deg, var(--grass), var(--grass-dark));
+    color: #fff; border: none; border-radius: var(--btn-r);
+    padding: .9rem 2.5rem; font-size: 1.15rem;
+    font-family: var(--font-title); cursor: pointer;
+    box-shadow: 0 6px 20px rgba(102,187,106,.4);
+    transition: transform .2s, box-shadow .2s;
+    margin-top: 1.5rem;
+  }
+  .start-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(102,187,106,.5); }
+  .start-btn:active { transform: translateY(0); }
+
+  /* ══════════════════════════════════════════════
+     ABAS DOS MÓDULOS
+  ══════════════════════════════════════════════ */
+  .kids-main { max-width: 800px; margin: 0 auto; padding: 1rem 1.5rem 3rem; }
+
+  .kids-tabs {
+    display: flex; gap: .6rem; flex-wrap: wrap;
+    margin-bottom: 1.5rem; justify-content: center;
+  }
+  .kids-tab {
+    display: flex; align-items: center; gap: .5rem;
+    padding: .65rem 1.3rem;
+    border-radius: var(--btn-r);
+    border: 3px solid transparent;
+    background: #fff;
+    font-family: var(--font-title); font-size: .95rem;
+    color: var(--ink-light); cursor: pointer;
+    box-shadow: var(--shadow); transition: all .2s;
+  }
+  .kids-tab:hover { transform: translateY(-2px); }
+  .kids-tab.active { color: #fff; border-color: transparent; transform: translateY(-2px); }
+  .kids-tab[data-tab="aprender"].active  { background: var(--sky); box-shadow: 0 6px 18px rgba(79,195,247,.4); }
+  .kids-tab[data-tab="mesada"].active    { background: var(--sun-dark); box-shadow: 0 6px 18px rgba(244,180,0,.4); }
+  .kids-tab[data-tab="loja"].active      { background: var(--coral); box-shadow: 0 6px 18px rgba(255,112,67,.4); }
+  .kids-tab[data-tab="conquistas"].active{ background: var(--lavender); box-shadow: 0 6px 18px rgba(171,71,188,.4); }
+  .kids-tab .tab-icon { font-size: 1.2rem; }
+
+  .kids-panel { display: none; }
+  .kids-panel.active { display: block; }
+
+  /* ══════════════════════════════════════════════
+     PAINEL 1 — APRENDER (lições com Coin)
+  ══════════════════════════════════════════════ */
+  .lesson-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .lesson-card {
+    background: #fff; border-radius: var(--card-r);
+    padding: 1.4rem 1.2rem;
+    box-shadow: var(--shadow);
+    cursor: pointer; transition: transform .2s, box-shadow .2s;
+    border-bottom: 5px solid transparent;
+    position: relative;
+  }
+  .lesson-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .lesson-card.done { border-bottom-color: var(--grass); }
+  .lesson-card .l-icon { font-size: 2.5rem; margin-bottom: .7rem; display: block; }
+  .lesson-card .l-title { font-family: var(--font-title); font-size: 1.05rem; margin-bottom: .3rem; }
+  .lesson-card .l-desc { font-size: .83rem; color: var(--ink-light); font-weight: 600; line-height: 1.45; }
+  .lesson-card .l-xp {
+    display: inline-flex; align-items: center; gap: .3rem;
+    margin-top: .7rem; background: var(--sun);
+    color: var(--ink); border-radius: var(--btn-r);
+    padding: .2rem .7rem; font-size: .78rem; font-weight: 800;
+  }
+  .lesson-done-badge {
+    display: none; position: absolute; top: -8px; right: -8px;
+    background: var(--grass); color: #fff;
+    border-radius: 50%; width: 28px; height: 28px;
+    align-items: center; justify-content: center;
+    font-size: .85rem; border: 3px solid #fff; box-shadow: var(--shadow);
+  }
+  .lesson-card.done .lesson-done-badge { display: flex; }
+
+  /* Modal de lição */
+  .lesson-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.6); z-index: 1000;
+    align-items: center; justify-content: center; padding: 1rem;
+  }
+  .lesson-modal-overlay.open { display: flex; }
+  .lesson-modal {
+    background: #fff; border-radius: 24px;
+    padding: 2rem 1.8rem;
+    max-width: 480px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    animation: popIn .35s cubic-bezier(.34,1.56,.64,1);
+    max-height: 90vh; overflow-y: auto;
+  }
+  @keyframes popIn {
+    from { transform: scale(.7); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .modal-header { display: flex; align-items: center; gap: .8rem; margin-bottom: 1.2rem; }
+  .modal-icon { font-size: 2.8rem; }
+  .modal-title { font-family: var(--font-title); font-size: 1.4rem; color: var(--ink); }
+  .modal-body { font-size: .95rem; line-height: 1.65; color: var(--ink); margin-bottom: 1.2rem; font-weight: 600; }
+  .modal-body .highlight {
+    background: var(--sun); color: var(--ink);
+    border-radius: 8px; padding: .15rem .5rem; font-weight: 800;
+  }
+  .modal-example {
+    background: #E8F5E9; border-left: 5px solid var(--grass);
+    border-radius: 12px; padding: 1rem;
+    font-size: .9rem; font-weight: 700; color: #2E7D32;
+    margin-bottom: 1.2rem; line-height: 1.5;
+  }
+  .modal-quiz { margin-bottom: 1.2rem; }
+  .modal-quiz-q { font-family: var(--font-title); font-size: 1rem; margin-bottom: .8rem; color: var(--sky-dark); }
+  .modal-quiz-opts { display: flex; flex-direction: column; gap: .5rem; }
+  .quiz-opt-btn {
+    padding: .7rem 1rem; border-radius: 14px;
+    border: 3px solid #E0E0E0; background: #FAFAFA;
+    font-family: var(--font-body); font-size: .9rem; font-weight: 700;
+    cursor: pointer; text-align: left;
+    transition: all .2s; color: var(--ink);
+  }
+  .quiz-opt-btn:hover { border-color: var(--sky); background: #E1F5FE; }
+  .quiz-opt-btn.correct { border-color: var(--grass); background: #E8F5E9; color: #2E7D32; }
+  .quiz-opt-btn.wrong   { border-color: var(--coral); background: #FBE9E7; color: #BF360C; }
+  .quiz-result-msg { text-align:center; font-family: var(--font-title); font-size: 1.2rem; padding: .8rem; border-radius: 14px; margin-top: .8rem; }
+  .quiz-result-msg.ok  { background: #E8F5E9; color: #2E7D32; }
+  .quiz-result-msg.err { background: #FBE9E7; color: #BF360C; }
+
+  .modal-footer { display: flex; justify-content: space-between; align-items: center; gap: .8rem; flex-wrap: wrap; }
+  .btn-kids {
+    display: inline-flex; align-items: center; gap: .5rem;
+    padding: .65rem 1.5rem; border-radius: var(--btn-r);
+    font-family: var(--font-title); font-size: 1rem;
+    cursor: pointer; border: none; transition: all .2s;
+  }
+  .btn-kids-close { background: #ECEFF1; color: var(--ink-light); }
+  .btn-kids-close:hover { background: #CFD8DC; }
+  .btn-kids-done { background: var(--grass); color: #fff; box-shadow: 0 4px 12px rgba(102,187,106,.4); }
+  .btn-kids-done:hover { background: var(--grass-dark); }
+
+  /* ══════════════════════════════════════════════
+     PAINEL 2 — MESADA DIGITAL
+  ══════════════════════════════════════════════ */
+  .mesada-hero {
+    background: linear-gradient(135deg, var(--sun) 0%, var(--sun-dark) 100%);
+    border-radius: var(--card-r); padding: 1.5rem;
+    text-align: center; margin-bottom: 1.5rem;
+    box-shadow: 0 8px 24px rgba(244,180,0,.35);
+  }
+  .mesada-hero-emoji { font-size: 3rem; display: block; margin-bottom: .5rem;
+    animation: coinBounce 2s ease-in-out infinite; }
+  .mesada-saldo-label { font-size: .9rem; font-weight: 800; color: rgba(45,52,54,.7); margin-bottom: .2rem; }
+  .mesada-saldo { font-family: var(--font-title); font-size: 3rem; color: var(--ink); line-height: 1; }
+  .mesada-saldo .cents { font-size: 1.5rem; }
+
+  .mesada-coins-bar {
+    display: flex; gap: .6rem; flex-wrap: wrap; justify-content: center; margin-top: .8rem;
+  }
+  .coin-pill {
+    display: flex; align-items: center; gap: .35rem;
+    background: rgba(255,255,255,.5); border-radius: var(--btn-r);
+    padding: .3rem .9rem; font-size: .85rem; font-weight: 800; color: var(--ink);
+  }
+  .coin-pill .icon { font-size: 1rem; }
+
+  .mesada-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem;
+    margin-bottom: 1.5rem;
+  }
+  .mesada-action {
+    background: #fff; border-radius: var(--card-r);
+    padding: 1.2rem .8rem; text-align: center;
+    box-shadow: var(--shadow); cursor: pointer;
+    border: 3px solid transparent;
+    transition: all .2s;
+  }
+  .mesada-action:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .mesada-action.gastar  { border-color: var(--coral); }
+  .mesada-action.guardar { border-color: var(--grass); }
+  .mesada-action.investir{ border-color: var(--lavender); }
+  .mesada-action .a-icon { font-size: 2.2rem; margin-bottom: .5rem; display: block; }
+  .mesada-action .a-name { font-family: var(--font-title); font-size: 1rem; margin-bottom: .2rem; }
+  .mesada-action .a-desc { font-size: .78rem; color: var(--ink-light); font-weight: 700; line-height: 1.4; }
+
+  .mesada-history {
+    background: #fff; border-radius: var(--card-r);
+    padding: 1.2rem; box-shadow: var(--shadow); margin-bottom: 1.2rem;
+  }
+  .mesada-history h4 {
+    font-family: var(--font-title); font-size: 1rem; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: .4rem;
+  }
+  .history-empty { text-align:center; color: var(--ink-light); font-size: .9rem; padding: 1rem; font-weight: 700; }
+  .history-item {
+    display: flex; align-items: center; gap: .8rem;
+    padding: .6rem 0;
+    border-bottom: 2px dashed #F5F5F5;
+  }
+  .history-item:last-child { border-bottom: none; }
+  .history-item .h-icon { font-size: 1.5rem; }
+  .history-item .h-info { flex: 1; }
+  .history-item .h-label { font-size: .88rem; font-weight: 800; color: var(--ink); }
+  .history-item .h-time  { font-size: .75rem; color: var(--ink-light); font-weight: 600; }
+  .history-item .h-val   { font-family: var(--font-title); font-size: 1rem; }
+  .history-item .h-val.pos { color: var(--grass); }
+  .history-item .h-val.neg { color: var(--coral); }
+
+  /* Cofrinhos */
+  .cofrinhos {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: .8rem; margin-bottom: 1.2rem;
+  }
+  .cofrinho-card {
+    background: #fff; border-radius: var(--card-r);
+    padding: 1rem; box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .cofrinho-icon { font-size: 2rem; display: block; margin-bottom: .4rem; }
+  .cofrinho-name { font-family: var(--font-title); font-size: .95rem; margin-bottom: .3rem; }
+  .cofrinho-val  { font-size: 1.1rem; font-weight: 800; color: var(--sky-dark); }
+  .cofrinho-bar-bg { height: 10px; background: #EEE; border-radius: 99px; margin-top: .5rem; overflow: hidden; }
+  .cofrinho-bar-fill { height: 100%; border-radius: 99px; transition: width .4s; }
+
+  /* Modal ação mesada */
+  .action-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.55); z-index: 1001;
+    align-items: center; justify-content: center; padding: 1rem;
+  }
+  .action-modal-overlay.open { display: flex; }
+  .action-modal {
+    background: #fff; border-radius: 24px; padding: 2rem;
+    max-width: 360px; width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    animation: popIn .3s cubic-bezier(.34,1.56,.64,1);
+    text-align: center;
+  }
+  .action-modal .am-icon { font-size: 3rem; margin-bottom: .6rem; display: block; }
+  .action-modal .am-title { font-family: var(--font-title); font-size: 1.4rem; margin-bottom: .3rem; }
+  .action-modal .am-sub { font-size: .9rem; color: var(--ink-light); font-weight: 700; margin-bottom: 1.2rem; }
+  .am-choices { display: flex; flex-direction: column; gap: .6rem; margin-bottom: 1.2rem; }
+  .am-choice {
+    padding: .8rem 1rem; border-radius: 14px;
+    border: 3px solid #E0E0E0; background: #FAFAFA;
+    cursor: pointer; font-family: var(--font-body); font-size: .9rem; font-weight: 700;
+    text-align: left; display: flex; align-items: center; gap: .7rem;
+    transition: all .2s; color: var(--ink);
+  }
+  .am-choice:hover { border-color: var(--sky); background: #E1F5FE; }
+  .am-choice .c-icon { font-size: 1.3rem; }
+  .am-val-input {
+    width: 100%; padding: .8rem 1rem; font-size: 1.1rem;
+    border: 3px solid #E0E0E0; border-radius: 14px;
+    font-family: var(--font-title); text-align: center; margin-bottom: 1rem;
+    outline: none; color: var(--ink);
+  }
+  .am-val-input:focus { border-color: var(--sky); }
+  .am-btns { display: flex; gap: .6rem; justify-content: center; }
+  .btn-kids-cancel { background: #ECEFF1; color: var(--ink-light); }
+  .btn-kids-confirm { background: var(--sky); color: #fff; box-shadow: 0 4px 12px rgba(79,195,247,.4); }
+  .btn-kids-confirm:hover { background: var(--sky-dark); }
+
+  /* Configuração pais */
+  .config-pais {
+    background: #fff; border-radius: var(--card-r);
+    padding: 1.2rem; box-shadow: var(--shadow);
+  }
+  .config-pais h4 { font-family: var(--font-title); font-size: 1rem; margin-bottom: 1rem;
+    display: flex; align-items: center; gap: .4rem; }
+  .config-row { display: flex; align-items: center; gap: .8rem; margin-bottom: .8rem; flex-wrap: wrap; }
+  .config-label { font-size: .88rem; font-weight: 700; color: var(--ink-light); flex: 1; min-width: 120px; }
+  .config-input {
+    padding: .55rem .9rem; border: 3px solid #E0E0E0; border-radius: 14px;
+    font-family: var(--font-body); font-size: .9rem; font-weight: 700;
+    outline: none; color: var(--ink); width: 130px;
+  }
+  .config-input:focus { border-color: var(--sky); }
+  .btn-config {
+    padding: .55rem 1.4rem; border-radius: var(--btn-r);
+    background: var(--sky-dark); color: #fff; border: none;
+    font-family: var(--font-title); font-size: .9rem; cursor: pointer;
+    box-shadow: 0 3px 10px rgba(2,136,209,.3);
+    transition: background .2s;
+  }
+  .btn-config:hover { background: var(--sky); }
+
+  /* ══════════════════════════════════════════════
+     PAINEL 3 — LOJA DO COIN
+  ══════════════════════════════════════════════ */
+  .loja-header-card {
+    background: linear-gradient(135deg, var(--coral) 0%, var(--coral-dark) 100%);
+    border-radius: var(--card-r); padding: 1.2rem 1.5rem;
+    color: #fff; display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 1.5rem; box-shadow: 0 6px 20px rgba(255,112,67,.35);
+  }
+  .loja-header-icon { font-size: 2.5rem; }
+  .loja-header-info h3 { font-family: var(--font-title); font-size: 1.2rem; }
+  .loja-header-info p { font-size: .85rem; opacity: .9; font-weight: 700; margin-top: .2rem; }
+  .loja-coins-display {
+    margin-left: auto; background: rgba(255,255,255,.2);
+    border-radius: var(--btn-r); padding: .4rem 1rem;
+    font-family: var(--font-title); font-size: 1rem;
+    display: flex; align-items: center; gap: .4rem; flex-shrink: 0;
+  }
+
+  .loja-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .loja-item {
+    background: #fff; border-radius: var(--card-r);
+    padding: 1.2rem .9rem; text-align: center;
+    box-shadow: var(--shadow); cursor: pointer;
+    border: 3px solid transparent; transition: all .2s;
+  }
+  .loja-item:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--coral); }
+  .loja-item.bought { border-color: var(--grass); background: #E8F5E9; }
+  .loja-item.cant-afford { opacity: .6; cursor: not-allowed; }
+  .loja-item .li-icon { font-size: 2.5rem; margin-bottom: .5rem; display: block; }
+  .loja-item .li-name { font-family: var(--font-title); font-size: .95rem; margin-bottom: .3rem; }
+  .loja-item .li-price {
+    display: inline-flex; align-items: center; gap: .3rem;
+    background: var(--sun); color: var(--ink);
+    border-radius: var(--btn-r); padding: .2rem .7rem;
+    font-size: .8rem; font-weight: 800;
+  }
+  .loja-item.bought .li-price { background: var(--grass); color: #fff; }
+
+  /* ══════════════════════════════════════════════
+     PAINEL 4 — CONQUISTAS KIDS
+  ══════════════════════════════════════════════ */
+  .xp-bar-section {
+    background: #fff; border-radius: var(--card-r);
+    padding: 1.2rem; box-shadow: var(--shadow); margin-bottom: 1.5rem;
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+  }
+  .xp-avatar {
+    width: 70px; height: 70px;
+    background: linear-gradient(135deg, var(--sky), var(--sky-dark));
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; box-shadow: 0 4px 16px rgba(79,195,247,.4);
+    flex-shrink: 0; border: 4px solid #fff;
+  }
+  .xp-info { flex: 1; }
+  .xp-level { font-family: var(--font-title); font-size: 1.1rem; color: var(--ink); }
+  .xp-name  { font-size: .82rem; font-weight: 700; color: var(--ink-light); margin-bottom: .5rem; }
+  .xp-bar-bg { height: 14px; background: #EEE; border-radius: 99px; overflow: hidden; margin-bottom: .3rem; }
+  .xp-bar-fill {
+    height: 100%; border-radius: 99px;
+    background: linear-gradient(90deg, var(--sky), var(--sky-dark));
+    transition: width .5s ease;
+  }
+  .xp-caption { font-size: .78rem; font-weight: 700; color: var(--ink-light); }
+
+  .kids-badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: .9rem;
+  }
+  .k-badge {
+    background: #fff; border-radius: var(--card-r);
+    padding: 1rem .8rem; text-align: center;
+    box-shadow: var(--shadow); transition: transform .2s;
+  }
+  .k-badge:hover { transform: translateY(-3px); }
+  .k-badge.earned { background: linear-gradient(135deg, #FFFDE7, #FFF9C4); border: 2px solid var(--sun); }
+  .k-badge.locked { opacity: .45; filter: grayscale(.7); }
+  .k-badge .kb-icon { font-size: 2.2rem; margin-bottom: .4rem; display: block; }
+  .k-badge .kb-name { font-family: var(--font-title); font-size: .85rem; margin-bottom: .2rem; }
+  .k-badge .kb-desc { font-size: .72rem; color: var(--ink-light); font-weight: 700; line-height: 1.35; }
+
+  /* ══════════════════════════════════════════════
+     COIN TOAST (recompensa)
+  ══════════════════════════════════════════════ */
+  .coin-toast {
+    position: fixed; bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--sun); color: var(--ink);
+    border-radius: var(--btn-r); padding: .8rem 1.6rem;
+    font-family: var(--font-title); font-size: 1.1rem;
+    box-shadow: 0 8px 24px rgba(244,180,0,.5);
+    z-index: 2000; opacity: 0;
+    transition: transform .3s, opacity .3s;
+    display: flex; align-items: center; gap: .6rem;
+    white-space: nowrap;
+  }
+  .coin-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  /* ══════════════════════════════════════════════
+     RESPONSIVO
+  ══════════════════════════════════════════════ */
+  @media (max-width: 500px) {
+    .hero-title { font-size: 2rem; }
+    .mesada-grid { grid-template-columns: 1fr; }
+    .cofrinhos { grid-template-columns: 1fr; }
+    .profile-cards { gap: .7rem; }
+    .profile-card { width: 140px; }
+    .kids-tab { padding: .55rem .9rem; font-size: .85rem; }
+  }
+  </style>
+  <link rel="icon" type="image/x-icon" href="../../../../favicon.ico">
+</head>
+<body>
+
+<!-- ═══ TOAST ═══ -->
+<div class="coin-toast" id="coinToast">
+  <span id="toastIcon">🌟</span>
+  <span id="toastText">+10 moedas!</span>
+</div>
+
+<!-- ═══ MODAL DE LIÇÃO ═══ -->
+<div class="lesson-modal-overlay" id="lessonModal">
+  <div class="lesson-modal" id="lessonModalContent"></div>
+</div>
+
+<!-- ═══ MODAL DE AÇÃO MESADA ═══ -->
+<div class="action-modal-overlay" id="actionModal">
+  <div class="action-modal" id="actionModalContent"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     HEADER
+══════════════════════════════════════════════ -->
+<header class="kids-header">
+  <div class="kids-logo">
+    <span class="star">⭐</span> FinWise <span style="color:var(--sun)">Kids</span>
+  </div>
+  <div class="header-btns">
+    <a href="dashboard.html" class="back-to-dashboard">
+      <i class="fas fa-home"></i> Dashboard
+    </a>
+    <button class="back-btn" onclick="voltarPerfil()">
+      <i class="fas fa-user-circle"></i> Trocar perfil
+    </button>
+  </div>
+  <button id="pwa-install-btn" style="display:none" class="btn btn--ghost btn--sm">
+  <i class="fas fa-download"></i> <span>Instalar app</span>
+</button>
+</header>
+
+<!-- ══════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════ -->
+<section class="kids-hero">
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <span class="floating-star">⭐</span>
+  <span class="floating-star">🌟</span>
+  <span class="floating-star">✨</span>
+
+  <div class="coin-character">🪙</div>
+  <h1 class="hero-title">Olá! Eu sou o Coin! 👋</h1>
+  <p class="hero-subtitle">Seu amigo para aprender sobre dinheiro!</p>
+  <div class="hero-speech">
+    💬 Vamos aprender juntos a cuidar do dinheiro de um jeito divertido!
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     SELETOR DE PERFIL
+══════════════════════════════════════════════ -->
+<section class="profile-section" id="profileSection">
+  <div class="section-badge">🎮 Quem vai jogar hoje?</div>
+  <h2 class="section-title">Escolha seu personagem!</h2>
+  <p class="section-sub">Cada perfil tem lições feitas do seu tamanho 😊</p>
+
+  <div class="profile-cards">
+    <div class="profile-card" data-profile="pequenino" onclick="selectProfile(this)">
+      <span class="p-icon">🐣</span>
+      <div class="p-name">Pequenino</div>
+      <div class="p-age">4 a 6 anos</div>
+      <div class="p-check"><i class="fas fa-check"></i></div>
+    </div>
+    <div class="profile-card" data-profile="explorador" onclick="selectProfile(this)">
+      <span class="p-icon">🚀</span>
+      <div class="p-name">Explorador</div>
+      <div class="p-age">7 a 9 anos</div>
+      <div class="p-check"><i class="fas fa-check"></i></div>
+    </div>
+    <div class="profile-card" data-profile="aventureiro" onclick="selectProfile(this)">
+      <span class="p-icon">⚡</span>
+      <div class="p-name">Aventureiro</div>
+      <div class="p-age">10 a 12 anos</div>
+      <div class="p-check"><i class="fas fa-check"></i></div>
+    </div>
+  </div>
+
+  <button class="start-btn" onclick="startKids()">
+    <i class="fas fa-play"></i> Começar a aventura!
+  </button>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     ÁREA PRINCIPAL (aparece após selecionar perfil)
+══════════════════════════════════════════════ -->
+<main class="kids-main" id="kidsMain" style="display:none">
+
+  <!-- Tabs -->
+  <div class="kids-tabs">
+    <button class="kids-tab active" data-tab="aprender" onclick="switchTab('aprender')">
+      <span class="tab-icon">📚</span> Aprender
+    </button>
+    <button class="kids-tab" data-tab="mesada" onclick="switchTab('mesada')">
+      <span class="tab-icon">🐷</span> Mesada
+    </button>
+    <button class="kids-tab" data-tab="loja" onclick="switchTab('loja')">
+      <span class="tab-icon">🛍️</span> Loja
+    </button>
+    <button class="kids-tab" data-tab="conquistas" onclick="switchTab('conquistas')">
+      <span class="tab-icon">🏅</span> Conquistas
+    </button>
+  </div>
+
+  <!-- ──────────────────────
+       PAINEL APRENDER
+  ────────────────────── -->
+  <div class="kids-panel active" id="panel-aprender">
+    <div class="lesson-grid" id="lessonGrid"></div>
+  </div>
+
+  <!-- ──────────────────────
+       PAINEL MESADA
+  ────────────────────── -->
+  <div class="kids-panel" id="panel-mesada">
+
+    <!-- Saldo -->
+    <div class="mesada-hero">
+      <span class="mesada-hero-emoji">💰</span>
+      <div class="mesada-saldo-label">Meu dinheiro</div>
+      <div class="mesada-saldo" id="mesadaSaldo">R$ <span id="mesadaVal">0</span><span class="cents">,00</span></div>
+      <div class="mesada-coins-bar">
+        <div class="coin-pill"><span class="icon">⭐</span> <span id="moedas">0</span> moedas</div>
+        <div class="coin-pill"><span class="icon">🐷</span> Cofrinho: R$ <span id="cofrinhoVal">0</span></div>
+        <div class="coin-pill"><span class="icon">📈</span> Investido: R$ <span id="investidoVal">0</span></div>
+      </div>
+    </div>
+
+    <!-- Ações -->
+    <div class="mesada-grid">
+      <div class="mesada-action gastar" onclick="openAction('gastar')">
+        <span class="a-icon">🛒</span>
+        <div class="a-name">Gastar</div>
+        <div class="a-desc">Comprar algo que você quer</div>
+      </div>
+      <div class="mesada-action guardar" onclick="openAction('guardar')">
+        <span class="a-icon">🐷</span>
+        <div class="a-name">Guardar</div>
+        <div class="a-desc">Colocar no cofrinho pra depois</div>
+      </div>
+      <div class="mesada-action investir" onclick="openAction('investir')">
+        <span class="a-icon">🌱</span>
+        <div class="a-name">Investir</div>
+        <div class="a-desc">Fazer o dinheiro crescer!</div>
+      </div>
+    </div>
+
+    <!-- Cofrinhos de meta -->
+    <h4 style="font-family:var(--font-title);font-size:1rem;margin-bottom:.8rem;display:flex;align-items:center;gap:.4rem;">
+      🎯 Meus objetivos
+    </h4>
+    <div class="cofrinhos" id="cofrinhos"></div>
+
+    <!-- Histórico -->
+    <div class="mesada-history">
+      <h4><span>📋</span> O que fiz com meu dinheiro</h4>
+      <div id="historyList"><div class="history-empty">Nenhuma movimentação ainda. Comece gastando, guardando ou investindo! 😄</div></div>
+    </div>
+
+    <!-- Config pais -->
+    <div class="config-pais">
+      <h4><i class="fas fa-lock" style="color:var(--sky-dark)"></i> Área dos pais</h4>
+      <div class="config-row">
+        <span class="config-label">Mesada mensal (R$)</span>
+        <input type="number" class="config-input" id="cfgMesada" placeholder="Ex: 50" min="1" max="9999">
+      </div>
+      <div class="config-row">
+        <span class="config-label">Nome da criança</span>
+        <input type="text" class="config-input" id="cfgNome" placeholder="Ex: Bia">
+      </div>
+      <button class="btn-config" onclick="saveConfig()"><i class="fas fa-save"></i> Salvar</button>
+      <button class="btn-config" style="background:var(--grass);margin-left:.5rem" onclick="addMesada()">
+        <i class="fas fa-plus"></i> Depositar mesada
+      </button>
+    </div>
+  </div>
+
+  <!-- ──────────────────────
+       PAINEL LOJA
+  ────────────────────── -->
+  <div class="kids-panel" id="panel-loja">
+    <div class="loja-header-card">
+      <span class="loja-header-icon">🛍️</span>
+      <div class="loja-header-info">
+        <h3>Loja do Coin</h3>
+        <p>Use suas moedas para comprar itens e personalizar!</p>
+      </div>
+      <div class="loja-coins-display">⭐ <span id="lojaMoedas">0</span></div>
+    </div>
+    <div class="loja-grid" id="lojaGrid"></div>
+  </div>
+
+  <!-- ──────────────────────
+       PAINEL CONQUISTAS
+  ────────────────────── -->
+  <div class="kids-panel" id="panel-conquistas">
+    <div class="xp-bar-section" id="xpSection"></div>
+    <div class="section-badge" style="margin-bottom:1rem">🏅 Meus badges</div>
+    <div class="kids-badges-grid" id="kidsBadgesGrid"></div>
+  </div>
+
+</main>
+
+<script>
+/* ══════════════════════════════════════════════
+   STORAGE
+══════════════════════════════════════════════ */
+const KS = {
+  get: k => { try { return JSON.parse(localStorage.getItem('fwk_'+k)); } catch { return null; } },
+  set: (k,v) => localStorage.setItem('fwk_'+k, JSON.stringify(v)),
+};
+
+/* ══════════════════════════════════════════════
+   ESTADO GLOBAL
+══════════════════════════════════════════════ */
+let state = KS.get('state') || {
+  profile: null,
+  moedas: 0,
+  saldo: 0,
+  cofrinho: 0,
+  investido: 0,
+  xp: 0,
+  nome: 'Explorador',
+  mesadaMensal: 0,
+  history: [],
+  lessonsCompleted: [],
+  boughtItems: [],
+  badges: [],
+};
+
+function saveState() { KS.set('state', state); }
+
+/* ══════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════ */
+function showToast(icon, text) {
+  const t = document.getElementById('coinToast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastText').textContent = text;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3200);
+}
+
+/* ══════════════════════════════════════════════
+   PERFIL
+══════════════════════════════════════════════ */
+let selectedProfile = 'explorador';
+function selectProfile(el) {
+  document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedProfile = el.dataset.profile;
+}
+function startKids() {
+  state.profile = selectedProfile;
+  saveState();
+  document.getElementById('profileSection').style.display = 'none';
+  document.getElementById('kidsMain').style.display = '';
+  renderAll();
+}
+function voltarPerfil() {
+  document.getElementById('profileSection').style.display = '';
+  document.getElementById('kidsMain').style.display = 'none';
+}
+
+/* ══════════════════════════════════════════════
+   LIÇÕES — conteúdo adaptado
+══════════════════════════════════════════════ */
+const LESSONS_ALL = [
+  {
+    id: 'oq_dinheiro',
+    icon: '💵', title: 'O que é dinheiro?',
+    desc: 'Moedas, cédulas e como usamos para comprar coisas.',
+    xp: 10, profiles: ['pequenino','explorador','aventureiro'],
+    content: `O <span class="highlight">dinheiro</span> é uma forma que as pessoas combinaram de trocar coisas! 💰<br><br>
+Antigamente, as pessoas trocavam direto: davam ovos e recebiam leite. Mas era complicado...<br><br>
+Aí inventaram o dinheiro: moedas e cédulas que todo mundo aceita para comprar qualquer coisa! 🪙📄`,
+    example: '🍎 Imagina que você tem uma maçã, mas quer um biscoito. Com dinheiro fica fácil: você vende a maçã, pega o dinheiro, e compra o biscoito! Simples assim! 😄',
+    quiz: {
+      q: 'Para que serve o dinheiro?',
+      opts: ['Para jogar no chão', 'Para trocar por coisas que precisamos', 'Para enfeitar a casa', 'Para comer'],
+      correct: 1,
+    }
+  },
+  {
+    id: 'ganhar',
+    icon: '🤝', title: 'Como ganhar dinheiro?',
+    desc: 'Trabalho, mesada e outras formas de ganhar.',
+    xp: 10, profiles: ['pequenino','explorador','aventureiro'],
+    content: `As pessoas ganham dinheiro ajudando outras pessoas! 💪<br><br>
+Quando um médico cuida de pacientes, um padeiro faz pão ou um professor dá aulas — eles recebem dinheiro pelo trabalho deles.<br><br>
+Você também pode ganhar dinheiro! Uma <span class="highlight">mesada</span> é um valor que seus pais te dão para você aprender a cuidar do dinheiro. 🏠`,
+    example: '🧹 Que tal ajudar em casa e combinar uma recompensa com seus pais? Varrer a casa, arrumar o quarto ou cuidar do cachorro são formas de colaborar e aprender o valor do trabalho!',
+    quiz: {
+      q: 'Como as pessoas ganham dinheiro?',
+      opts: ['Encontrando na rua', 'Trabalhando e ajudando outras pessoas', 'Sonhando', 'Não sei'],
+      correct: 1,
+    }
+  },
+  {
+    id: 'gastar',
+    icon: '🛒', title: 'Gastar com sabedoria',
+    desc: 'A diferença entre querer e precisar.',
+    xp: 15, profiles: ['pequenino','explorador','aventureiro'],
+    content: `Antes de gastar, pergunte a si mesmo: eu <span class="highlight">preciso</span> ou eu <span class="highlight">quero</span>? 🤔<br><br>
+<strong>Precisar</strong> = coisas necessárias: comida, escola, roupa.<br>
+<strong>Querer</strong> = coisas legais mas não urgentes: brinquedo novo, sorvete.<br><br>
+As duas são válidas! Mas é importante cuidar primeiro do que você <em>precisa</em> e depois pensar no que quer. 😊`,
+    example: '🍦 Você tem R$ 10. Um caderno para a escola custa R$ 8 e um sorvete custa R$ 5. O caderno é necessidade — compre primeiro! Com R$ 2 que sobra, guarde para juntar mais. O sorvete pode ser uma recompensa depois! 🎉',
+    quiz: {
+      q: 'Qual desses é uma NECESSIDADE?',
+      opts: ['Videogame novo', 'Material escolar', 'Figurinha rara', 'Brinquedo colecionável'],
+      correct: 1,
+    }
+  },
+  {
+    id: 'poupar',
+    icon: '🐷', title: 'Por que poupar?',
+    desc: 'Guardar dinheiro para realizar sonhos!',
+    xp: 15, profiles: ['pequenino','explorador','aventureiro'],
+    content: `Poupar é <span class="highlight">guardar um pouquinho</span> do dinheiro toda vez que você recebe! 🐷<br><br>
+Com o tempo, o dinheiro vai crescendo e você pode realizar sonhos maiores que não conseguiria comprar de uma vez.<br><br>
+O segredo é ter paciência e disciplina. É como montar um quebra-cabeça: peça por peça até completar! 🧩`,
+    example: '🎮 Imagina que você quer um videogame que custa R$ 200. Se você guardar R$ 20 por mês da sua mesada, em 10 meses você consegue! E sem precisar pedir dinheiro emprestado 😄',
+    quiz: {
+      q: 'Por que é importante poupar dinheiro?',
+      opts: ['Não é importante', 'Para realizar sonhos e ter dinheiro para emergências', 'Para esconder dos pais', 'Para não gastar nunca'],
+      correct: 1,
+    }
+  },
+  {
+    id: 'cofrinho',
+    icon: '🏦', title: 'O cofrinho mágico',
+    desc: 'Como o dinheiro guardado cresce com o tempo.',
+    xp: 20, profiles: ['explorador','aventureiro'],
+    content: `Quando você guarda dinheiro no banco ou em investimentos, ele pode <span class="highlight">crescer sozinho</span>! 🌱<br><br>
+Isso se chama <strong>juros</strong>. O banco usa seu dinheiro emprestado para outras pessoas, e te paga um pouquinho por isso.<br><br>
+É como plantar uma sementinha — com água (tempo) ela vira uma árvore grande! 🌳`,
+    example: '🌱 Se você guardar R$ 100 num cofrinho que cresce 10% por ano:\n• Depois de 1 ano: R$ 110\n• Depois de 2 anos: R$ 121\n• Depois de 5 anos: R$ 161 🎉\nO dinheiro trabalhou por você!',
+    quiz: {
+      q: 'O que acontece quando guardamos dinheiro no banco por muito tempo?',
+      opts: ['Ele some', 'Ele cresce com os juros', 'Fica do mesmo jeito', 'Vira moeda'],
+      correct: 1,
+    }
+  },
+  {
+    id: 'investir_kids',
+    icon: '📈', title: 'Investir é plantar dinheiro!',
+    desc: 'Para aventureiros: o básico sobre fazer dinheiro crescer.',
+    xp: 25, profiles: ['aventureiro'],
+    content: `Investir é colocar seu dinheiro em algo que vai <span class="highlight">gerar mais dinheiro</span> no futuro! 🌱➡️🌳<br><br>
+Existem vários tipos de investimento:<br>
+• <strong>Poupança</strong> — simples, mas rende pouco<br>
+• <strong>Tesouro Direto</strong> — empréstimo pro governo, muito seguro<br>
+• <strong>Ações</strong> — você vira "dono" de um pedacinho de uma empresa!<br><br>
+Quanto antes você começa, mais tempo o dinheiro tem para crescer! ⏰`,
+    example: '🏭 Imagina que você compra 1 ação de uma empresa de brinquedos por R$ 10. Se a empresa vai bem e cresce, sua ação pode valer R$ 20, R$ 30... Você ganhou dinheiro sem trabalhar! Isso é investir 😎',
+    quiz: {
+      q: 'O que é uma ação de uma empresa?',
+      opts: ['Uma promoção da loja', 'Um pedacinho de uma empresa que você compra', 'Um tipo de dívida', 'Um presente'],
+      correct: 1,
+    }
+  },
+  {
+    id: 'divida_kids',
+    icon: '⚠️', title: 'Cuidado com as dívidas!',
+    desc: 'O que são dívidas e como evitar.',
+    xp: 20, profiles: ['explorador','aventureiro'],
+    content: `Dívida é quando você <span class="highlight">gasta dinheiro que ainda não tem</span> e promete pagar depois. 😬<br><br>
+Às vezes é necessário (como quando os pais financiam uma casa). Mas dívida com juros altos pode crescer muito rápido!<br><br>
+A regra de ouro: <strong>só gaste o que você já tem</strong>. Se não tem, guarde até juntar! 💪`,
+    example: '❌ João pediu R$ 10 emprestado pra comprar figurinhas e prometeu pagar R$ 12 na semana seguinte. Mas gastou tudo antes. Aí pediu mais R$ 10 emprestado para pagar a dívida... a bola de neve cresceu! 😱\n✅ Maria guarda R$ 5 por semana. Em 2 semanas compra as figurinhas sem dívida! 😄',
+    quiz: {
+      q: 'Qual a melhor forma de comprar algo caro?',
+      opts: ['Pegar emprestado e não pagar', 'Guardar dinheiro aos poucos até ter o suficiente', 'Pegar emprestado com juros altos', 'Pegar de um amigo e esquecer'],
+      correct: 1,
+    }
+  },
+  {
+    id: 'doacao',
+    icon: '💝', title: 'Compartilhar é legal!',
+    desc: 'Como ajudar outras pessoas com dinheiro.',
+    xp: 15, profiles: ['pequenino','explorador','aventureiro'],
+    content: `Cuidar do dinheiro não é só guardar para si — também é <span class="highlight">ajudar quem precisa</span>! 💝<br><br>
+Muitas famílias ensinam a dividir: uma parte para gastar, uma para guardar e uma para <strong>doação</strong>.<br><br>
+Doe roupas, brinquedos ou até um pouquinho do seu dinheiro. Isso faz muito bem para quem recebe e para você também! 😊`,
+    example: '🧸 João tinha brinquedos que não usava mais. Em vez de deixar guardados, ele doou para crianças de um abrigo. As crianças ficaram felizes, e João também — porque fazer o bem dá uma sensação ótima! ❤️',
+    quiz: {
+      q: 'O que podemos fazer com uma parte do nosso dinheiro para ajudar outros?',
+      opts: ['Esconder embaixo do colchão', 'Queimar', 'Doação para quem precisa', 'Jogar fora'],
+      correct: 2,
+    }
+  },
+];
+
+/* ══════════════════════════════════════════════
+   LOJA — itens
+══════════════════════════════════════════════ */
+const LOJA_ITEMS = [
+  { id:'chapeu',   icon:'🎩', name:'Chapéu Mágico',   price:30 },
+  { id:'oculos',   icon:'🕶️', name:'Óculos do Coin',   price:25 },
+  { id:'capa',     icon:'🦸', name:'Capa de Super',    price:50 },
+  { id:'coroa',    icon:'👑', name:'Coroa de Rei',      price:80 },
+  { id:'mochila',  icon:'🎒', name:'Mochila Especial', price:40 },
+  { id:'foguete',  icon:'🚀', name:'Foguete do Coin',  price:100 },
+  { id:'cristal',  icon:'💎', name:'Cristal Raro',     price:150 },
+  { id:'trofeu',   icon:'🏆', name:'Troféu de Ouro',   price:200 },
+];
+
+/* ══════════════════════════════════════════════
+   BADGES KIDS
+══════════════════════════════════════════════ */
+const KIDS_BADGES = [
+  { id:'primeira_licao',  icon:'📚', name:'Primeiro Passo',   desc:'Completou sua primeira lição!' },
+  { id:'todas_licoes',    icon:'🎓', name:'Turma da Monica',  desc:'Completou todas as lições' },
+  { id:'primeiro_gasto',  icon:'🛒', name:'Primeiro Compra',  desc:'Fez seu primeiro gasto' },
+  { id:'primeiro_save',   icon:'🐷', name:'Pequeno Poupador', desc:'Guardou dinheiro pela 1ª vez' },
+  { id:'primeiro_invest', icon:'🌱', name:'Investidor Mirim', desc:'Investiu pela primeira vez' },
+  { id:'loja_item',       icon:'🛍️', name:'Meu Presente!',    desc:'Comprou algo na Loja do Coin' },
+  { id:'quiz_10',         icon:'🧠', name:'Gênio das Finanças',desc:'Acertou 10 quizzes' },
+  { id:'100_moedas',      icon:'💰', name:'Rico Rico Rico!',  desc:'Juntou 100 moedas' },
+];
+
+/* ══════════════════════════════════════════════
+   COFRINHOS DE META
+══════════════════════════════════════════════ */
+const METAS_COFRINHOS = [
+  { id:'meta_brinquedo', icon:'🎮', name:'Meu brinquedo',  meta:100, color:'#4FC3F7' },
+  { id:'meta_viagem',    icon:'✈️', name:'Passeio em família', meta:200, color:'#66BB6A' },
+  { id:'meta_livre',     icon:'⭐', name:'Sonho livre',    meta:150, color:'#AB47BC' },
+];
+
+/* ══════════════════════════════════════════════
+   RENDER TUDO
+══════════════════════════════════════════════ */
+function renderAll() {
+  renderLessons();
+  renderMesada();
+  renderLoja();
+  renderConquistas();
+}
+
+/* ── LIÇÕES ── */
+function renderLessons() {
+  const grid = document.getElementById('lessonGrid');
+  if (!grid) return;
+  const profile = state.profile || 'explorador';
+  const lessons = LESSONS_ALL.filter(l => l.profiles.includes(profile));
+
+  grid.innerHTML = lessons.map(l => `
+    <div class="lesson-card ${state.lessonsCompleted.includes(l.id) ? 'done' : ''}"
+         onclick="openLesson('${l.id}')">
+      <div class="lesson-done-badge"><i class="fas fa-check"></i></div>
+      <span class="l-icon">${l.icon}</span>
+      <div class="l-title">${l.title}</div>
+      <div class="l-desc">${l.desc}</div>
+      <div class="l-xp">⭐ +${l.xp} moedas</div>
+    </div>
+  `).join('');
+}
+
+/* ── MESADA ── */
+function renderMesada() {
+  document.getElementById('mesadaVal').textContent  = state.saldo.toFixed(0);
+  document.getElementById('moedas').textContent     = state.moedas;
+  document.getElementById('cofrinhoVal').textContent = state.cofrinho.toFixed(0);
+  document.getElementById('investidoVal').textContent = state.investido.toFixed(0);
+
+  // Cofrinhos de meta
+  const s = KS.get('cofrinhos') || {};
+  document.getElementById('cofrinhos').innerHTML = METAS_COFRINHOS.map(m => {
+    const val = s[m.id] || 0;
+    const pct = Math.min((val/m.meta)*100, 100);
+    return `
+      <div class="cofrinho-card">
+        <span class="cofrinho-icon">${m.icon}</span>
+        <div class="cofrinho-name">${m.name}</div>
+        <div class="cofrinho-val">R$ ${val.toFixed(0)} / ${m.meta}</div>
+        <div class="cofrinho-bar-bg">
+          <div class="cofrinho-bar-fill" style="width:${pct}%;background:${m.color}"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Histórico
+  const hist = state.history || [];
+  const histEl = document.getElementById('historyList');
+  if (!hist.length) {
+    histEl.innerHTML = '<div class="history-empty">Nenhuma movimentação ainda. Comece gastando, guardando ou investindo! 😄</div>';
+  } else {
+    histEl.innerHTML = [...hist].reverse().slice(0,10).map(h => `
+      <div class="history-item">
+        <span class="h-icon">${h.icon}</span>
+        <div class="h-info">
+          <div class="h-label">${h.label}</div>
+          <div class="h-time">${h.time}</div>
+        </div>
+        <div class="h-val ${h.val >= 0 ? 'pos' : 'neg'}">${h.val >= 0 ? '+' : ''}R$ ${Math.abs(h.val).toFixed(0)}</div>
+      </div>
+    `).join('');
+  }
+
+  // Config pais
+  if (state.mesadaMensal) document.getElementById('cfgMesada').value = state.mesadaMensal;
+  if (state.nome) document.getElementById('cfgNome').value = state.nome;
+}
+
+/* ── LOJA ── */
+function renderLoja() {
+  document.getElementById('lojaMoedas').textContent = state.moedas;
+  document.getElementById('lojaGrid').innerHTML = LOJA_ITEMS.map(item => {
+    const bought = state.boughtItems.includes(item.id);
+    const cantAfford = state.moedas < item.price && !bought;
+    return `
+      <div class="loja-item ${bought?'bought':''} ${cantAfford&&!bought?'cant-afford':''}"
+           onclick="${!bought&&!cantAfford?`buyItem('${item.id}')`:bought?`showToast('😊','Você já tem este item!')`:''}" >
+        <span class="li-icon">${item.icon}</span>
+        <div class="li-name">${item.name}</div>
+        <div class="li-price">⭐ ${bought?'✓ Comprado':item.price}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ── CONQUISTAS ── */
+function renderConquistas() {
+  // XP bar
+  const xp = state.xp || 0;
+  const level = Math.floor(xp / 50) + 1;
+  const levelNames = ['Iniciante','Explorador','Aventureiro','Herói','Mestre','Lenda'];
+  const levelName = levelNames[Math.min(level-1, levelNames.length-1)];
+  const xpInLevel = xp % 50;
+  const xpPct = (xpInLevel/50)*100;
+
+  document.getElementById('xpSection').innerHTML = `
+    <div class="xp-avatar">🪙</div>
+    <div class="xp-info">
+      <div class="xp-level">⚡ Nível ${level} — ${levelName}</div>
+      <div class="xp-name">${state.nome || 'Explorador'}</div>
+      <div class="xp-bar-bg"><div class="xp-bar-fill" style="width:${xpPct}%"></div></div>
+      <div class="xp-caption">${xpInLevel}/50 XP para o próximo nível</div>
+    </div>
+    <div style="text-align:center">
+      <div style="font-family:var(--font-title);font-size:1.4rem;color:var(--sun-dark)">${state.moedas}</div>
+      <div style="font-size:.75rem;font-weight:700;color:var(--ink-light)">⭐ Moedas</div>
+    </div>
+  `;
+
+  document.getElementById('kidsBadgesGrid').innerHTML = KIDS_BADGES.map(b => {
+    const earned = state.badges.includes(b.id);
+    return `
+      <div class="k-badge ${earned?'earned':'locked'}">
+        <span class="kb-icon">${b.icon}</span>
+        <div class="kb-name">${b.name}</div>
+        <div class="kb-desc">${b.desc}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+/* ══════════════════════════════════════════════
+   LIÇÃO — ABRIR MODAL
+══════════════════════════════════════════════ */
+let currentLesson = null;
+let quizAnswered = false;
+
+function openLesson(id) {
+  const l = LESSONS_ALL.find(x => x.id === id);
+  if (!l) return;
+  currentLesson = l;
+  quizAnswered = false;
+
+  const alreadyDone = state.lessonsCompleted.includes(l.id);
+
+  document.getElementById('lessonModalContent').innerHTML = `
+    <div class="modal-header">
+      <span class="modal-icon">${l.icon}</span>
+      <div class="modal-title">${l.title}</div>
+    </div>
+    <div class="modal-body">${l.content}</div>
+    <div class="modal-example">${l.example}</div>
+    ${l.quiz ? `
+    <div class="modal-quiz">
+      <div class="modal-quiz-q">🤔 ${l.quiz.q}</div>
+      <div class="modal-quiz-opts">
+        ${l.quiz.opts.map((o,i) => `
+          <button class="quiz-opt-btn" data-idx="${i}" onclick="answerKidsQuiz(${i},${l.quiz.correct},'${l.id}')">
+            ${['A','B','C','D'][i]}) ${o}
+          </button>
+        `).join('')}
+      </div>
+      <div id="quizResultMsg" class="quiz-result-msg" style="display:none"></div>
+    </div>
+    ` : ''}
+<div class="modal-footer">
+      <button class="btn-kids btn-kids-close" onclick="closeLesson()">Fechar</button>
+      ${!alreadyDone ? `<button class="btn-kids btn-kids-done" id="completeLessonBtn" onclick="completeLesson('${l.id}',${l.xp})" style="display:none">
+        ⭐ Completar (+${l.xp} moedas)
+      </button>` : `<span style="color:var(--grass);font-family:var(--font-title)">✓ Já concluída!</span>`}
+    </div>
+  `;
+  document.getElementById('lessonModal').classList.add('open');
+}
+
+function answerKidsQuiz(idx, correct, lessonId) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  document.querySelectorAll('.quiz-opt-btn').forEach((btn,i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add('correct');
+    else if (i === idx) btn.classList.add('wrong');
+  });
+  const msg = document.getElementById('quizResultMsg');
+  msg.style.display = '';
+if (idx === correct) {
+    msg.className = 'quiz-result-msg ok';
+    msg.textContent = '🎉 Muito bem! Você acertou!';
+    addXP(5, 'quiz certo');
+    checkBadge('quiz_10', () => (KS.get('quiz_count')||0) >= 10);
+    KS.set('quiz_count', (KS.get('quiz_count')||0)+1);
+    const completeBtn = document.getElementById('completeLessonBtn');
+    if (completeBtn) completeBtn.style.display = '';
+  } else {
+    msg.className = 'quiz-result-msg err';
+    msg.textContent = '❌ Não foi dessa vez! Mas você aprendeu algo novo 😊';
+  }
+}
+
+function closeLesson() {
+  document.getElementById('lessonModal').classList.remove('open');
+}
+
+function completeLesson(id, xp) {
+  if (state.lessonsCompleted.includes(id)) return;
+  state.lessonsCompleted.push(id);
+  addMoedas(xp, `Lição: ${LESSONS_ALL.find(l=>l.id===id)?.title}`);
+  addXP(xp);
+  saveState();
+  closeLesson();
+  renderLessons();
+  showToast('⭐', `+${xp} moedas! Parabéns!`);
+
+  // Badges
+  awardBadge('primeira_licao');
+  const profile = state.profile || 'explorador';
+  const total = LESSONS_ALL.filter(l => l.profiles.includes(profile)).length;
+  if (state.lessonsCompleted.length >= total) awardBadge('todas_licoes');
+}
+
+/* ══════════════════════════════════════════════
+   MESADA — AÇÕES
+══════════════════════════════════════════════ */
+function openAction(tipo) {
+  const info = {
+    gastar:  { icon:'🛒', title:'Vou gastar!',  sub:'Em que você quer gastar?', color:'var(--coral)' },
+    guardar: { icon:'🐷', title:'Vou guardar!', sub:'Ótima decisão! Quanto você quer guardar?', color:'var(--grass)' },
+    investir:{ icon:'🌱', title:'Vou investir!',sub:'Incrível! Seu dinheiro vai crescer!', color:'var(--lavender)' },
+  }[tipo];
+
+  const items = {
+    gastar: [
+      { icon:'🍦', label:'Sorvete / Lanche', val:5 },
+      { icon:'🧃', label:'Suco ou lanchinho', val:3 },
+      { icon:'🎮', label:'Jogo ou brinquedo', val:25 },
+      { icon:'📖', label:'Livro ou revistinha', val:12 },
+    ],
+    guardar: [
+      { icon:'🎮', label:'Para o meu videogame', cofrinho:'meta_brinquedo' },
+      { icon:'✈️', label:'Para a viagem da família', cofrinho:'meta_viagem' },
+      { icon:'⭐', label:'Para o meu sonho', cofrinho:'meta_livre' },
+      { icon:'💰', label:'Guardar no cofrinho geral', cofrinho:null },
+    ],
+    investir: [
+      { icon:'🌱', label:'Plante R$ 5', val:5 },
+      { icon:'🌿', label:'Plante R$ 10', val:10 },
+      { icon:'🌳', label:'Plante R$ 20', val:20 },
+    ],
+  }[tipo];
+
+  document.getElementById('actionModalContent').innerHTML = `
+    <span class="am-icon">${info.icon}</span>
+    <div class="am-title">${info.title}</div>
+    <div class="am-sub">${info.sub}</div>
+    <div class="am-choices">
+      ${items.map((it,i) => `
+        <button class="am-choice" onclick="executeAction('${tipo}',${JSON.stringify(it).replace(/'/g,"\\'")},${i})">
+          <span class="c-icon">${it.icon}</span> ${it.label} ${it.val ? '(R$ '+it.val+')' : ''}
+        </button>
+      `).join('')}
+    </div>
+    <div class="am-btns">
+      <button class="btn-kids btn-kids-cancel" onclick="closeAction()">Cancelar</button>
+    </div>
+  `;
+  document.getElementById('actionModal').classList.add('open');
+}
+
+function closeAction() {
+  document.getElementById('actionModal').classList.remove('open');
+}
+
+function executeAction(tipo, item, idx) {
+  closeAction();
+  if (tipo === 'gastar') {
+    if (state.saldo < item.val) { showToast('😬','Saldo insuficiente!'); return; }
+    state.saldo -= item.val;
+    addHistory(item.icon, item.label, -item.val);
+    showToast(item.icon, `Gasto: R$ ${item.val}!`);
+    awardBadge('primeiro_gasto');
+  }
+  else if (tipo === 'guardar') {
+    const val = 10; // valor padrão — simplificado para crianças
+    if (state.saldo < val) { showToast('😬','Saldo insuficiente!'); return; }
+    state.saldo -= val;
+    state.cofrinho += val;
+    if (item.cofrinho) {
+      const cofrinhos = KS.get('cofrinhos') || {};
+      cofrinhos[item.cofrinho] = (cofrinhos[item.cofrinho]||0) + val;
+      KS.set('cofrinhos', cofrinhos);
+    }
+    addHistory(item.icon, item.label, -val);
+    showToast(item.icon, `+R$ ${val} guardado!`);
+    awardBadge('primeiro_save');
+  }
+  else if (tipo === 'investir') {
+    if (state.saldo < item.val) { showToast('😬','Saldo insuficiente!'); return; }
+    state.saldo -= item.val;
+    state.investido += item.val;
+    addHistory(item.icon, `Investimento: ${item.label}`, -item.val);
+    showToast('📈', `Plantado R$ ${item.val}! Crescendo...`);
+    awardBadge('primeiro_invest');
+  }
+  saveState();
+  renderMesada();
+}
+
+/* ══════════════════════════════════════════════
+   LOJA
+══════════════════════════════════════════════ */
+function buyItem(id) {
+  const item = LOJA_ITEMS.find(x => x.id === id);
+  if (!item || state.moedas < item.price) return;
+  state.moedas -= item.price;
+  state.boughtItems.push(id);
+  saveState();
+  renderLoja();
+  renderConquistas();
+  showToast(item.icon, `Comprado: ${item.name}!`);
+  awardBadge('loja_item');
+}
+
+/* ══════════════════════════════════════════════
+   CONFIG PAIS
+══════════════════════════════════════════════ */
+function saveConfig() {
+  const mesada = parseFloat(document.getElementById('cfgMesada').value) || 0;
+  const nome = document.getElementById('cfgNome').value.trim() || 'Explorador';
+  state.mesadaMensal = mesada;
+  state.nome = nome;
+  saveState();
+  showToast('✅', 'Configuração salva!');
+  renderConquistas();
+}
+
+function addMesada() {
+  const val = state.mesadaMensal;
+  if (!val) { showToast('⚠️','Configure a mesada primeiro!'); return; }
+  state.saldo += val;
+  addHistory('💰', 'Mesada recebida!', val);
+  saveState();
+  renderMesada();
+  showToast('💰', `+R$ ${val} de mesada!`);
+}
+
+/* ══════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════ */
+function addMoedas(n, label) {
+  state.moedas += n;
+  if (state.moedas >= 100) awardBadge('100_moedas');
+}
+function addXP(n) { state.xp = (state.xp||0) + n; }
+function addHistory(icon, label, val) {
+  state.history = state.history || [];
+  state.history.push({ icon, label, val, time: new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) });
+  if (state.history.length > 50) state.history.shift();
+}
+
+function awardBadge(id) {
+  if (state.badges.includes(id)) return;
+  state.badges.push(id);
+  saveState();
+  const b = KIDS_BADGES.find(x => x.id === id);
+  if (b) showToast(b.icon, `Badge: ${b.name}!`);
+  renderConquistas();
+}
+function checkBadge(id, condition) { if (condition()) awardBadge(id); }
+
+/* ══════════════════════════════════════════════
+   TABS
+══════════════════════════════════════════════ */
+function switchTab(tab) {
+  document.querySelectorAll('.kids-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === tab);
+  });
+  document.querySelectorAll('.kids-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'panel-'+tab);
+  });
+  if (tab === 'mesada') renderMesada();
+  if (tab === 'loja') renderLoja();
+  if (tab === 'conquistas') renderConquistas();
+}
+
+/* ══════════════════════════════════════════════
+   INIT — carregar estado salvo
+══════════════════════════════════════════════ */
+if (state.profile) {
+  document.getElementById('profileSection').style.display = 'none';
+  document.getElementById('kidsMain').style.display = '';
+  renderAll();
+}
+</script>
+</body>
+</html>

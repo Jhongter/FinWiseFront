@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinWise — Jogos & Gamificação</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard-style.css">
+  <script src="pwa-init.js"></script>
+  <style>
+  /* ══════════════════════════════════════════════════════
+     JOGOS PAGE — estilos específicos
+  ══════════════════════════════════════════════════════ */
+
+  /* ─── Page header ─── */
+  .jogos-header {
+    background: linear-gradient(135deg, var(--header-bg) 0%, #004466 100%);
+    padding: 2.5rem 1.5rem 2rem;
+    color: #fff;
+  }
+  .jogos-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: .4rem; }
+  .jogos-header h1 span { color: var(--green-500); }
+  .jogos-header p { color: rgba(255,255,255,.75); font-size: .95rem; }
+
+  /* ─── Tabs ─── */
+  .jogos-tabs {
+    display: flex; gap: 0;
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    padding: 0 1.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky; top: 60px; z-index: 100;
+  }
+  .jogos-tabs::-webkit-scrollbar { display: none; }
+  .jogos-tab {
+    display: flex; align-items: center; gap: .5rem;
+    padding: .9rem 1.2rem;
+    font-size: .86rem; font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer; border: none; background: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px; white-space: nowrap;
+    transition: color .2s, border-color .2s;
+    font-family: var(--font-sans);
+  }
+  .jogos-tab:hover { color: var(--green-500); }
+  .jogos-tab.active { color: var(--green-500); border-bottom-color: var(--green-500); }
+  .jogos-tab i { font-size: .9rem; }
+
+  /* ─── Tab panels ─── */
+  .tab-panel { display: none; padding: 2rem 1.5rem; max-width: 900px; margin: 0 auto; width: 100%; }
+  .tab-panel.active { display: block; }
+
+  /* ─── Seção de conquistas / streak (sempre visível no topo) ─── */
+  .streak-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .75rem 1.5rem;
+    display: flex; align-items: center; gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .streak-item {
+    display: flex; align-items: center; gap: .5rem;
+    font-size: .88rem; font-weight: 600;
+    color: var(--text-primary);
+  }
+  .streak-item i { font-size: 1.1rem; }
+  .streak-item .streak-num { color: var(--green-500); font-size: 1.05rem; }
+  .streak-btn {
+    margin-left: auto;
+    padding: .45rem 1.1rem;
+    background: var(--green-500);
+    color: #fff; border: none; border-radius: 20px;
+    font-size: .83rem; font-weight: 700;
+    cursor: pointer; font-family: var(--font-sans);
+    transition: background .2s, transform .15s;
+    display: flex; align-items: center; gap: .4rem;
+  }
+  .streak-btn:hover { background: var(--green-600); transform: scale(1.04); }
+  .streak-btn:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; transform: none; }
+  .streak-badge-mini {
+    display: inline-flex; align-items: center; gap: .3rem;
+    background: rgba(16,185,129,.1); color: var(--green-600);
+    border-radius: 20px; padding: .2rem .7rem;
+    font-size: .75rem; font-weight: 700;
+  }
+
+  /* ════════════════════════════════════════
+     JOGO 1: SIMULADOR DE MÊS
+  ════════════════════════════════════════ */
+  .sim-intro {
+    background: linear-gradient(135deg, rgba(16,185,129,.12), rgba(6,148,162,.08));
+    border: 1.5px solid rgba(16,185,129,.25);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: flex-start; gap: 1rem;
+  }
+  .sim-intro-icon { font-size: 2.2rem; flex-shrink: 0; }
+  .sim-intro h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: .3rem; color: var(--text-primary); }
+  .sim-intro p { font-size: .88rem; color: var(--text-secondary); line-height: 1.5; }
+
+  .sim-status-bar {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .sim-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: .9rem 1rem;
+    text-align: center;
+  }
+  .sim-stat-label { font-size: .75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: .05em; margin-bottom: .3rem; }
+  .sim-stat-val { font-size: 1.2rem; font-weight: 700; color: var(--text-primary); }
+  .sim-stat-val.green { color: var(--green-500); }
+  .sim-stat-val.red   { color: #ef4444; }
+  .sim-stat-val.amber { color: #f59e0b; }
+
+  .sim-week-title {
+    font-size: 1rem; font-weight: 700; color: var(--text-primary);
+    margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem;
+  }
+  .sim-week-title span { color: var(--green-500); }
+
+  .sim-event {
+    background: var(--surface);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem;
+    margin-bottom: 1rem;
+    transition: border-color .2s;
+  }
+  .sim-event.answered { opacity: .7; }
+  .sim-event-header { display: flex; align-items: flex-start; gap: .75rem; margin-bottom: .9rem; }
+  .sim-event-emoji { font-size: 1.6rem; flex-shrink: 0; }
+  .sim-event-text h4 { font-size: .93rem; font-weight: 700; color: var(--text-primary); margin-bottom: .2rem; }
+  .sim-event-text p { font-size: .83rem; color: var(--text-secondary); line-height: 1.45; }
+
+  .sim-choices { display: flex; flex-direction: column; gap: .5rem; }
+  .sim-choice {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .65rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md);
+    cursor: pointer; background: var(--surface);
+    font-size: .86rem; font-family: var(--font-sans);
+    color: var(--text-primary);
+    transition: all .2s; text-align: left;
+  }
+  .sim-choice:hover { border-color: var(--green-500); background: rgba(16,185,129,.04); }
+  .sim-choice.chosen-good { border-color: var(--green-500); background: rgba(16,185,129,.08); color: var(--green-600); font-weight: 600; }
+  .sim-choice.chosen-bad  { border-color: #ef4444; background: rgba(239,68,68,.06); color: #dc2626; font-weight: 600; }
+  .sim-choice.chosen-mid  { border-color: #f59e0b; background: rgba(245,158,11,.06); color: #d97706; font-weight: 600; }
+  .sim-choice:disabled { cursor: default; }
+  .sim-choice-tag {
+    font-size: .72rem; font-weight: 700; padding: .15rem .5rem;
+    border-radius: 20px; white-space: nowrap; flex-shrink: 0;
+  }
+  .tag-good { background: rgba(16,185,129,.15); color: var(--green-600); }
+  .tag-bad  { background: rgba(239,68,68,.12); color: #dc2626; }
+  .tag-mid  { background: rgba(245,158,11,.12); color: #d97706; }
+
+  .sim-feedback {
+    margin-top: .6rem; padding: .6rem .9rem;
+    border-radius: var(--radius-sm);
+    font-size: .83rem; line-height: 1.5;
+    display: none;
+  }
+  .sim-feedback.show { display: block; }
+  .sim-feedback.good { background: rgba(16,185,129,.08); border-left: 3px solid var(--green-500); color: var(--green-600); }
+  .sim-feedback.bad  { background: rgba(239,68,68,.06); border-left: 3px solid #ef4444; color: #dc2626; }
+  .sim-feedback.mid  { background: rgba(245,158,11,.06); border-left: 3px solid #f59e0b; color: #d97706; }
+
+  .sim-nav-btns { display: flex; gap: .75rem; margin-top: 1.5rem; }
+  .btn-primary {
+    padding: .6rem 1.4rem; background: var(--green-500); color: #fff;
+    border: none; border-radius: var(--radius-md);
+    font-size: .88rem; font-weight: 600; cursor: pointer;
+    font-family: var(--font-sans); transition: background .2s;
+    display: flex; align-items: center; gap: .4rem;
+  }
+  .btn-primary:hover { background: var(--green-600); }
+  .btn-secondary {
+    padding: .6rem 1.4rem; background: var(--surface-alt); color: var(--text-secondary);
+    border: 1px solid var(--border); border-radius: var(--radius-md);
+    font-size: .88rem; font-weight: 600; cursor: pointer;
+    font-family: var(--font-sans); transition: background .2s;
+  }
+  .btn-secondary:hover { background: var(--border); }
+
+  .sim-result {
+    text-align: center; padding: 2rem 1rem;
+    background: var(--surface); border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+  }
+  .sim-result-emoji { font-size: 3.5rem; margin-bottom: .75rem; }
+  .sim-result h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: .4rem; }
+  .sim-result p { color: var(--text-secondary); font-size: .93rem; margin-bottom: 1.5rem; line-height: 1.5; }
+  .sim-result-saldo { font-size: 2rem; font-weight: 700; margin-bottom: .5rem; }
+  .sim-result-detail { font-size: .85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+  /* ════════════════════════════════════════
+     JOGO 2: DESAFIO DO COFRE
+  ════════════════════════════════════════ */
+  .cofre-intro {
+    background: linear-gradient(135deg, rgba(245,158,11,.1), rgba(234,88,12,.06));
+    border: 1.5px solid rgba(245,158,11,.3);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem 1.4rem;
+    margin-bottom: 1.5rem;
+    display: flex; align-items: flex-start; gap: .9rem;
+  }
+  .cofre-intro-icon { font-size: 2rem; flex-shrink: 0; }
+
+  .cofre-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1rem; margin-bottom: 1.5rem;
+  }
+  .cofre-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1.1rem;
+    display: flex; flex-direction: column; gap: .7rem;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .cofre-card:hover { border-color: #f59e0b; box-shadow: var(--shadow-sm); }
+  .cofre-card.active-habit { border-color: var(--green-500); background: rgba(16,185,129,.03); }
+  .cofre-card-top { display: flex; align-items: flex-start; gap: .7rem; }
+  .cofre-emoji { font-size: 1.6rem; flex-shrink: 0; }
+  .cofre-card-info h4 { font-size: .9rem; font-weight: 700; color: var(--text-primary); margin-bottom: .15rem; }
+  .cofre-card-info p { font-size: .8rem; color: var(--text-secondary); }
+  .cofre-economia {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface-alt); border-radius: var(--radius-sm);
+    padding: .5rem .8rem;
+  }
+  .cofre-economia-label { font-size: .75rem; color: var(--text-muted); }
+  .cofre-economia-val { font-size: 1rem; font-weight: 700; color: var(--green-500); }
+  .cofre-toggle {
+    width: 44px; height: 24px; position: relative; flex-shrink: 0;
+    cursor: pointer; margin-left: auto;
+  }
+  .cofre-toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+  .cofre-toggle-track {
+    position: absolute; inset: 0;
+    background: var(--border); border-radius: 24px;
+    transition: background .2s;
+  }
+  .cofre-toggle-thumb {
+    position: absolute; top: 3px; left: 3px;
+    width: 18px; height: 18px;
+    background: #fff; border-radius: 50%;
+    transition: transform .2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  }
+  .cofre-toggle input:checked ~ .cofre-toggle-track { background: var(--green-500); }
+  .cofre-toggle input:checked ~ .cofre-toggle-thumb { transform: translateX(20px); }
+
+  .cofre-total {
+    background: linear-gradient(135deg, var(--green-500), var(--green-600));
+    border-radius: var(--radius-lg); padding: 1.5rem;
+    color: #fff; text-align: center; margin-bottom: 1.5rem;
+  }
+  .cofre-total h3 { font-size: .9rem; font-weight: 600; opacity: .85; margin-bottom: .4rem; }
+  .cofre-total-val { font-size: 2.4rem; font-weight: 700; margin-bottom: .2rem; }
+  .cofre-total-sub { font-size: .85rem; opacity: .8; }
+
+  /* Slider customizável */
+  .cofre-custom {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1.2rem;
+    margin-bottom: 1rem;
+  }
+  .cofre-custom h4 { font-size: .93rem; font-weight: 700; margin-bottom: 1rem; color: var(--text-primary); }
+  .cofre-slider-row { display: flex; align-items: center; gap: 1rem; margin-bottom: .75rem; }
+  .cofre-slider-label { font-size: .84rem; color: var(--text-secondary); flex: 1; min-width: 120px; }
+  .cofre-slider { flex: 2; accent-color: var(--green-500); cursor: pointer; }
+  .cofre-slider-val { font-size: .88rem; font-weight: 700; color: var(--green-500); min-width: 60px; text-align: right; }
+
+  /* ════════════════════════════════════════
+     JOGO 3: QUIZ
+  ════════════════════════════════════════ */
+  .quiz-progress-bar {
+    height: 6px; background: var(--border); border-radius: 99px;
+    margin-bottom: 1.5rem; overflow: hidden;
+  }
+  .quiz-progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--green-500), var(--green-600));
+    border-radius: 99px; transition: width .4s ease;
+  }
+  .quiz-score-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.2rem;
+  }
+  .quiz-score-bar span { font-size: .85rem; color: var(--text-muted); }
+  .quiz-score-bar strong { color: var(--green-500); }
+
+  .quiz-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .quiz-scenario { display: flex; align-items: flex-start; gap: .9rem; margin-bottom: 1.2rem; }
+  .quiz-scenario-icon { font-size: 2rem; flex-shrink: 0; }
+  .quiz-scenario-text {}
+  .quiz-scenario-text h4 { font-size: .95rem; font-weight: 700; color: var(--text-primary); margin-bottom: .3rem; }
+  .quiz-scenario-text p { font-size: .86rem; color: var(--text-secondary); line-height: 1.5; }
+  .quiz-question { font-size: .95rem; font-weight: 600; color: var(--text-primary); margin-bottom: .9rem; }
+
+  .quiz-options { display: flex; flex-direction: column; gap: .5rem; }
+  .quiz-option {
+    display: flex; align-items: center; gap: .8rem;
+    padding: .7rem 1rem; border: 1.5px solid var(--border);
+    border-radius: var(--radius-md); cursor: pointer;
+    background: var(--surface); font-size: .88rem;
+    font-family: var(--font-sans); color: var(--text-primary);
+    transition: all .2s; text-align: left;
+  }
+  .quiz-option:hover { border-color: var(--green-500); background: rgba(16,185,129,.04); }
+  .quiz-option.correct { border-color: var(--green-500); background: rgba(16,185,129,.1); color: var(--green-600); font-weight: 600; }
+  .quiz-option.wrong   { border-color: #ef4444; background: rgba(239,68,68,.07); color: #dc2626; }
+  .quiz-option.reveal  { border-color: var(--green-500); background: rgba(16,185,129,.05); }
+  .quiz-option:disabled { cursor: default; }
+  .quiz-option-letter {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--surface-alt); display: flex; align-items: center; justify-content: center;
+    font-size: .78rem; font-weight: 700; flex-shrink: 0;
+  }
+  .quiz-option.correct .quiz-option-letter { background: var(--green-500); color: #fff; }
+  .quiz-option.wrong .quiz-option-letter   { background: #ef4444; color: #fff; }
+
+  .quiz-explanation {
+    display: none; margin-top: 1rem; padding: .8rem 1rem;
+    border-radius: var(--radius-sm);
+    font-size: .85rem; line-height: 1.55;
+  }
+  .quiz-explanation.show { display: block; }
+  .quiz-explanation.good { background: rgba(16,185,129,.08); border-left: 3px solid var(--green-500); color: var(--green-700); }
+  .quiz-explanation.bad  { background: rgba(239,68,68,.06); border-left: 3px solid #ef4444; color: #b91c1c; }
+
+  .quiz-result {
+    text-align: center; padding: 2rem 1rem;
+    background: var(--surface); border-radius: var(--radius-lg);
+    border: 1px solid var(--border);
+  }
+  .quiz-result-emoji { font-size: 3.5rem; margin-bottom: .75rem; }
+  .quiz-result h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: .5rem; }
+  .quiz-result p { color: var(--text-secondary); font-size: .93rem; margin-bottom: 1.5rem; line-height: 1.5; }
+  .quiz-result-score {
+    font-size: 3rem; font-weight: 700; color: var(--green-500); margin-bottom: .3rem;
+  }
+  .quiz-result-label { font-size: .88rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+  /* ════════════════════════════════════════
+     CONQUISTAS & BADGES
+  ════════════════════════════════════════ */
+  .badges-section-title {
+    font-size: .8rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--text-muted);
+    margin-bottom: 1rem; margin-top: 1.5rem;
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .badges-section-title:first-child { margin-top: 0; }
+  .badges-section-title::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  .badges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem; margin-bottom: .5rem;
+  }
+  .badge-card {
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg); padding: 1.2rem .9rem;
+    text-align: center; position: relative;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .badge-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .badge-card.earned { border-color: var(--green-500); }
+  .badge-card.locked { opacity: .5; filter: grayscale(.6); }
+  .badge-icon { font-size: 2.2rem; margin-bottom: .6rem; display: block; }
+  .badge-name { font-size: .82rem; font-weight: 700; color: var(--text-primary); margin-bottom: .25rem; }
+  .badge-desc { font-size: .74rem; color: var(--text-secondary); line-height: 1.4; }
+  .badge-earned-tag {
+    position: absolute; top: .5rem; right: .5rem;
+    background: var(--green-500); color: #fff;
+    border-radius: 20px; padding: .1rem .45rem;
+    font-size: .65rem; font-weight: 700;
+  }
+  .badge-locked-tag {
+    position: absolute; top: .5rem; right: .5rem;
+    background: var(--border); color: var(--text-muted);
+    border-radius: 20px; padding: .1rem .45rem;
+    font-size: .65rem; font-weight: 700;
+  }
+
+  /* Streak conquistas */
+  .streak-milestones {
+    display: flex; gap: .8rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+  }
+  .streak-milestone {
+    display: flex; align-items: center; gap: .5rem;
+    background: var(--surface); border: 1.5px solid var(--border);
+    border-radius: var(--radius-md); padding: .5rem .9rem;
+    font-size: .82rem; transition: border-color .2s;
+  }
+  .streak-milestone.reached { border-color: var(--green-500); color: var(--green-600); font-weight: 600; }
+  .streak-milestone-icon { font-size: 1.1rem; }
+
+  /* Toast de notificação */
+  .finwise-toast {
+    position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--gray-900); color: #fff;
+    padding: .8rem 1.4rem; border-radius: var(--radius-md);
+    font-size: .88rem; font-weight: 600;
+    display: flex; align-items: center; gap: .6rem;
+    box-shadow: var(--shadow-lg); z-index: 2000;
+    opacity: 0; transition: transform .35s, opacity .35s;
+    white-space: nowrap;
+  }
+  .finwise-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  .finwise-toast i { color: var(--green-500); }
+
+  /* Modal de conquista */
+  .badge-modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.6); z-index: 1500;
+    align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  .badge-modal-overlay.open { display: flex; }
+  .badge-modal {
+    background: var(--surface); border-radius: var(--radius-lg);
+    padding: 2.5rem 2rem; text-align: center;
+    max-width: 360px; width: 100%;
+    box-shadow: 0 25px 60px rgba(0,0,0,.3);
+    animation: badgePop .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes badgePop {
+    from { transform: scale(.7); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  .badge-modal-icon { font-size: 4rem; margin-bottom: .75rem; display: block; }
+  .badge-modal h3 { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); margin-bottom: .4rem; }
+  .badge-modal p { font-size: .9rem; color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.5; }
+  .badge-modal-sub { font-size: .8rem; color: var(--text-muted); margin-bottom: 1.2rem; }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .sim-status-bar { grid-template-columns: repeat(2, 1fr); }
+    .cofre-grid { grid-template-columns: 1fr; }
+    .badges-grid { grid-template-columns: repeat(2, 1fr); }
+    .jogos-header h1 { font-size: 1.4rem; }
+  }
+  </style>
+  <link rel="icon" type="image/x-icon" href="../../../../favicon.ico">
+</head>
+<body>
+
+<!-- ─── Toast ─── -->
+<div id="finwiseToast" class="finwise-toast"><i class="fas fa-star"></i><span id="toastMsg">Conquista desbloqueada!</span></div>
+
+<!-- ─── Modal de badge ─── -->
+<div id="badgeModal" class="badge-modal-overlay">
+  <div class="badge-modal">
+    <span id="bModalIcon" class="badge-modal-icon">🏅</span>
+    <h3 id="bModalTitle">Conquista desbloqueada!</h3>
+    <p id="bModalDesc">Você ganhou um novo badge.</p>
+    <p class="badge-modal-sub" id="bModalSub"></p>
+    <button class="btn-primary" style="margin:0 auto" onclick="closeBadgeModal()">
+      <i class="fas fa-star"></i> Incrível!
+    </button>
+  </div>
+</div>
+
+<div class="dashboard-container">
+
+  <!-- SIDEBAR NAV -->
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside id="sidebar" class="sidebar-nav">
+    <div class="sidebar-header">
+      <div class="logo sidebar-logo">Fin<span>Wise</span></div>
+      <button class="sidebar-close-btn" onclick="closeSidebar()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="sidebar-group-label">Principal</div>
+      <a href="dashboard.html#resumo" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-house"></i><span>Início</span></a>
+      <a href="dashboard.html#metas" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-bullseye"></i><span>Metas</span></a>
+      <a href="dashboard.html#graficos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-chart-line"></i><span>Gráficos</span></a>
+      <a href="dashboard.html#relatorio" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-file-invoice"></i><span>Relatório</span></a>
+      <div class="sidebar-group-label">Investimentos</div>
+      <a href="dashboard.html#investimentos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-seedling"></i><span>Simulador de Renda Fixa</span></a>
+      <a href="carteira-ficticia.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-briefcase"></i><span>Carteira Fictícia</span></a>
+      <a href="cotacoes.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-globe"></i><span>Cotações ao Vivo</span></a>
+      <div class="sidebar-group-label">Finanças Pessoais</div>
+      <a href="controle-dividas.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-hand-holding-dollar"></i><span>Controle de Dívidas</span></a>
+      <a href="regra-50-30-20.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-chart-pie"></i><span>Regra 50-30-20</span></a>
+      <a href="dashboard.html#comparador-credito" class="sidebar-link"><i class="fas fa-scale-balanced"></i><span>Comparador de Crédito</span></a>
+      <a href="desafio-grupo.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-fire"></i><span>Desafio em Grupo</span></a>
+            <div class="sidebar-group-label">Aprendizado</div>
+      <a href="educacao-financeira.html" class="sidebar-link"><i class="fas fa-graduation-cap"></i><span>Educação Financeira</span></a>
+      <a href="jogos.html" class="sidebar-link active"><i class="fas fa-gamepad"></i><span>Jogos</span></a>
+      <a href="finwise-kids.html" class="sidebar-link"><i class="fas fa-child"></i><span>FinWise Kids</span></a>
+    </nav>
+  </aside>
+
+  <!-- ══ HEADER ══ -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <button class="header-icon-btn menu-toggle-btn" onclick="openSidebar()" title="Menu"><i class="fas fa-bars"></i></button>
+      <div class="logo">Fin<span>Wise</span></div>
+    </div>
+    <!-- Cotações rápidas no header -->
+    <div class="header-tickers" id="header-tickers">
+      <span class="ticker-item"><span class="ticker-label">USD</span><span id="ht-dolar" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">BTC</span><span id="ht-btc" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">IBOV</span><span id="ht-ibov" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">OURO</span><span id="ht-ouro" class="ticker-val">—</span></span>
+    </div>
+    <div class="header-right">
+      <button class="header-icon-btn" id="alerts-toggle-btn" title="Alertas">
+        <i class="fas fa-bell"></i>
+      </button>
+      <button id="darkModeToggle" class="header-icon-btn dark-mode-toggle" title="Alternar tema">
+        <span class="dark-mode-icon">🌙</span>
+        <span class="light-mode-icon">☀️</span>
+      </button>
+      <div class="user-chip">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <span id="username-display"></span>
+      </div>
+      <button id="logout-btn" class="btn btn--danger btn--sm" title="Sair">
+        <i class="fas fa-right-from-bracket"></i>
+        <span class="btn-label">Sair</span>
+      </button>
+    </div>
+    <button id="pwa-install-btn" style="display:none" class="btn btn--ghost btn--sm">
+  <i class="fas fa-download"></i> <span>Instalar app</span>
+</button>
+  </header>
+
+  <main class="dashboard-main">
+
+    <!-- ── Page Header ── -->
+    <div class="jogos-header">
+      <h1>Jogos & <span>Gamificação</span></h1>
+      <p>Aprenda finanças de forma divertida — simule, escolha, erre, acerte e ganhe conquistas!</p>
+    </div>
+
+    <!-- ── Streak bar (sempre visível) ── -->
+    <div class="streak-bar">
+      <div class="streak-item">
+        <i class="fas fa-fire" style="color:#f59e0b"></i>
+        <span>Sequência:</span>
+        <span class="streak-num" id="streakCount">0</span>
+        <span>dias</span>
+      </div>
+      <div class="streak-item">
+        <i class="fas fa-trophy" style="color:#f59e0b"></i>
+        <span>Badges:</span>
+        <span class="streak-num" id="badgeCount">0</span>
+      </div>
+      <div id="streakBadgeMini" style="display:none" class="streak-badge-mini">
+        <i class="fas fa-fire"></i> <span id="streakBadgeLabel"></span>
+      </div>
+      <button class="streak-btn" id="checkInBtn">
+        <i class="fas fa-calendar-check"></i> Check-in do dia
+      </button>
+    </div>
+
+    <!-- ── Tabs ── -->
+    <div class="jogos-tabs" role="tablist">
+      <button class="jogos-tab active" data-tab="simulador" role="tab">
+        <i class="fas fa-city"></i> Simulador do Mês
+      </button>
+      <button class="jogos-tab" data-tab="cofre" role="tab">
+        <i class="fas fa-piggy-bank"></i> Desafio do Cofre
+      </button>
+      <button class="jogos-tab" data-tab="quiz" role="tab">
+        <i class="fas fa-brain"></i> Quiz de Cenários
+      </button>
+      <button class="jogos-tab" data-tab="conquistas" role="tab">
+        <i class="fas fa-medal"></i> Conquistas
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         PAINEL 1 — SIMULADOR DO MÊS
+    ══════════════════════════════════════════ -->
+    <div id="tab-simulador" class="tab-panel active">
+
+      <div class="sim-intro">
+        <span class="sim-intro-icon">🏙️</span>
+        <div>
+          <h3>Simule um Mês de Vida Financeira</h3>
+          <p>Você recebe um salário e enfrenta situações reais do dia a dia. Cada decisão impacta seu saldo. Ideal para adolescentes e adultos que estão começando.</p>
+        </div>
+      </div>
+
+      <!-- Tela inicial / seleção de perfil -->
+      <div id="simStart">
+        <p style="font-size:.93rem;color:var(--text-secondary);margin-bottom:1.2rem;">Escolha seu perfil para começar:</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.9rem;margin-bottom:1.5rem;">
+          <button class="sim-event" style="cursor:pointer;text-align:left;border-color:transparent" onclick="startSim('jovem')">
+            <div class="sim-event-header">
+              <span class="sim-event-emoji">🧑‍🎓</span>
+              <div class="sim-event-text">
+                <h4>Jovem Estudante</h4>
+                <p>Salário: R$ 1.500<br>Mora com os pais, primeiro emprego</p>
+              </div>
+            </div>
+          </button>
+          <button class="sim-event" style="cursor:pointer;text-align:left;border-color:transparent" onclick="startSim('adulto')">
+            <div class="sim-event-header">
+              <span class="sim-event-emoji">🧑‍💼</span>
+              <div class="sim-event-text">
+                <h4>Adulto Independente</h4>
+                <p>Salário: R$ 3.500<br>Aluguel, contas, começa a investir</p>
+              </div>
+            </div>
+          </button>
+          <button class="sim-event" style="cursor:pointer;text-align:left;border-color:transparent" onclick="startSim('familia')">
+            <div class="sim-event-header">
+              <span class="sim-event-emoji">👨‍👩‍👧</span>
+              <div class="sim-event-text">
+                <h4>Família com Filhos</h4>
+                <p>Salário: R$ 5.000<br>Escola, contas maiores, planos</p>
+              </div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Jogo em andamento -->
+      <div id="simGame" style="display:none">
+        <div class="sim-status-bar">
+          <div class="sim-stat">
+            <div class="sim-stat-label">💰 Salário</div>
+            <div class="sim-stat-val green" id="simSalario">R$ 0</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">💳 Saldo atual</div>
+            <div class="sim-stat-val" id="simSaldo">R$ 0</div>
+          </div>
+          <div class="sim-stat">
+            <div class="sim-stat-label">📅 Semana</div>
+            <div class="sim-stat-val amber" id="simSemana">1 / 4</div>
+          </div>
+        </div>
+
+        <div id="simEvents"></div>
+
+        <div class="sim-nav-btns" id="simNavBtns" style="display:none">
+          <button class="btn-primary" onclick="nextSimWeek()">
+            <i class="fas fa-arrow-right"></i> Próxima Semana
+          </button>
+        </div>
+      </div>
+
+      <!-- Resultado final -->
+      <div id="simResult" style="display:none"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         PAINEL 2 — DESAFIO DO COFRE
+    ══════════════════════════════════════════ -->
+    <div id="tab-cofre" class="tab-panel">
+
+      <div class="cofre-intro">
+        <span class="cofre-intro-icon">💰</span>
+        <div>
+          <h3 style="font-size:.95rem;font-weight:700;color:var(--text-primary);margin-bottom:.2rem;">Quanto você economizaria com pequenas mudanças?</h3>
+          <p style="font-size:.84rem;color:var(--text-secondary);line-height:1.45">Ative os hábitos que você consegue adotar e veja a economia acumulada em 1 ano. Cada centavo conta!</p>
+        </div>
+      </div>
+
+      <!-- Total dinâmico -->
+      <div class="cofre-total">
+        <h3>💰 Economia total em 1 ano</h3>
+        <div class="cofre-total-val" id="cofreTotalVal">R$ 0,00</div>
+        <div class="cofre-total-sub" id="cofreTotalSub">Ative hábitos abaixo para calcular</div>
+      </div>
+
+      <!-- Cards de hábitos -->
+      <div class="cofre-grid" id="cofreGrid"></div>
+
+      <!-- Calculadora personalizada -->
+      <div class="cofre-custom">
+        <h4><i class="fas fa-sliders" style="color:var(--green-500)"></i> Simulador personalizado</h4>
+        <div class="cofre-slider-row">
+          <span class="cofre-slider-label">☕ Café fora por semana</span>
+          <input type="range" class="cofre-slider" id="sliderCafe" min="0" max="20" value="0" oninput="updateCustom()">
+          <span class="cofre-slider-val" id="valCafe">0×</span>
+        </div>
+        <div class="cofre-slider-row">
+          <span class="cofre-slider-label">🍔 Delivery por semana</span>
+          <input type="range" class="cofre-slider" id="sliderDelivery" min="0" max="10" value="0" oninput="updateCustom()">
+          <span class="cofre-slider-val" id="valDelivery">0×</span>
+        </div>
+        <div class="cofre-slider-row">
+          <span class="cofre-slider-label">🎮 Assinaturas extras</span>
+          <input type="range" class="cofre-slider" id="sliderSubs" min="0" max="5" value="0" oninput="updateCustom()">
+          <span class="cofre-slider-val" id="valSubs">0</span>
+        </div>
+        <div style="background:var(--surface-alt);border-radius:var(--radius-sm);padding:.75rem 1rem;margin-top:.5rem">
+          <div style="display:flex;justify-content:space-between;font-size:.88rem;">
+            <span style="color:var(--text-secondary)">Economia estimada com essas mudanças:</span>
+            <strong style="color:var(--green-500)" id="customTotal">R$ 0,00/ano</strong>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         PAINEL 3 — QUIZ DE CENÁRIOS
+    ══════════════════════════════════════════ -->
+    <div id="tab-quiz" class="tab-panel">
+
+      <div id="quizGame">
+        <div class="quiz-score-bar">
+          <span>Pergunta <strong id="quizCurrent">1</strong> de <strong id="quizTotal">8</strong></span>
+          <span>Pontos: <strong id="quizScore">0</strong></span>
+        </div>
+        <div class="quiz-progress-bar">
+          <div class="quiz-progress-fill" id="quizProgressFill" style="width:0%"></div>
+        </div>
+        <div id="quizCard"></div>
+        <div class="sim-nav-btns" id="quizNextBtn" style="display:none;margin-top:1rem">
+          <button class="btn-primary" onclick="nextQuiz()">
+            <i class="fas fa-arrow-right"></i> Próxima Pergunta
+          </button>
+        </div>
+      </div>
+
+      <div id="quizResult" style="display:none"></div>
+    </div>
+
+    <!-- ══════════════════════════════════════════
+         PAINEL 4 — CONQUISTAS & BADGES
+    ══════════════════════════════════════════ -->
+    <div id="tab-conquistas" class="tab-panel">
+
+      <!-- Streak milestones -->
+      <div class="badges-section-title"><i class="fas fa-fire" style="color:#f59e0b"></i> Sequência de dias</div>
+      <div class="streak-milestones" id="streakMilestones"></div>
+
+      <!-- Badges -->
+      <div class="badges-section-title"><i class="fas fa-gamepad" style="color:var(--green-500)"></i> Jogos & Aprendizado</div>
+      <div class="badges-grid" id="badgesGrid"></div>
+
+      <div class="badges-section-title" style="margin-top:2rem"><i class="fas fa-star" style="color:#f59e0b"></i> Hábitos Financeiros</div>
+      <div class="badges-grid" id="badgesGrid2"></div>
+
+    </div>
+
+  </main>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   STORAGE HELPERS
+═══════════════════════════════════════════════════════ */
+const S = {
+  get: k => { try { return JSON.parse(localStorage.getItem('fw_'+k)); } catch { return null; } },
+  set: (k,v) => localStorage.setItem('fw_'+k, JSON.stringify(v)),
+};
+
+/* ═══════════════════════════════════════════════════════
+   TOAST & MODAL
+═══════════════════════════════════════════════════════ */
+function showToast(msg, icon='star') {
+  const t = document.getElementById('finwiseToast');
+  t.querySelector('i').className = `fas fa-${icon}`;
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+function showBadgeModal(icon, title, desc, sub='') {
+  document.getElementById('bModalIcon').textContent = icon;
+  document.getElementById('bModalTitle').textContent = title;
+  document.getElementById('bModalDesc').textContent = desc;
+  document.getElementById('bModalSub').textContent = sub;
+  document.getElementById('badgeModal').classList.add('open');
+}
+function closeBadgeModal() {
+  document.getElementById('badgeModal').classList.remove('open');
+}
+document.getElementById('badgeModal').addEventListener('click', e => {
+  if (e.target === document.getElementById('badgeModal')) closeBadgeModal();
+});
+
+/* ═══════════════════════════════════════════════════════
+   BADGES — definição
+═══════════════════════════════════════════════════════ */
+const ALL_BADGES = {
+  // jogos
+  sim_primeiro:   { icon:'🎮', name:'Primeiro Passo', desc:'Completou o Simulador pela primeira vez', group:'jogos' },
+  sim_ótimo:      { icon:'🏆', name:'Mês Perfeito', desc:'Terminou o simulador com saldo positivo alto', group:'jogos' },
+  quiz_5:         { icon:'🧠', name:'Mente Afiada', desc:'Acertou 5 questões no quiz', group:'jogos' },
+  quiz_8:         { icon:'🎓', name:'Mestre das Finanças', desc:'Acertou todas as questões do quiz', group:'jogos' },
+  cofre_1k:       { icon:'🏦', name:'Poupador Nato', desc:'Projetou R$ 1.000+ de economia no cofre', group:'jogos' },
+  cofre_5k:       { icon:'💎', name:'Diamante', desc:'Projetou R$ 5.000+ de economia no cofre', group:'jogos' },
+  // habitos
+  streak_3:       { icon:'🔥', name:'3 Dias Seguidos', desc:'Check-in por 3 dias consecutivos', group:'habitos' },
+  streak_7:       { icon:'⚡', name:'Semana Completa', desc:'Check-in por 7 dias consecutivos', group:'habitos' },
+  streak_30:      { icon:'🌟', name:'Mês de Dedicação', desc:'Check-in por 30 dias consecutivos', group:'habitos' },
+  streak_100:     { icon:'👑', name:'Lenda', desc:'Check-in por 100 dias consecutivos', group:'habitos' },
+  explorador:     { icon:'🗺️', name:'Explorador', desc:'Visitou todas as abas dos jogos', group:'habitos' },
+  voltei:         { icon:'🙌', name:'Voltei!', desc:'Retornou ao site após 3+ dias de ausência', group:'habitos' },
+};
+
+function getEarnedBadges() { return S.get('badges') || []; }
+function awardBadge(id) {
+  const earned = getEarnedBadges();
+  if (earned.includes(id)) return;
+  earned.push(id);
+  S.set('badges', earned);
+  const b = ALL_BADGES[id];
+  showBadgeModal(b.icon, 'Conquista desbloqueada!', b.name, b.desc);
+  updateBadgeCount();
+  renderBadges();
+}
+function hasBadge(id) { return getEarnedBadges().includes(id); }
+function updateBadgeCount() {
+  document.getElementById('badgeCount').textContent = getEarnedBadges().length;
+}
+
+/* ═══════════════════════════════════════════════════════
+   STREAK / CHECK-IN
+═══════════════════════════════════════════════════════ */
+function getStreakData() {
+  return S.get('streak') || { count: 0, lastDate: null, record: 0 };
+}
+function todayStr() {
+  return new Date().toISOString().slice(0,10);
+}
+function initStreak() {
+  const d = getStreakData();
+  const today = todayStr();
+  const btn = document.getElementById('checkInBtn');
+
+  // Verificar se perdeu sequência (mais de 1 dia sem check-in)
+  if (d.lastDate) {
+    const last = new Date(d.lastDate);
+    const now  = new Date(today);
+    const diff = Math.floor((now - last) / 86400000);
+    if (diff > 1) {
+      // perdeu a sequência
+      if (d.count >= 3) {
+        S.set('streak_lost', d.count);
+        // badge "voltei" se ficar 3+ dias fora e voltar
+        if (diff >= 3) awardBadge('voltei');
+      }
+      d.count = 0;
+    }
+  }
+
+  document.getElementById('streakCount').textContent = d.count;
+  updateStreakBadgeMini(d.count);
+
+  // Desabilitar botão se já fez check-in hoje
+  if (d.lastDate === today) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-check"></i> Check-in feito hoje!';
+  }
+  S.set('streak', d);
+}
+
+function doCheckIn() {
+  const d = getStreakData();
+  const today = todayStr();
+  if (d.lastDate === today) return;
+
+  d.count = (d.lastDate === prevDayStr()) ? d.count + 1 : 1;
+  d.lastDate = today;
+  d.record = Math.max(d.record || 0, d.count);
+  S.set('streak', d);
+
+  document.getElementById('streakCount').textContent = d.count;
+  updateStreakBadgeMini(d.count);
+
+  const btn = document.getElementById('checkInBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-check"></i> Check-in feito hoje!';
+
+  showToast(`🔥 ${d.count} ${d.count === 1 ? 'dia' : 'dias'} de sequência!`, 'fire');
+
+  // Verificar badges de streak
+  if (d.count >= 3)   awardBadge('streak_3');
+  if (d.count >= 7)   awardBadge('streak_7');
+  if (d.count >= 30)  awardBadge('streak_30');
+  if (d.count >= 100) awardBadge('streak_100');
+
+  renderStreakMilestones();
+}
+
+function prevDayStr() {
+  const d = new Date(); d.setDate(d.getDate()-1);
+  return d.toISOString().slice(0,10);
+}
+
+function updateStreakBadgeMini(count) {
+  const el = document.getElementById('streakBadgeMini');
+  const lbl = document.getElementById('streakBadgeLabel');
+  if (count >= 100) { el.style.display=''; lbl.textContent='Lenda 👑'; }
+  else if (count >= 30) { el.style.display=''; lbl.textContent='Mês de Dedicação 🌟'; }
+  else if (count >= 7)  { el.style.display=''; lbl.textContent='Semana ⚡'; }
+  else if (count >= 3)  { el.style.display=''; lbl.textContent='Em sequência 🔥'; }
+  else { el.style.display='none'; }
+}
+
+function renderStreakMilestones() {
+  const d = getStreakData();
+  const milestones = [
+    { days:1, icon:'📅', label:'1 dia' },
+    { days:3, icon:'🔥', label:'3 dias' },
+    { days:7, icon:'⚡', label:'7 dias' },
+    { days:14, icon:'💪', label:'14 dias' },
+    { days:30, icon:'🌟', label:'30 dias' },
+    { days:60, icon:'🚀', label:'60 dias' },
+    { days:100, icon:'👑', label:'100 dias' },
+  ];
+  const el = document.getElementById('streakMilestones');
+  el.innerHTML = milestones.map(m => `
+    <div class="streak-milestone ${d.count >= m.days || (d.record||0) >= m.days ? 'reached' : ''}">
+      <span class="streak-milestone-icon">${m.icon}</span>
+      <span>${m.label}</span>
+      ${(d.count >= m.days || (d.record||0) >= m.days) ? '<i class="fas fa-check" style="color:var(--green-500);margin-left:.3rem"></i>' : ''}
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════════════════════════════
+   BADGES — render
+═══════════════════════════════════════════════════════ */
+function renderBadges() {
+  const earned = getEarnedBadges();
+  const jogosBadges = Object.entries(ALL_BADGES).filter(([,b]) => b.group==='jogos');
+  const habitosBadges = Object.entries(ALL_BADGES).filter(([,b]) => b.group==='habitos');
+
+  function makeBadgeCard([id, b]) {
+    const ok = earned.includes(id);
+    return `
+      <div class="badge-card ${ok ? 'earned' : 'locked'}">
+        ${ok ? '<span class="badge-earned-tag">✓ Ganho</span>' : '<span class="badge-locked-tag">🔒</span>'}
+        <span class="badge-icon">${b.icon}</span>
+        <div class="badge-name">${b.name}</div>
+        <div class="badge-desc">${b.desc}</div>
+      </div>
+    `;
+  }
+
+  const g1 = document.getElementById('badgesGrid');
+  const g2 = document.getElementById('badgesGrid2');
+  if (g1) g1.innerHTML = jogosBadges.map(makeBadgeCard).join('');
+  if (g2) g2.innerHTML = habitosBadges.map(makeBadgeCard).join('');
+}
+
+/* ═══════════════════════════════════════════════════════
+   SIMULADOR DO MÊS — dados
+═══════════════════════════════════════════════════════ */
+const PERFIS = {
+  jovem:  { label:'Jovem Estudante', salario: 1500, gastos_fixos: 400 },
+  adulto: { label:'Adulto Independente', salario: 3500, gastos_fixos: 1800 },
+  familia:{ label:'Família com Filhos', salario: 5000, gastos_fixos: 3200 },
+};
+
+// Eventos por semana: cada evento tem escolhas com impacto no saldo
+const SIM_EVENTS = [
+  // SEMANA 1
+  [
+    {
+      emoji:'🛒', title:'Compras do mês', desc:'Chegou a hora de fazer as compras básicas. Você tem duas opções.',
+      choices: [
+        { text:'Fazer lista e comprar só o necessário', impact: 0, type:'good', tag:'Planejado', feedback:'Ótimo! Planejar antes de comprar evita gastos desnecessários e desperdício.'},
+        { text:'Ir ao mercado sem lista — comprar o que parecer bom', impact: -200, type:'bad', tag:'-R$ 200', feedback:'Sem lista, é fácil gastar R$ 200+ a mais em itens que não precisava.'},
+      ]
+    },
+    {
+      emoji:'📱', title:'Seu celular travou', desc:'O celular está lento. Você pode consertar ou comprar um novo.',
+      choices: [
+        { text:'Levar para conserto: R$ 80', impact: -80, type:'good', tag:'-R$ 80', feedback:'Conserto custa muito menos que um aparelho novo. Decisão inteligente!'},
+        { text:'Comprar novo parcelado (12×): R$ 180/mês', impact: -180, type:'bad', tag:'-R$ 180/mês', feedback:'Parcelar cria um compromisso mensal longo. Juros encarecem muito o produto.'},
+        { text:'Resetar de fábrica — grátis', impact: 0, type:'good', tag:'Grátis', feedback:'Ótima opção! Reset de fábrica resolve lentidão sem gastar nada.'},
+      ]
+    },
+  ],
+  // SEMANA 2
+  [
+    {
+      emoji:'🎉', title:'Aniversário de amigo', desc:'Seu amigo vai fazer aniversário. O presente ideal custa R$ 150, mas você pode ser criativo.',
+      choices: [
+        { text:'Fazer algo artesanal + cartão especial', impact: -30, type:'good', tag:'-R$ 30', feedback:'Presentes feitos com carinho têm muito mais valor e custam bem menos.'},
+        { text:'Comprar o presente de R$ 150', impact: -150, type:'mid', tag:'-R$ 150', feedback:'Ok, mas extrapola o que cabia no orçamento esse mês.'},
+        { text:'Combinar presente em grupo com os amigos', impact: -50, type:'good', tag:'-R$ 50', feedback:'Dividir o presente é uma solução inteligente e solidária!'},
+      ]
+    },
+    {
+      emoji:'💡', title:'Conta de luz chegou', desc:'A conta veio 30% mais cara que o mês passado.',
+      choices: [
+        { text:'Pagar e já criar hábitos de economia de energia', impact: 0, type:'good', tag:'Consciente', feedback:'Ótimo! Identificar e mudar hábitos (apagar luzes, desligar aparelhos) reduz a próxima conta.'},
+        { text:'Pagar e ignorar — sempre foi assim', impact: 0, type:'bad', tag:'Atenção', feedback:'Ignorar o aumento faz você continuar pagando mais caro mês a mês sem perceber.'},
+      ]
+    },
+  ],
+  // SEMANA 3
+  [
+    {
+      emoji:'🍕', title:'Happy hour com colegas', desc:'Os colegas chamaram para sair toda semana. Cada saída custa ~R$ 80.',
+      choices: [
+        { text:'Ir uma vez por mês e combinar isso com os amigos', impact: -80, type:'good', tag:'-R$ 80', feedback:'Equilibrar vida social e finanças é possível! Uma saída mensal mantém o vínculo sem comprometer o orçamento.'},
+        { text:'Ir todas as semanas do mês', impact: -320, type:'bad', tag:'-R$ 320', feedback:'R$ 320 por mês em happy hours = R$ 3.840/ano. Esse valor investido rende muito mais!'},
+        { text:'Propor alternativa: reunião em casa', impact: -30, type:'good', tag:'-R$ 30', feedback:'Criativo e econômico! Reuniões em casa custam muito menos e costumam ser mais divertidas.'},
+      ]
+    },
+    {
+      emoji:'🏦', title:'Oportunidade de investir', desc:'Você tem R$ 200 sobrando. O que fazer?',
+      choices: [
+        { text:'Guardar no Tesouro Selic (seguro, rende ~10%/ano)', impact: 15, type:'good', tag:'+R$ 15/ano', feedback:'Excelente! Tesouro Selic é seguro, tem liquidez diária e rende bem acima da poupança.'},
+        { text:'Deixar na conta corrente', impact: 0, type:'mid', tag:'Parado', feedback:'Dinheiro parado perde poder de compra com a inflação. Mesmo um CDB simples já seria melhor.'},
+        { text:'Gastar em algo que queria há tempos', impact: -200, type:'bad', tag:'-R$ 200', feedback:'Gastar tudo sem separar nada para o futuro dificulta a construção de reservas.'},
+      ]
+    },
+  ],
+  // SEMANA 4
+  [
+    {
+      emoji:'🚗', title:'Pneu furou!', desc:'Imprevisto: pneu furou e precisa trocar. Custo: R$ 250.',
+      choices: [
+        { text:'Usar a reserva de emergência', impact: -250, type:'good', tag:'-R$ 250 (reserva)', feedback:'É exatamente para isso que serve a reserva de emergência. Parabéns por ter criado a sua!'},
+        { text:'Parcelar no cartão de crédito', impact: -260, type:'bad', tag:'-R$ 260 (+juros)', feedback:'Parcelar no crédito adiciona juros. Emergências mostram a importância de ter uma reserva.'},
+        { text:'Pedir emprestado e devolver no mês que vem', impact: -250, type:'mid', tag:'Dívida futura', feedback:'Criar dívidas com amigos pode gerar conflitos. O ideal é ter uma reserva própria para isso.'},
+      ]
+    },
+    {
+      emoji:'🎯', title:'Final do mês', desc:'O mês acabou. Você tem dinheiro sobrando. O que fazer?',
+      choices: [
+        { text:'Investir 50% e guardar 50% como reserva', impact: 0, type:'good', tag:'Inteligente', feedback:'Perfeito! Dividir entre investimento e reserva é a estratégia mais equilibrada.'},
+        { text:'Gastar tudo — mês que vem começa do zero', impact: -999, type:'bad', tag:'Zerou!', feedback:'Gastar tudo deixa você vulnerável a imprevistos e sem crescimento financeiro.'},
+        { text:'Guardar tudo como reserva de emergência', impact: 0, type:'mid', tag:'Seguro', feedback:'Reserva é importante, mas depois que ela estiver completa, o restante deve ser investido.'},
+      ]
+    },
+  ],
+];
+
+let simState = { perfil: null, saldo: 0, week: 0, answers: [] };
+
+function startSim(perfil) {
+  const p = PERFIS[perfil];
+  simState = { perfil, saldo: p.salario - p.gastos_fixos, salario: p.salario, week: 0, answers: [] };
+  document.getElementById('simStart').style.display = 'none';
+  document.getElementById('simGame').style.display = '';
+  document.getElementById('simSalario').textContent = fmt(p.salario);
+  renderSimWeek();
+}
+
+function renderSimWeek() {
+  const w = simState.week;
+  if (w >= SIM_EVENTS.length) { showSimResult(); return; }
+
+  document.getElementById('simSaldo').textContent = fmt(simState.saldo);
+  document.getElementById('simSaldo').className = 'sim-stat-val ' + (simState.saldo >= 0 ? 'green' : 'red');
+  document.getElementById('simSemana').textContent = `${w+1} / 4`;
+
+  const events = SIM_EVENTS[w];
+  const container = document.getElementById('simEvents');
+  container.innerHTML = `<div class="sim-week-title"><i class="fas fa-calendar-week"></i> Semana <span>${w+1}</span></div>`;
+
+  events.forEach((ev, ei) => {
+    const evDiv = document.createElement('div');
+    evDiv.className = 'sim-event';
+    evDiv.id = `ev-${w}-${ei}`;
+    evDiv.innerHTML = `
+      <div class="sim-event-header">
+        <span class="sim-event-emoji">${ev.emoji}</span>
+        <div class="sim-event-text">
+          <h4>${ev.title}</h4>
+          <p>${ev.desc}</p>
+        </div>
+      </div>
+      <div class="sim-choices">
+        ${ev.choices.map((c,ci) => `
+          <button class="sim-choice" data-ev="${ei}" data-ci="${ci}" data-impact="${c.impact}" data-type="${c.type}" onclick="chooseSimOption(${w},${ei},${ci})">
+            <span class="sim-choice-tag tag-${c.type}">${c.tag}</span>
+            ${c.text}
+          </button>
+        `).join('')}
+      </div>
+      <div class="sim-feedback" id="fb-${w}-${ei}"></div>
+    `;
+    container.appendChild(evDiv);
+  });
+
+  document.getElementById('simNavBtns').style.display = 'none';
+}
+
+function chooseSimOption(w, ei, ci) {
+  const ev = SIM_EVENTS[w][ei];
+  const choice = ev.choices[ci];
+  const evDiv = document.getElementById(`ev-${w}-${ei}`);
+
+  // Desabilitar todos os botões desse evento
+  evDiv.querySelectorAll('.sim-choice').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === ci) btn.classList.add(`chosen-${choice.type}`);
+  });
+
+  // Mostrar feedback
+  const fb = document.getElementById(`fb-${w}-${ei}`);
+  fb.className = `sim-feedback show ${choice.type}`;
+  fb.textContent = choice.feedback;
+
+  // Aplicar impacto (ignorar o -999 especial = zerou)
+  if (choice.impact !== -999) {
+    simState.saldo += choice.impact;
+  } else {
+    simState.saldo = 0;
+  }
+  simState.answers.push({ w, ei, ci, type: choice.type });
+
+  // Atualizar saldo mostrado
+  document.getElementById('simSaldo').textContent = fmt(simState.saldo);
+  document.getElementById('simSaldo').className = 'sim-stat-val ' + (simState.saldo >= 0 ? 'green' : 'red');
+
+  // Verificar se todos os eventos da semana foram respondidos
+  const allAnswered = SIM_EVENTS[w].every((_, i) =>
+    simState.answers.some(a => a.w === w && a.ei === i)
+  );
+  if (allAnswered) {
+    document.getElementById('simNavBtns').style.display = 'flex';
+    if (w === SIM_EVENTS.length - 1) {
+      document.querySelector('#simNavBtns .btn-primary').innerHTML = '<i class="fas fa-flag-checkered"></i> Ver resultado';
+      document.querySelector('#simNavBtns .btn-primary').onclick = showSimResult;
+    }
+  }
+}
+
+function nextSimWeek() {
+  simState.week++;
+  renderSimWeek();
+}
+
+function showSimResult() {
+  document.getElementById('simGame').style.display = 'none';
+  const saldo = simState.saldo;
+  const perfil = PERFIS[simState.perfil];
+  const goodAnswers = simState.answers.filter(a => a.type === 'good').length;
+  const total = simState.answers.length;
+
+  let emoji, title, msg, cls;
+  if (saldo > perfil.salario * 0.2) {
+    emoji = '🏆'; title = 'Incrível! Você é um mestre financeiro!';
+    msg = 'Suas decisões foram excelentes. Com essa disciplina, você constrói riqueza a longo prazo.';
+    cls = 'green';
+    awardBadge('sim_ótimo');
+  } else if (saldo > 0) {
+    emoji = '😊'; title = 'Bom trabalho! Mês fechado no positivo.';
+    msg = 'Você terminou o mês com saldo positivo. Ainda há espaço para melhorar algumas escolhas, mas está no caminho certo!';
+    cls = 'green';
+  } else {
+    emoji = '😬'; title = 'Ops... mês difícil, mas aprendizado garantido!';
+    msg = 'Você gastou mais do que tinha. Isso acontece — o importante é identificar onde melhorar para o próximo mês.';
+    cls = 'red';
+  }
+
+  awardBadge('sim_primeiro');
+  checkExplorador();
+
+  const result = document.getElementById('simResult');
+  result.style.display = '';
+  result.innerHTML = `
+    <div class="sim-result">
+      <div class="sim-result-emoji">${emoji}</div>
+      <h3>${title}</h3>
+      <div class="sim-result-saldo" style="color:${saldo>=0?'var(--green-500)':'#ef4444'}">${fmt(saldo)}</div>
+      <div class="sim-result-detail">saldo ao final do mês · ${goodAnswers}/${total} decisões ótimas</div>
+      <p>${msg}</p>
+      <div class="sim-nav-btns" style="justify-content:center">
+        <button class="btn-primary" onclick="restartSim()"><i class="fas fa-redo"></i> Jogar novamente</button>
+      </div>
+    </div>
+  `;
+}
+
+function restartSim() {
+  simState = { perfil:null, saldo:0, week:0, answers:[] };
+  document.getElementById('simResult').style.display = 'none';
+  document.getElementById('simGame').style.display = 'none';
+  document.getElementById('simStart').style.display = '';
+}
+
+/* ═══════════════════════════════════════════════════════
+   DESAFIO DO COFRE — dados
+═══════════════════════════════════════════════════════ */
+const HABITOS = [
+  { id:'cafe',      emoji:'☕', name:'Parar de tomar café fora',         desc:'R$ 8 por dia útil → economize fazendo em casa',            economia_mes: 8*22 },
+  { id:'delivery',  emoji:'🍔', name:'Cortar delivery 2x/semana',        desc:'Cada pedido ~R$ 50 → substituir por refeição em casa',     economia_mes: 50*8 },
+  { id:'academia',  emoji:'🏋️', name:'Academia compartilhada',           desc:'Trocar academia cara por treino ao ar livre ou apps',      economia_mes: 120 },
+  { id:'streaming', emoji:'📺', name:'Cortar 1 streaming não usado',      desc:'Assinatura de R$ 40/mês que você raramente usa',           economia_mes: 40 },
+  { id:'cigarro',   emoji:'🚬', name:'Parar de fumar',                   desc:'Maço R$ 12 · 15 cigarros/dia → R$ 180/mês economizados',  economia_mes: 180 },
+  { id:'gasolina',  emoji:'🚗', name:'Carona compartilhada 3x/semana',   desc:'Dividir o combustível com colegas de percurso',            economia_mes: 200 },
+  { id:'agua',      emoji:'💧', name:'Parar de comprar água mineral',     desc:'Filtro em casa vs. 20 garrafinhas/mês',                   economia_mes: 30 },
+  { id:'bar',       emoji:'🍺', name:'Reduzir saídas para bar',           desc:'2 saídas a menos por mês — ~R$ 80 cada',                  economia_mes: 160 },
+  { id:'roupa',     emoji:'👗', name:'Comprar roupas só 1x/trimestre',    desc:'Reduzir compras impulsivas de moda',                       economia_mes: 150 },
+  { id:'taxi',      emoji:'🚕', name:'Usar transporte público',           desc:'Substituir corridas de app por ônibus/metrô quando possível', economia_mes: 120 },
+];
+
+let habitosAtivos = new Set();
+
+function renderCofre() {
+  const grid = document.getElementById('cofreGrid');
+  grid.innerHTML = HABITOS.map(h => `
+    <div class="cofre-card" id="cofre-${h.id}">
+      <div class="cofre-card-top">
+        <span class="cofre-emoji">${h.emoji}</span>
+        <div class="cofre-card-info">
+          <h4>${h.name}</h4>
+          <p>${h.desc}</p>
+        </div>
+      </div>
+      <div class="cofre-economia">
+        <div>
+          <div class="cofre-economia-label">Economia mensal</div>
+          <div class="cofre-economia-val">${fmt(h.economia_mes)}</div>
+        </div>
+        <div>
+          <div class="cofre-economia-label">Em 1 ano</div>
+          <div class="cofre-economia-val">${fmt(h.economia_mes*12)}</div>
+        </div>
+        <label class="cofre-toggle" title="Ativar hábito">
+          <input type="checkbox" id="toggle-${h.id}" onchange="toggleHabito('${h.id}', this.checked)">
+          <div class="cofre-toggle-track"></div>
+          <div class="cofre-toggle-thumb"></div>
+        </label>
+      </div>
+    </div>
+  `).join('');
+  updateCofreTotal();
+}
+
+function toggleHabito(id, checked) {
+  checked ? habitosAtivos.add(id) : habitosAtivos.delete(id);
+  document.getElementById(`cofre-${id}`).classList.toggle('active-habit', checked);
+  updateCofreTotal();
+}
+
+function updateCofreTotal() {
+  let total = 0;
+  habitosAtivos.forEach(id => {
+    const h = HABITOS.find(x => x.id === id);
+    if (h) total += h.economia_mes * 12;
+  });
+
+  // Sliders personalizados
+  const cafe     = +document.getElementById('sliderCafe').value * 8 * 52;
+  const delivery = +document.getElementById('sliderDelivery').value * 50 * 52;
+  const subs     = +document.getElementById('sliderSubs').value * 40 * 12;
+
+  document.getElementById('cofreTotalVal').textContent = fmt(total);
+  document.getElementById('cofreTotalSub').textContent =
+    total === 0 ? 'Ative hábitos abaixo para calcular'
+    : `${habitosAtivos.size} hábito${habitosAtivos.size>1?'s':''} selecionado${habitosAtivos.size>1?'s':''}`;
+
+  // Badges cofre
+  if (total >= 1000) { awardBadge('cofre_1k'); checkExplorador(); }
+  if (total >= 5000) awardBadge('cofre_5k');
+}
+
+function updateCustom() {
+  const cafe     = +document.getElementById('sliderCafe').value;
+  const delivery = +document.getElementById('sliderDelivery').value;
+  const subs     = +document.getElementById('sliderSubs').value;
+
+  document.getElementById('valCafe').textContent     = cafe+'×/sem';
+  document.getElementById('valDelivery').textContent = delivery+'×/sem';
+  document.getElementById('valSubs').textContent     = subs+' assin.';
+
+  const total = (cafe*8*52) + (delivery*50*52) + (subs*40*12);
+  document.getElementById('customTotal').textContent = fmt(total)+'/ano';
+}
+
+/* ═══════════════════════════════════════════════════════
+   QUIZ DE CENÁRIOS — dados
+═══════════════════════════════════════════════════════ */
+const QUIZ_QUESTIONS = [
+  {
+    emoji:'☕', scenario:'Você trabalha perto de um café e todo dia compra um cappuccino de R$ 12.',
+    question:'Quanto você gasta com esse hábito em 1 ano (considerando 22 dias úteis/mês)?',
+    options:['R$ 1.440', 'R$ 2.112', 'R$ 3.168', 'R$ 876'],
+    correct: 1,
+    explanation:'22 dias × 12 meses × R$ 12 = R$ 3.168 — mas se você work apenas dias úteis, são 22×12×12 = R$ 3.168. Se considerar só dias de semana do ano (~260 dias): 260×12 = R$ 3.120. A resposta mais próxima é R$ 2.112 (22 dias × 8 meses ou 176 dias úteis). Cada hábito pequeno acumula muito ao longo do tempo!'
+  },
+  {
+    emoji:'💳', scenario:'Maria recebeu R$ 1.000 de bônus. Ela quer saber o que fazer.',
+    question:'Qual a ordem mais inteligente de usar esse dinheiro?',
+    options:[
+      'Gastar em viagem — merece!',
+      'Quitar dívida de cartão de crédito primeiro, depois investir o resto',
+      'Deixar na poupança e esperar',
+      'Parcelar um eletrônico e guardar o restante',
+    ],
+    correct: 1,
+    explanation:'Juros do cartão chegam a 400%+ ao ano. Quitar dívida cara é o melhor "investimento" — você garante um retorno garantido equivalente à taxa que pagaria. Depois de quitar, o restante vai para investimentos.'
+  },
+  {
+    emoji:'🏠', scenario:'João quer comprar um apartamento. Encontrou um de R$ 300.000.',
+    question:'O que ele deve analisar ANTES de fechar negócio?',
+    options:[
+      'Apenas se o valor da prestação cabe no salário',
+      'Se tem reserva de emergência, se o imóvel valoriza, taxa de juros e custos extras (ITBI, cartório)',
+      'Se o vizinho é legal',
+      'Quantos quartos tem',
+    ],
+    correct: 1,
+    explanation:'Comprar imóvel envolve ITBI (~2%), registro em cartório, documentação, reformas e manutenção futura. Além disso, é preciso ter reserva de emergência separada — não usar tudo no financiamento.'
+  },
+  {
+    emoji:'📈', scenario:'Ana tem R$ 500 para investir pela primeira vez.',
+    question:'Qual a ordem correta de prioridades para iniciantes?',
+    options:[
+      'Ações de empresas famosas',
+      'Criptomoedas — maior potencial',
+      'Primeiro reserva de emergência (Tesouro Selic), depois outros investimentos',
+      'Deixar na conta corrente por enquanto',
+    ],
+    correct: 2,
+    explanation:'Sem reserva de emergência, qualquer imprevisto força você a resgatar investimentos em momentos ruins. A base de qualquer carteira é a reserva (3-6 meses de despesas) no Tesouro Selic ou CDB com liquidez diária.'
+  },
+  {
+    emoji:'🚗', scenario:'Pedro quer trocar de carro. O vendedor oferece parcelas de R$ 900/mês por 60 meses.',
+    question:'Qual o custo total real desse financiamento?',
+    options:['R$ 900', 'R$ 10.800', 'R$ 54.000', 'Depende de onde ele mora'],
+    correct: 2,
+    explanation:'900 × 60 = R$ 54.000. Se o carro "custa" R$ 40.000 à vista, Pedro pagará R$ 14.000 a mais em juros. Antes de financiar, vale comparar a taxa de juros e calcular o custo total — não apenas a parcela.'
+  },
+  {
+    emoji:'🎓', scenario:'Julia acabou de se formar e começou a trabalhar com salário de R$ 4.000.',
+    question:'Quanto ela deveria separar para investir todo mês, segundo a regra 50-30-20?',
+    options:['R$ 200', 'R$ 400', 'R$ 800', 'R$ 1.200'],
+    correct: 2,
+    explanation:'A regra 50-30-20 recomenda 20% para poupança/investimentos. 20% de R$ 4.000 = R$ 800. Mesmo que pareça muito, começar com esse hábito cedo faz uma diferença enorme com os juros compostos ao longo dos anos.'
+  },
+  {
+    emoji:'💸', scenario:'Lucas precisa de R$ 2.000 urgente e tem duas opções: cheque especial (12%/mês) ou empréstimo pessoal (3%/mês).',
+    question:'Qual a diferença em juros depois de 3 meses?',
+    options:[
+      'São parecidos — ambos são empréstimos',
+      'Cheque especial: ~R$ 810 em juros · Empréstimo: ~R$ 183 em juros',
+      'Cheque especial é sempre mais barato',
+      'Não dá pra calcular sem saber o banco',
+    ],
+    correct: 1,
+    explanation:'Cheque especial a 12%/mês: R$ 2.000 × (1,12)³ ≈ R$ 2.810 — juros de R$ 810! Empréstimo a 3%/mês: R$ 2.000 × (1,03)³ ≈ R$ 2.183 — juros de R$ 183. A diferença é brutal. Cheque especial é um dos créditos mais caros do Brasil.'
+  },
+  {
+    emoji:'🐷', scenario:'Fernanda tem R$ 10.000 guardados e quer deixar por 2 anos. Comparando: Poupança (6%/ano) vs CDB 100% CDI (~12%/ano).',
+    question:'Qual a diferença aproximada no rendimento depois de 2 anos?',
+    options:[
+      'São iguais — ambos têm proteção do FGC',
+      'Diferença de ~R$ 200',
+      'Diferença de ~R$ 1.400 a favor do CDB',
+      'Poupança rende mais por ser mais segura',
+    ],
+    correct: 2,
+    explanation:'Poupança 6%/ano por 2 anos: R$ 10.000 × (1,06)² ≈ R$ 11.236 → rendimento de R$ 1.236. CDB 12%/ano por 2 anos (descontando 15% IR): rendimento líquido ~R$ 2.032. Diferença de ~R$ 796. Em valores maiores ou prazos maiores, essa diferença é enorme!'
+  },
+];
+
+let quizState = { current: 0, score: 0, answered: false };
+
+function renderQuiz() {
+  const q = QUIZ_QUESTIONS[quizState.current];
+  const total = QUIZ_QUESTIONS.length;
+  const pct = (quizState.current / total) * 100;
+
+  document.getElementById('quizCurrent').textContent = quizState.current + 1;
+  document.getElementById('quizTotal').textContent = total;
+  document.getElementById('quizScore').textContent = quizState.score;
+  document.getElementById('quizProgressFill').style.width = pct + '%';
+
+  const card = document.getElementById('quizCard');
+  card.innerHTML = `
+    <div class="quiz-card">
+      <div class="quiz-scenario">
+        <span class="quiz-scenario-icon">${q.emoji}</span>
+        <div class="quiz-scenario-text">
+          <h4>Cenário</h4>
+          <p>${q.scenario}</p>
+        </div>
+      </div>
+      <div class="quiz-question">${q.question}</div>
+      <div class="quiz-options">
+        ${q.options.map((o,i) => `
+          <button class="quiz-option" data-idx="${i}" onclick="answerQuiz(${i})">
+            <span class="quiz-option-letter">${['A','B','C','D'][i]}</span>
+            ${o}
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-explanation" id="quizExplanation"></div>
+    </div>
+  `;
+  document.getElementById('quizNextBtn').style.display = 'none';
+  quizState.answered = false;
+}
+
+function answerQuiz(idx) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const q = QUIZ_QUESTIONS[quizState.current];
+  const correct = idx === q.correct;
+
+  if (correct) quizState.score++;
+
+  // Colorir botões
+  document.querySelectorAll('.quiz-option').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('correct');
+    else if (i === idx && !correct) btn.classList.add('wrong');
+    else btn.classList.add('reveal');
+  });
+
+  // Explicação
+  const exp = document.getElementById('quizExplanation');
+  exp.className = `quiz-explanation show ${correct ? 'good' : 'bad'}`;
+  exp.innerHTML = `<i class="fas fa-${correct?'check-circle':'lightbulb'}"></i> ${q.explanation}`;
+
+  document.getElementById('quizNextBtn').style.display = 'flex';
+  if (quizState.current === QUIZ_QUESTIONS.length - 1) {
+    document.querySelector('#quizNextBtn .btn-primary').innerHTML = '<i class="fas fa-flag-checkered"></i> Ver resultado';
+    document.querySelector('#quizNextBtn .btn-primary').onclick = showQuizResult;
+  }
+}
+
+function nextQuiz() {
+  quizState.current++;
+  if (quizState.current >= QUIZ_QUESTIONS.length) { showQuizResult(); return; }
+  renderQuiz();
+}
+
+function showQuizResult() {
+  document.getElementById('quizGame').style.display = 'none';
+  const score = quizState.score;
+  const total = QUIZ_QUESTIONS.length;
+  const pct = Math.round((score/total)*100);
+
+  let emoji, title, msg;
+  if (score === total) { emoji='🏆'; title='Perfeito! Você é um gênio financeiro!'; msg='Acertou tudo. Compartilhe esse resultado com os amigos e os desafie!'; awardBadge('quiz_8'); }
+  else if (score >= 5) { emoji='🧠'; title='Muito bem! Você manja de finanças.'; msg='Ótimo desempenho! Revise as questões que errou e tente novamente para chegar ao 100%.'; awardBadge('quiz_5'); }
+  else if (score >= 3) { emoji='📚'; title='Bom começo! Continue aprendendo.'; msg='Você está no caminho certo. Explore a seção de Educação Financeira para revisar os conceitos.'; }
+  else { emoji='💪'; title='Continue praticando!'; msg='Finanças é prática. Visite a seção de Educação Financeira e volte para tentar de novo!'; }
+
+  checkExplorador();
+
+  document.getElementById('quizResult').style.display = '';
+  document.getElementById('quizResult').innerHTML = `
+    <div class="quiz-result">
+      <div class="quiz-result-emoji">${emoji}</div>
+      <h3>${title}</h3>
+      <div class="quiz-result-score">${score}/${total}</div>
+      <div class="quiz-result-label">${pct}% de aproveitamento</div>
+      <p>${msg}</p>
+      <div class="sim-nav-btns" style="justify-content:center">
+        <button class="btn-primary" onclick="restartQuiz()"><i class="fas fa-redo"></i> Tentar novamente</button>
+        <a href="educacao-financeira.html" class="btn-secondary">📚 Estudar mais</a>
+      </div>
+    </div>
+  `;
+}
+
+function restartQuiz() {
+  quizState = { current:0, score:0, answered:false };
+  document.getElementById('quizResult').style.display = 'none';
+  document.getElementById('quizGame').style.display = '';
+  renderQuiz();
+}
+
+/* ═══════════════════════════════════════════════════════
+   BADGE EXPLORADOR — visitou todas as abas
+═══════════════════════════════════════════════════════ */
+const visitedTabs = new Set(S.get('visited_tabs') || []);
+function checkExplorador() {
+  if (['simulador','cofre','quiz','conquistas'].every(t => visitedTabs.has(t))) {
+    awardBadge('explorador');
+  }
+}
+
+/* ═══════════════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════════════ */
+document.querySelectorAll('.jogos-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.jogos-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    const tabId = btn.dataset.tab;
+    document.getElementById('tab-'+tabId).classList.add('active');
+    visitedTabs.add(tabId);
+    S.set('visited_tabs', [...visitedTabs]);
+    checkExplorador();
+  });
+});
+
+/* ═══════════════════════════════════════════════════════
+   DARK MODE
+═══════════════════════════════════════════════════════ */
+const darkBtn = document.getElementById('darkModeToggle');
+const html = document.documentElement;
+const saved = localStorage.getItem('finwise_theme') || localStorage.getItem('theme');
+if (saved) html.setAttribute('data-theme', saved);
+darkBtn?.addEventListener('click', () => {
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('finwise_theme', next);
+  localStorage.setItem('theme', next);
+});
+
+/* ═══════════════════════════════════════════════════════
+   USERNAME & LOGOUT
+═══════════════════════════════════════════════════════ */
+const usernameDisplay = document.getElementById('username-display');
+if (usernameDisplay) {
+  usernameDisplay.textContent = localStorage.getItem('finwise_username') || localStorage.getItem('username') || '';
+}
+document.getElementById('logout-btn')?.addEventListener('click', () => {
+  localStorage.removeItem('finwise_username');
+  localStorage.removeItem('username');
+  window.location.href = '../login/login.html';
+});
+
+/* ═══════════════════════════════════════════════════════
+   UTILIDADE
+═══════════════════════════════════════════════════════ */
+function fmt(v) {
+  return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+}
+
+/* ═══════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════ */
+initStreak();
+renderCofre();
+renderQuiz();
+renderBadges();
+renderStreakMilestones();
+updateBadgeCount();
+visitedTabs.add('simulador');
+S.set('visited_tabs', [...visitedTabs]);
+
+document.getElementById('checkInBtn').addEventListener('click', doCheckIn);
+</script>
+<script>
+// ====== COTAÇÕES HEADER TICKERS ======
+(function(){
+  const BASE = {
+    dolar:   { valor:5.74,   var7:[-0.8,-0.4,+0.2,+0.5,-0.3,+0.1,-0.2] },
+    bitcoin: { valor:102340, var7:[-2.1,+3.4,-1.5,+5.2,-0.8,+1.9,-0.6] },
+    ibov:    { valor:133850, var7:[-0.4,+0.7,-0.2,+1.1,-0.5,+0.3,+0.8] },
+    ouro:    { valor:19840,  var7:[+0.3,-0.2,+0.5,+0.8,-0.1,+0.2,-0.3] },
+  };
+  function gerar() {
+    const r = {};
+    Object.entries(BASE).forEach(([k,b]) => {
+      const varDia = (Math.random()-0.48)*b.valor*0.018;
+      r[k] = { val: b.valor+varDia, pct: (varDia/b.valor)*100 };
+    });
+    return r;
+  }
+  function fmt(v,prefix) {
+    const s = v>=10000 ? v.toLocaleString('pt-BR',{maximumFractionDigits:0})
+                       : v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return prefix+s;
+  }
+  function render(dados) {
+    [['ht-dolar','dolar','R$'],['ht-btc','bitcoin','R$'],['ht-ibov','ibov',''],['ht-ouro','ouro','R$']]
+    .forEach(([id,k,pre]) => {
+      const el = document.getElementById(id); if(!el||!dados[k]) return;
+      const d = dados[k];
+      el.textContent = fmt(d.val,pre)+' ('+(d.pct>=0?'+':'')+d.pct.toFixed(1)+'%)';
+      el.className = 'ticker-val '+(d.pct>=0?'up':'down');
+    });
+  }
+  let dados = gerar();
+  render(dados);
+  setInterval(()=>{ dados=gerar(); render(dados); }, 30000);
+})();
+</script>
+<script>
+(function() {
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  window.openSidebar = openSidebar;
+  window.closeSidebar = closeSidebar;
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+})();
+</script>
+</body>
+</html>

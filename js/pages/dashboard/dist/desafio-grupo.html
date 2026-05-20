@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinWise — Desafio em Grupo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=DM+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard-style.css">
+  <script src="pwa-init.js"></script>
+  <style>
+  /* ══════════════════════════════════════
+     DESAFIO PAGE — estilos específicos
+  ══════════════════════════════════════ */
+
+  /* ── Tabs ── */
+  .dg-tabs {
+    display: flex;
+    background: var(--surface);
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+    scrollbar-width: none;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .dg-tabs::-webkit-scrollbar { display:none; }
+  .dg-tab {
+    flex: none;
+    padding: .85rem 1.4rem;
+    font-size: .85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    gap: .45rem;
+  }
+  .dg-tab.active { color: var(--brand-primary); border-bottom-color: var(--brand-primary); }
+  .dg-tab:hover:not(.active) { color: var(--text-primary); background: var(--surface-alt); }
+
+  .dg-panel { display: none; padding: 1.5rem; }
+  .dg-panel.active { display: block; }
+
+  /* ── Hero streak ── */
+  .streak-hero {
+    background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 40%, #16213e 100%);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    color: #fff;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+  .streak-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(245,158,11,.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .streak-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 5rem;
+    font-weight: 700;
+    line-height: 1;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .streak-label { font-size: .9rem; color: rgba(255,255,255,.6); margin-top: .3rem; letter-spacing: .1em; text-transform: uppercase; }
+  .streak-subtitle { font-size: 1.2rem; font-weight: 700; margin: .5rem 0 1.2rem; }
+  .progress-ring { position: relative; display: inline-flex; align-items: center; justify-content: center; }
+  .progress-ring svg { transform: rotate(-90deg); }
+  .progress-ring-num {
+    position: absolute;
+    font-family: 'Space Mono', monospace;
+    font-size: .8rem;
+    font-weight: 700;
+    color: rgba(255,255,255,.8);
+  }
+
+  .checkin-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .9rem 2.4rem;
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: #fff;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 4px 20px rgba(245,158,11,.4);
+    font-family: 'Poppins', sans-serif;
+  }
+  .checkin-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 28px rgba(245,158,11,.5); }
+  .checkin-btn:active { transform: translateY(0); }
+  .checkin-btn:disabled {
+    background: var(--surface-alt);
+    color: var(--text-secondary);
+    box-shadow: none;
+    cursor: default;
+    transform: none;
+  }
+
+  .milestone-row {
+    display: flex;
+    gap: .5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 1.2rem;
+  }
+  .milestone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .25rem;
+    padding: .5rem .8rem;
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,.06);
+    font-size: .72rem;
+    color: rgba(255,255,255,.5);
+    min-width: 60px;
+    border: 1px solid rgba(255,255,255,.08);
+    transition: all .3s;
+  }
+  .milestone.done {
+    background: rgba(245,158,11,.15);
+    border-color: rgba(245,158,11,.4);
+    color: #f59e0b;
+  }
+  .milestone.done .ms-icon { filter: none; }
+  .ms-icon { font-size: 1.3rem; filter: grayscale(1) opacity(.4); }
+  .milestone.done .ms-icon { filter: none; }
+
+  .economy-badge {
+    background: rgba(16,185,129,.15);
+    border: 1px solid rgba(16,185,129,.3);
+    border-radius: var(--radius-md);
+    padding: .7rem 1.2rem;
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .85rem;
+    color: #10b981;
+    font-weight: 600;
+    margin-top: .8rem;
+  }
+
+  /* ── Conquistas grid ── */
+  .conquistas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .conquista-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    text-align: center;
+    transition: all .2s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .conquista-card:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+  .conquista-card.locked { opacity: .45; filter: grayscale(.8); }
+  .conquista-card.unlocked { border-color: var(--green-500); background: var(--green-50); }
+  [data-theme="dark"] .conquista-card.unlocked { background: rgba(16,185,129,.08); }
+  .conquista-emoji { font-size: 2.2rem; margin-bottom: .4rem; display: block; }
+  .conquista-nome { font-size: .8rem; font-weight: 700; color: var(--text-primary); }
+  .conquista-desc { font-size: .72rem; color: var(--text-secondary); margin-top: .2rem; }
+  .conquista-badge {
+    position: absolute;
+    top: .4rem; right: .4rem;
+    background: var(--green-500);
+    color: #fff;
+    font-size: .6rem;
+    font-weight: 700;
+    padding: .1rem .35rem;
+    border-radius: 10px;
+  }
+
+  /* ── Card Instagram preview ── */
+  .card-preview-wrap {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .card-canvas-wrap {
+    flex: none;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,.2);
+  }
+  .card-controls { flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: .8rem; }
+
+  .theme-swatches { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .theme-swatch {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 3px solid transparent;
+    transition: all .2s;
+  }
+  .theme-swatch.active { border-color: var(--brand-primary); transform: scale(1.15); }
+
+  /* ── Divisor de contas ── */
+  .divisor-result {
+    background: var(--surface-alt);
+    border-radius: var(--radius-md);
+    padding: 1.2rem;
+    margin-top: 1rem;
+    display: none;
+  }
+  .divisor-result.show { display: block; }
+  .divisor-person {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .5rem 0;
+    border-bottom: 1px solid var(--border);
+    font-size: .9rem;
+  }
+  .divisor-person:last-child { border-bottom: none; }
+  .divisor-valor { font-family: 'Space Mono', monospace; font-weight: 700; color: var(--brand-primary); font-size: 1rem; }
+
+  /* ── Ranking ── */
+  .ranking-table { width: 100%; }
+  .ranking-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: .85rem 1rem;
+    border-radius: var(--radius-md);
+    margin-bottom: .4rem;
+    background: var(--surface-alt);
+    transition: all .2s;
+  }
+  .ranking-row:hover { transform: translateX(4px); }
+  .ranking-row.me { background: linear-gradient(135deg, rgba(0,102,153,.12), rgba(16,185,129,.08)); border: 1px solid rgba(0,102,153,.25); }
+  .ranking-pos {
+    font-family: 'Space Mono', monospace;
+    font-size: .9rem;
+    font-weight: 700;
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .ranking-pos.gold { color: #f59e0b; }
+  .ranking-pos.silver { color: #94a3b8; }
+  .ranking-pos.bronze { color: #b45309; }
+  .ranking-avatar {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+  .ranking-info { flex: 1; }
+  .ranking-name { font-weight: 600; font-size: .88rem; }
+  .ranking-sub { font-size: .74rem; color: var(--text-secondary); }
+  .ranking-economia {
+    font-family: 'Space Mono', monospace;
+    font-size: .88rem;
+    font-weight: 700;
+    color: var(--green-600);
+    text-align: right;
+  }
+  .ranking-streak { font-size: .75rem; color: var(--text-muted); }
+
+  .ranking-header {
+    background: linear-gradient(135deg, #0a0a0a, #1a1a2e);
+    border-radius: var(--radius-lg);
+    padding: 1.2rem 1.5rem;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+
+  /* ── Animations ── */
+  @keyframes pop-in {
+    0%   { transform: scale(.5) rotate(-10deg); opacity: 0; }
+    70%  { transform: scale(1.1) rotate(3deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  @keyframes confetti-fall {
+    0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(60px) rotate(720deg); opacity: 0; }
+  }
+  .pop-in { animation: pop-in .5s cubic-bezier(.34,1.56,.64,1) forwards; }
+
+  .confetti-piece {
+    position: fixed;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    pointer-events: none;
+    z-index: 9999;
+    animation: confetti-fall .8s ease-in forwards;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 4px 20px rgba(245,158,11,.3); }
+    50%       { box-shadow: 0 4px 40px rgba(245,158,11,.7); }
+  }
+  .pulse-glow { animation: pulse-glow 2s infinite; }
+
+  .section-eyebrow {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--brand-primary);
+    margin-bottom: .3rem;
+  }
+
+  /* Responsive */
+  @media(max-width:640px){
+    .streak-number { font-size: 3.5rem; }
+    .conquistas-grid { grid-template-columns: repeat(3, 1fr); }
+    .card-preview-wrap { flex-direction: column; align-items: center; }
+  }
+  </style>
+  <link rel="icon" type="image/x-icon" href="../../../../favicon.ico">
+</head>
+<body>
+<div class="dashboard-container">
+
+  <!-- SIDEBAR NAV -->
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside id="sidebar" class="sidebar-nav">
+    <div class="sidebar-header">
+      <div class="logo sidebar-logo">Fin<span>Wise</span></div>
+      <button class="sidebar-close-btn" onclick="closeSidebar()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="sidebar-group-label">Principal</div>
+      <a href="dashboard.html#resumo" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-house"></i><span>Início</span></a>
+      <a href="dashboard.html#metas" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-bullseye"></i><span>Metas</span></a>
+      <a href="dashboard.html#graficos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-chart-line"></i><span>Gráficos</span></a>
+      <a href="dashboard.html#relatorio" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-file-invoice"></i><span>Relatório</span></a>
+      <div class="sidebar-group-label">Investimentos</div>
+      <a href="dashboard.html#investimentos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-seedling"></i><span>Simulador de Renda Fixa</span></a>
+      <a href="carteira-ficticia.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-briefcase"></i><span>Carteira Fictícia</span></a>
+      <a href="cotacoes.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-globe"></i><span>Cotações ao Vivo</span></a>
+      <div class="sidebar-group-label">Finanças Pessoais</div>
+      <a href="controle-dividas.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-hand-holding-dollar"></i><span>Controle de Dívidas</span></a>
+      <a href="regra-50-30-20.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-chart-pie"></i><span>Regra 50-30-20</span></a>
+      <a href="dashboard.html#comparador-credito" class="sidebar-link"><i class="fas fa-scale-balanced"></i><span>Comparador de Crédito</span></a>
+      <a href="desafio-grupo.html" class="sidebar-link active"><i class="fas fa-fire"></i><span>Desafio em Grupo</span></a>
+      <div class="sidebar-group-label">Aprendizado</div>
+      <a href="educacao-financeira.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-graduation-cap"></i><span>Educação Financeira</span></a>
+      <a href="jogos.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-gamepad"></i><span>Jogos</span></a>
+      <a href="finwise-kids.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-child"></i><span>FinWise Kids</span></a>
+    </nav>
+  </aside>
+
+  <!-- HEADER -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <button class="header-icon-btn menu-toggle-btn" onclick="openSidebar()" title="Menu"><i class="fas fa-bars"></i></button>
+      <div class="logo">Fin<span>Wise</span></div>
+    </div>
+    <div class="header-tickers" id="header-tickers">
+      <span class="ticker-item"><span class="ticker-label">USD</span><span id="ht-dolar" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">BTC</span><span id="ht-btc" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">IBOV</span><span id="ht-ibov" class="ticker-val">—</span></span>
+    </div>
+    <div class="header-right">
+      <button id="darkModeToggle" class="header-icon-btn dark-mode-toggle" title="Alternar tema">
+        <span class="dark-mode-icon">🌙</span>
+        <span class="light-mode-icon">☀️</span>
+      </button>
+      <div class="user-chip">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <span id="username-display"></span>
+      </div>
+      <button id="logout-btn" class="btn btn--danger btn--sm" title="Sair">
+        <i class="fas fa-right-from-bracket"></i>
+        <span class="btn-label">Sair</span>
+      </button>
+    </div>
+    <button id="pwa-install-btn" style="display:none" class="btn btn--ghost btn--sm">
+  <i class="fas fa-download"></i> <span>Instalar app</span>
+</button>
+  </header>
+
+  <main class="dashboard-main">
+
+    <!-- TABS -->
+    <div class="dg-tabs">
+      <button class="dg-tab active" onclick="switchTab('streak')">
+        <i class="fas fa-fire"></i> Desafio 30 Dias
+      </button>
+      <button class="dg-tab" onclick="switchTab('conquistas')">
+        <i class="fas fa-trophy"></i> Conquistas
+      </button>
+      <button class="dg-tab" onclick="switchTab('card')">
+        <i class="fab fa-instagram"></i> Card Instagram
+      </button>
+      <button class="dg-tab" onclick="switchTab('divisor')">
+        <i class="fas fa-divide"></i> Divisor de Contas
+      </button>
+      <button class="dg-tab" onclick="switchTab('ranking')">
+        <i class="fas fa-ranking-star"></i> Ranking
+      </button>
+    </div>
+
+    <!-- ══════════════════════════════════
+         TAB 1 — STREAK / DESAFIO
+    ══════════════════════════════════ -->
+    <div id="tab-streak" class="dg-panel active">
+
+      <div class="streak-hero">
+        <div class="section-eyebrow">🔥 Desafio Público Aberto</div>
+        <div class="streak-number" id="streak-num">0</div>
+        <div class="streak-label">dias sem delivery</div>
+        <div class="streak-subtitle" id="streak-msg">Comece hoje. Cada real conta.</div>
+
+        <!-- Progresso circular -->
+        <div style="display:flex;align-items:center;justify-content:center;gap:2rem;margin:.8rem 0 1.2rem">
+          <div class="progress-ring">
+            <svg width="80" height="80" viewBox="0 0 80 80">
+              <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
+              <circle id="ring-fill" cx="40" cy="40" r="34" fill="none" stroke="#f59e0b" stroke-width="7"
+                stroke-linecap="round" stroke-dasharray="213.6" stroke-dashoffset="213.6" style="transition:stroke-dashoffset .8s ease"/>
+            </svg>
+            <div class="progress-ring-num" id="ring-pct">0%</div>
+          </div>
+          <div style="text-align:left">
+            <div class="economy-badge" id="economy-badge">
+              <i class="fas fa-piggy-bank"></i>
+              <span>Economia estimada: <strong id="economia-val">R$ 0</strong></span>
+            </div>
+            <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:.4rem">
+              Baseado em R$ 80/pedido · 8 pedidos/mês
+            </div>
+          </div>
+        </div>
+
+        <button class="checkin-btn pulse-glow" id="checkin-btn" onclick="fazerCheckin()">
+          <i class="fas fa-check-circle"></i> Completei hoje!
+        </button>
+        <div id="checkin-msg" style="font-size:.8rem;color:rgba(255,255,255,.5);margin-top:.6rem"></div>
+
+        <!-- Milestones -->
+        <div class="milestone-row" id="milestone-row"></div>
+      </div>
+
+      <!-- Calendário -->
+      <div class="card">
+        <div class="card-head">
+          <h3><i class="fas fa-calendar-check"></i> Histórico do Desafio</h3>
+          <button class="btn btn--ghost btn--sm" onclick="resetarDesafio()" style="font-size:.78rem">
+            <i class="fas fa-rotate-left"></i> Reiniciar
+          </button>
+        </div>
+        <div id="calendar-grid" style="display:grid;grid-template-columns:repeat(10,1fr);gap:.35rem;margin-top:.5rem"></div>
+        <div style="display:flex;gap:1rem;margin-top:.8rem;font-size:.75rem;color:var(--text-muted)">
+          <span><span style="display:inline-block;width:14px;height:14px;background:#10b981;border-radius:3px;vertical-align:middle;margin-right:3px"></span>Concluído</span>
+          <span><span style="display:inline-block;width:14px;height:14px;background:var(--border);border-radius:3px;vertical-align:middle;margin-right:3px"></span>Pendente</span>
+          <span><span style="display:inline-block;width:14px;height:14px;background:#ef4444;border-radius:3px;vertical-align:middle;margin-right:3px;opacity:.6"></span>Perdido</span>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div class="card" style="margin-top:1rem">
+        <div class="card-head"><h3><i class="fas fa-lightbulb"></i> Dicas para Aguentar</h3></div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:.8rem;margin-top:.5rem">
+          <div style="padding:.8rem;background:var(--surface-alt);border-radius:var(--radius-sm);font-size:.84rem">
+            🥘 <strong>Prepare marmitas</strong> no domingo para a semana inteira. Economize até 70%.
+          </div>
+          <div style="padding:.8rem;background:var(--surface-alt);border-radius:var(--radius-sm);font-size:.84rem">
+            📱 <strong>Delete o app</strong> do celular nos primeiros 7 dias. Reduz impulsos em 80%.
+          </div>
+          <div style="padding:.8rem;background:var(--surface-alt);border-radius:var(--radius-sm);font-size:.84rem">
+            🎯 <strong>Mova a economia</strong> para uma conta separada assim que resistir a um pedido.
+          </div>
+          <div style="padding:.8rem;background:var(--surface-alt);border-radius:var(--radius-sm);font-size:.84rem">
+            👥 <strong>Chame amigos</strong> para o desafio. Grupos têm 3x mais taxa de conclusão.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ══════════════════════════════════
+         TAB 2 — CONQUISTAS
+    ══════════════════════════════════ -->
+    <div id="tab-conquistas" class="dg-panel">
+      <div class="section-eyebrow" style="margin-bottom:.6rem">Desbloqueie conquistas e compartilhe no Instagram</div>
+      <div class="conquistas-grid" id="conquistas-grid"></div>
+
+      <div class="card">
+        <div class="card-head"><h3><i class="fas fa-share-nodes"></i> Última conquista desbloqueada</h3></div>
+        <div id="last-conquista" style="text-align:center;padding:1.5rem;color:var(--text-muted);font-size:.88rem">
+          Complete dias do desafio para desbloquear conquistas!
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         TAB 3 — CARD INSTAGRAM
+    ══════════════════════════════════ -->
+    <div id="tab-card" class="dg-panel">
+      <div class="section-eyebrow" style="margin-bottom:.8rem">Gere seu card e poste nos Stories ou Feed</div>
+
+      <div class="card-preview-wrap">
+        <!-- Canvas -->
+        <div class="card-canvas-wrap">
+          <canvas id="ig-canvas" width="400" height="400"></canvas>
+        </div>
+
+        <!-- Controls -->
+        <div class="card-controls">
+          <div class="card">
+            <div class="card-head"><h3><i class="fas fa-palette"></i> Personalizar</h3></div>
+
+            <label style="font-size:.8rem;color:var(--text-secondary);font-weight:600;display:block;margin:.6rem 0 .3rem">Seu nickname</label>
+            <input type="text" id="ig-nickname" placeholder="Ex: PoupadorAnônimo42" style="width:100%" oninput="renderIGCard()">
+
+            <label style="font-size:.8rem;color:var(--text-secondary);font-weight:600;display:block;margin:.8rem 0 .3rem">Valor economizado (R$)</label>
+            <input type="number" id="ig-economia" placeholder="Ex: 320" min="0" style="width:100%" oninput="renderIGCard()">
+
+            <label style="font-size:.8rem;color:var(--text-secondary);font-weight:600;display:block;margin:.8rem 0 .3rem">Tema do card</label>
+            <div class="theme-swatches">
+              <div class="theme-swatch active" data-theme-card="dark-fire" style="background:linear-gradient(135deg,#0a0a0a,#1a0000)" onclick="selectTheme(this,'dark-fire')"></div>
+              <div class="theme-swatch" data-theme-card="green-glow" style="background:linear-gradient(135deg,#052e16,#064e3b)" onclick="selectTheme(this,'green-glow')"></div>
+              <div class="theme-swatch" data-theme-card="ocean-blue" style="background:linear-gradient(135deg,#0c1445,#0e3a6e)" onclick="selectTheme(this,'ocean-blue')"></div>
+              <div class="theme-swatch" data-theme-card="purple-dusk" style="background:linear-gradient(135deg,#1e0a3c,#3730a3)" onclick="selectTheme(this,'purple-dusk')"></div>
+              <div class="theme-swatch" data-theme-card="sunrise" style="background:linear-gradient(135deg,#7c2d12,#b45309)" onclick="selectTheme(this,'sunrise')"></div>
+            </div>
+
+            <label style="font-size:.8rem;color:var(--text-secondary);font-weight:600;display:block;margin:.8rem 0 .3rem">Tipo de card</label>
+            <select id="ig-tipo" style="width:100%" onchange="renderIGCard()">
+              <option value="streak">🔥 Sequência de dias</option>
+              <option value="economia">💰 Economia total</option>
+              <option value="conquista">🏆 Conquista desbloqueada</option>
+            </select>
+
+            <button class="btn btn--primary" style="width:100%;margin-top:1rem" onclick="downloadCard()">
+              <i class="fas fa-download"></i> Baixar PNG (1080×1080)
+            </button>
+            <p style="font-size:.74rem;color:var(--text-muted);text-align:center;margin-top:.4rem">Salva em resolução Instagram-ready</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         TAB 4 — DIVISOR DE CONTAS
+    ══════════════════════════════════ -->
+    <div id="tab-divisor" class="dg-panel">
+      <div class="section-eyebrow" style="margin-bottom:.8rem">Divida qualquer conta de forma justa e transparente</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem">
+        <div class="card">
+          <div class="card-head"><h3><i class="fas fa-receipt"></i> Configurar divisão</h3></div>
+
+          <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500;display:block;margin:.5rem 0 .25rem">Valor total (R$)</label>
+          <input type="number" id="div-total" placeholder="Ex: 450.00" min="0" step="0.01" style="width:100%">
+
+          <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500;display:block;margin:.7rem 0 .25rem">Número de pessoas</label>
+          <div style="display:flex;align-items:center;gap:.6rem">
+            <button class="btn btn--ghost btn--sm" onclick="ajustarPessoas(-1)"><i class="fas fa-minus"></i></button>
+            <span id="num-pessoas" style="font-family:'Space Mono',monospace;font-size:1.4rem;font-weight:700;min-width:32px;text-align:center">2</span>
+            <button class="btn btn--ghost btn--sm" onclick="ajustarPessoas(1)"><i class="fas fa-plus"></i></button>
+          </div>
+
+          <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500;display:block;margin:.7rem 0 .25rem">Gorjeta (%)</label>
+          <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+            <button class="btn btn--ghost btn--sm" onclick="setGorjeta(0)" id="g-0">0%</button>
+            <button class="btn btn--ghost btn--sm" onclick="setGorjeta(10)" id="g-10">10%</button>
+            <button class="btn btn--ghost btn--sm" onclick="setGorjeta(15)" id="g-15">15%</button>
+            <button class="btn btn--primary btn--sm" onclick="setGorjeta(20)" id="g-20">20%</button>
+          </div>
+
+          <div id="gorjeta-custom-wrap" style="margin-top:.6rem">
+            <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500;display:block;margin-bottom:.25rem">Gorjeta personalizada (%)</label>
+            <input type="number" id="gorjeta-val" value="20" min="0" max="100" step="1" style="width:100px">
+          </div>
+
+          <button class="btn btn--primary" style="margin-top:1rem;width:100%" onclick="calcularDivisao()">
+            <i class="fas fa-calculator"></i> Calcular
+          </button>
+        </div>
+
+        <div>
+          <div class="divisor-result" id="divisor-result">
+            <div id="divisor-resumo" style="margin-bottom:.8rem"></div>
+            <div id="divisor-pessoas"></div>
+            <div style="margin-top:1rem;padding-top:.8rem;border-top:1px solid var(--border)">
+              <button class="btn btn--ghost btn--sm" style="width:100%" onclick="gerarCardDivisor()">
+                <i class="fab fa-instagram"></i> Gerar card para compartilhar
+              </button>
+            </div>
+          </div>
+          <div id="divisor-placeholder" style="height:200px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:.9rem;text-align:center">
+            <div><i class="fas fa-calculator" style="font-size:2rem;opacity:.3;display:block;margin-bottom:.5rem"></i>Preencha os dados e clique em Calcular</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════
+         TAB 5 — RANKING
+    ══════════════════════════════════ -->
+    <div id="tab-ranking" class="dg-panel">
+
+      <div class="ranking-header">
+        <div>
+          <div style="font-size:.7rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em">Desafio Público Global</div>
+          <div style="font-size:1.2rem;font-weight:700;margin-top:.2rem">🏆 Ranking de Poupadores</div>
+          <div style="font-size:.8rem;color:rgba(255,255,255,.5);margin-top:.2rem">Atualizado em tempo real · anônimo</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:.75rem;color:rgba(255,255,255,.5)">Participantes</div>
+          <div style="font-family:'Space Mono',monospace;font-size:1.5rem;font-weight:700;color:#f59e0b" id="total-participantes">—</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <div class="card-head"><h3><i class="fas fa-user-circle"></i> Seu nickname no ranking</h3></div>
+        <div style="display:flex;gap:.6rem;align-items:center">
+          <input type="text" id="rank-nickname" placeholder="Ex: TigreEconômico" style="flex:1" oninput="atualizarRanking()">
+          <button class="btn btn--ghost btn--sm" onclick="gerarNickname()"><i class="fas fa-random"></i> Aleatório</button>
+        </div>
+        <p style="font-size:.76rem;color:var(--text-muted);margin-top:.4rem"><i class="fas fa-lock"></i> Seu nome real nunca é exibido. Apenas o nickname.</p>
+      </div>
+
+      <div id="ranking-list" class="ranking-table"></div>
+
+      <div class="card" style="margin-top:1rem">
+        <div class="card-head"><h3><i class="fas fa-info-circle"></i> Como funciona o ranking?</h3></div>
+        <p style="font-size:.85rem;color:var(--text-secondary);line-height:1.7">
+          O ranking simula outros participantes do desafio público com dados gerados localmente.
+          Sua posição é baseada nos seus dias de streak e economia estimada.
+          Em uma versão com backend, os dados seriam sincronizados entre todos os usuários em tempo real.
+        </p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SCRIPTS
+══════════════════════════════════════════════════════ -->
+<script>
+// ────────────────────────────────────────
+// Estado global
+// ────────────────────────────────────────
+const S = {
+  get: k => { try { return JSON.parse(localStorage.getItem('fw_desafio_'+k)); } catch(e) { return null; } },
+  set: (k,v) => localStorage.setItem('fw_desafio_'+k, JSON.stringify(v)),
+};
+
+let state = S.get('state') || {
+  streak: 0,
+  lastCheckin: null,
+  dias: [],           // array de 30 booleans/null
+  startDate: null,
+  nickname: '',
+  cardTheme: 'dark-fire',
+};
+
+const PRECO_DELIVERY = 80;
+const PEDIDOS_MES = 8;
+const DIAS_DESAFIO = 30;
+
+// ────────────────────────────────────────
+// TABS
+// ────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.dg-tab').forEach((t,i) => {
+    const tabs = ['streak','conquistas','card','divisor','ranking'];
+    t.classList.toggle('active', tabs[i] === id);
+  });
+  document.querySelectorAll('.dg-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  if(id === 'card') setTimeout(renderIGCard, 100);
+  if(id === 'ranking') atualizarRanking();
+  if(id === 'conquistas') renderConquistas();
+}
+
+// ────────────────────────────────────────
+// STREAK / CHECK-IN
+// ────────────────────────────────────────
+function hoje() { return new Date().toISOString().slice(0,10); }
+
+function fazerCheckin() {
+  const h = hoje();
+  if(state.lastCheckin === h) return;
+
+  // Init se necessário
+  if(!state.startDate) {
+    state.startDate = h;
+    state.dias = new Array(DIAS_DESAFIO).fill(null);
+  }
+
+  // Dia atual no desafio
+  const start = new Date(state.startDate);
+  const now = new Date(h);
+  const diaIdx = Math.floor((now - start) / 86400000);
+
+  if(diaIdx >= 0 && diaIdx < DIAS_DESAFIO) {
+    state.dias[diaIdx] = true;
+  }
+
+  // Calcular streak
+  let streak = 0;
+  for(let i = diaIdx; i >= 0; i--) {
+    if(state.dias[i] === true) streak++;
+    else break;
+  }
+  state.streak = streak;
+  state.lastCheckin = h;
+  S.set('state', state);
+
+  dispararConfetti();
+  renderStreak();
+  renderCalendar();
+  renderConquistas();
+  verificarConquistas();
+}
+
+function resetarDesafio() {
+  if(!confirm('Reiniciar o desafio do zero?')) return;
+  state = { streak:0, lastCheckin:null, dias:[], startDate:null, nickname:state.nickname, cardTheme:state.cardTheme };
+  S.set('state', state);
+  renderStreak();
+  renderCalendar();
+  renderConquistas();
+}
+
+function renderStreak() {
+  const s = state.streak;
+  document.getElementById('streak-num').textContent = s;
+
+  const msgs = [
+    'Comece hoje. Cada real conta.',
+    'Primeiro dia! A jornada começa agora. 🌱',
+    'Dois dias! Você está criando um hábito.',
+    'Três dias seguidos! Impressionante. 🔥',
+    'Uma semana! Você economizou R$ '+fmtR(Math.floor(s/30*PEDIDOS_MES)*PRECO_DELIVERY)+'. 🎉',
+    'Incrível! Mais da metade do caminho. 💪',
+    'Quase lá! Só mais alguns dias. 🏆',
+    '30 DIAS! Você venceu o desafio! 🎊',
+  ];
+  const msgIdx = s===0?0: s===1?1: s===2?2: s===3?3: s>=7&&s<15?4: s>=15&&s<28?5: s>=28&&s<30?6: s>=30?7: 3;
+  document.getElementById('streak-msg').textContent = msgs[msgIdx];
+
+  // Ring
+  const pct = Math.min(100, Math.round((s/DIAS_DESAFIO)*100));
+  const circum = 213.6;
+  document.getElementById('ring-fill').style.strokeDashoffset = circum - (circum * pct/100);
+  document.getElementById('ring-pct').textContent = pct+'%';
+
+  // Economia
+  const pedidosEvitados = Math.floor(s/30 * PEDIDOS_MES);
+  const eco = pedidosEvitados * PRECO_DELIVERY;
+  document.getElementById('economia-val').textContent = fmtR(eco);
+
+  // Check-in btn
+  const btn = document.getElementById('checkin-btn');
+  const msg = document.getElementById('checkin-msg');
+  if(state.lastCheckin === hoje()) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-check-double"></i> Check-in feito hoje!';
+    msg.textContent = 'Volte amanhã para continuar sua sequência. 🔥';
+  } else if(s >= DIAS_DESAFIO) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-trophy"></i> Desafio concluído!';
+    msg.textContent = 'Parabéns! Você completou os 30 dias! 🎊';
+  } else {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-check-circle"></i> Completei hoje!';
+    msg.textContent = '';
+  }
+
+  // Milestones
+  renderMilestones(s);
+}
+
+const MILESTONES = [
+  {dia:1, emoji:'🌱', label:'Dia 1'},
+  {dia:3, emoji:'💪', label:'3 dias'},
+  {dia:7, emoji:'🔥', label:'1 semana'},
+  {dia:14, emoji:'⚡', label:'2 semanas'},
+  {dia:21, emoji:'🏅', label:'21 dias'},
+  {dia:30, emoji:'🏆', label:'30 dias'},
+];
+
+function renderMilestones(streak) {
+  document.getElementById('milestone-row').innerHTML = MILESTONES.map(m =>
+    `<div class="milestone ${streak>=m.dia?'done':''}">
+      <span class="ms-icon">${m.emoji}</span>
+      <span>${m.label}</span>
+    </div>`
+  ).join('');
+}
+
+function renderCalendar() {
+  const grid = document.getElementById('calendar-grid');
+  if(!state.startDate) {
+    grid.innerHTML = '<div style="color:var(--text-muted);font-size:.85rem;grid-column:1/-1;padding:.5rem 0">Faça o primeiro check-in para começar o calendário!</div>';
+    return;
+  }
+  const start = new Date(state.startDate);
+  const hj = new Date(hoje());
+  grid.innerHTML = Array.from({length:DIAS_DESAFIO}, (_,i) => {
+    const d = new Date(start); d.setDate(d.getDate()+i);
+    const passou = d < hj;
+    const ehHoje = d.toISOString().slice(0,10) === hoje();
+    const status = state.dias[i];
+    let bg = 'var(--surface-alt)';
+    if(status === true) bg = '#10b981';
+    else if(passou && status !== true) bg = 'rgba(239,68,68,.5)';
+    else if(ehHoje) bg = 'rgba(245,158,11,.3)';
+    return `<div title="Dia ${i+1}" style="aspect-ratio:1;border-radius:4px;background:${bg};display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;font-family:'Space Mono',monospace">${i+1}</div>`;
+  }).join('');
+}
+
+// ────────────────────────────────────────
+// CONQUISTAS
+// ────────────────────────────────────────
+const CONQUISTAS = [
+  { id:'c1', emoji:'🌱', nome:'Primeiro Passo', desc:'Complete o 1º dia', req: s => s >= 1 },
+  { id:'c2', emoji:'🔥', nome:'Em Chamas', desc:'3 dias seguidos', req: s => s >= 3 },
+  { id:'c3', emoji:'⚡', nome:'Semana Limpa', desc:'7 dias sem delivery', req: s => s >= 7 },
+  { id:'c4', emoji:'💎', nome:'Duas Semanas', desc:'14 dias consecutivos', req: s => s >= 14 },
+  { id:'c5', emoji:'🏅', nome:'Quase Lá', desc:'21 dias — 70% do desafio', req: s => s >= 21 },
+  { id:'c6', emoji:'🏆', nome:'Mestre do Mês', desc:'30 dias completos!', req: s => s >= 30 },
+  { id:'c7', emoji:'💰', nome:'R$ 100 Guardados', desc:'Economia estimada ≥ R$100', req: s => calcEco(s) >= 100 },
+  { id:'c8', emoji:'🎯', nome:'Disciplina Total', desc:'Economia ≥ R$400', req: s => calcEco(s) >= 400 },
+  { id:'c9', emoji:'🐯', nome:'Poupador Feroz', desc:'Economia ≥ R$640', req: s => calcEco(s) >= 640 },
+];
+
+function calcEco(streak) {
+  return Math.floor(streak/30 * PEDIDOS_MES) * PRECO_DELIVERY;
+}
+
+function verificarConquistas() {
+  const unlocked = S.get('conquistas') || [];
+  CONQUISTAS.forEach(c => {
+    if(!unlocked.includes(c.id) && c.req(state.streak)) {
+      unlocked.push(c.id);
+      mostrarToast(`🏆 Conquista desbloqueada: ${c.nome}!`);
+    }
+  });
+  S.set('conquistas', unlocked);
+}
+
+function renderConquistas() {
+  const unlocked = S.get('conquistas') || [];
+  document.getElementById('conquistas-grid').innerHTML = CONQUISTAS.map(c => {
+    const done = unlocked.includes(c.id);
+    return `<div class="conquista-card ${done?'unlocked':'locked'}" onclick="clicarConquista('${c.id}')">
+      ${done?'<span class="conquista-badge">✓</span>':''}
+      <span class="conquista-emoji">${c.emoji}</span>
+      <div class="conquista-nome">${c.nome}</div>
+      <div class="conquista-desc">${c.desc}</div>
+    </div>`;
+  }).join('');
+
+  // Last unlocked
+  const lastId = [...unlocked].pop();
+  const last = CONQUISTAS.find(c => c.id === lastId);
+  if(last) {
+    document.getElementById('last-conquista').innerHTML = `
+      <div style="font-size:3rem;margin-bottom:.4rem" class="pop-in">${last.emoji}</div>
+      <div style="font-size:1.1rem;font-weight:700;color:var(--text-primary)">${last.nome}</div>
+      <div style="font-size:.85rem;color:var(--text-secondary);margin:.3rem 0 .8rem">${last.desc}</div>
+      <button class="btn btn--primary btn--sm" onclick="switchTab('card')">
+        <i class="fab fa-instagram"></i> Gerar card para postar
+      </button>
+    `;
+  }
+}
+
+function clicarConquista(id) {
+  const unlocked = S.get('conquistas') || [];
+  if(!unlocked.includes(id)) return;
+  const c = CONQUISTAS.find(x => x.id === id);
+  if(!c) return;
+  document.getElementById('ig-tipo').value = 'conquista';
+  switchTab('card');
+  setTimeout(renderIGCard, 150);
+}
+
+// ────────────────────────────────────────
+// CARD INSTAGRAM — Canvas
+// ────────────────────────────────────────
+const THEMES = {
+  'dark-fire':   { bg1:'#0a0a0a', bg2:'#3d0000', accent:'#f59e0b', accent2:'#ef4444' },
+  'green-glow':  { bg1:'#052e16', bg2:'#064e3b', accent:'#10b981', accent2:'#34d399' },
+  'ocean-blue':  { bg1:'#0c1445', bg2:'#0e3a6e', accent:'#60a5fa', accent2:'#38bdf8' },
+  'purple-dusk': { bg1:'#1e0a3c', bg2:'#3730a3', accent:'#a78bfa', accent2:'#c4b5fd' },
+  'sunrise':     { bg1:'#7c2d12', bg2:'#b45309', accent:'#fbbf24', accent2:'#fb923c' },
+};
+
+let currentCardTheme = state.cardTheme || 'dark-fire';
+
+function selectTheme(el, theme) {
+  document.querySelectorAll('.theme-swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  currentCardTheme = theme;
+  state.cardTheme = theme;
+  S.set('state', state);
+  renderIGCard();
+}
+
+function renderIGCard() {
+  const canvas = document.getElementById('ig-canvas');
+  const ctx = canvas.getContext('2d');
+  const W = 400, H = 400;
+  canvas.width = W; canvas.height = H;
+
+  const theme = THEMES[currentCardTheme] || THEMES['dark-fire'];
+  const tipo = document.getElementById('ig-tipo')?.value || 'streak';
+  const nick = document.getElementById('ig-nickname')?.value || 'Anônimo';
+  const ecoInput = parseFloat(document.getElementById('ig-economia')?.value);
+  const eco = isNaN(ecoInput) ? calcEco(state.streak) : ecoInput;
+
+  // Background gradient
+  const grad = ctx.createLinearGradient(0,0,W,H);
+  grad.addColorStop(0, theme.bg1);
+  grad.addColorStop(1, theme.bg2);
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  // Noise texture overlay (subtle)
+  ctx.globalAlpha = 0.03;
+  for(let i=0;i<8000;i++) {
+    ctx.fillStyle = Math.random()>.5?'#fff':'#000';
+    ctx.fillRect(Math.random()*W, Math.random()*H, 1, 1);
+  }
+  ctx.globalAlpha = 1;
+
+  // Glow circle
+  const glow = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, 180);
+  glow.addColorStop(0, theme.accent+'22');
+  glow.addColorStop(1, 'transparent');
+  ctx.fillStyle = glow;
+  ctx.fillRect(0,0,W,H);
+
+  // Decorative lines
+  ctx.strokeStyle = theme.accent+'18';
+  ctx.lineWidth = 1;
+  for(let i=0;i<6;i++){
+    ctx.beginPath();
+    ctx.arc(W/2, H/2, 60+i*30, 0, Math.PI*2);
+    ctx.stroke();
+  }
+
+  // Logo
+  ctx.font = 'bold 16px Poppins, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.4)';
+  ctx.textAlign = 'left';
+  ctx.fillText('Fin', 24, 36);
+  ctx.fillStyle = theme.accent;
+  ctx.fillText('Wise', 24 + ctx.measureText('Fin').width, 36);
+
+  // Nickname
+  ctx.font = '500 13px DM Sans, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,.5)';
+  ctx.textAlign = 'right';
+  ctx.fillText('@'+nick, W-24, 36);
+
+  // Main content
+  if(tipo === 'streak') {
+    // Big number
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 96px "Space Mono", monospace';
+    const grad2 = ctx.createLinearGradient(W/2-80, H/2-60, W/2+80, H/2+20);
+    grad2.addColorStop(0, theme.accent);
+    grad2.addColorStop(1, theme.accent2);
+    ctx.fillStyle = grad2;
+    ctx.fillText(state.streak, W/2, H/2 + 20);
+
+    ctx.font = 'bold 18px Poppins, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,.8)';
+    ctx.fillText('DIAS SEM DELIVERY', W/2, H/2 + 54);
+
+    ctx.font = '500 13px DM Sans, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,.4)';
+    ctx.fillText('Desafio 30 Dias · FinWise', W/2, H/2 + 78);
+
+  } else if(tipo === 'economia') {
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 15px Poppins, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,.6)';
+    ctx.fillText('ECONOMIZEI', W/2, H/2 - 30);
+
+    ctx.font = 'bold 52px "Space Mono", monospace';
+    const grad2 = ctx.createLinearGradient(W/2-100, 0, W/2+100, 0);
+    grad2.addColorStop(0, theme.accent);
+    grad2.addColorStop(1, theme.accent2);
+    ctx.fillStyle = grad2;
+    ctx.fillText('R$'+eco.toLocaleString('pt-BR'), W/2, H/2 + 20);
+
+    ctx.font = 'bold 16px Poppins, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,.7)';
+    ctx.fillText('sem pedir delivery', W/2, H/2 + 52);
+
+    ctx.font = '500 13px DM Sans, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,.35)';
+    ctx.fillText('Desafio 30 Dias · FinWise', W/2, H/2 + 78);
+
+  } else {
+    // Conquista
+    const unlocked = S.get('conquistas') || [];
+    const lastId = [...unlocked].pop();
+    const c = CONQUISTAS.find(x => x.id === lastId) || CONQUISTAS[0];
+
+    ctx.textAlign = 'center';
+    ctx.font = '70px serif';
+    ctx.fillText(c.emoji, W/2, H/2 - 10);
+
+    ctx.font = 'bold 20px Poppins, sans-serif';
+    const grad2 = ctx.createLinearGradient(W/2-100, 0, W/2+100, 0);
+    grad2.addColorStop(0, theme.accent);
+    grad2.addColorStop(1, theme.accent2);
+    ctx.fillStyle = grad2;
+    ctx.fillText(c.nome, W/2, H/2 + 40);
+
+    ctx.font = '500 13px DM Sans, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,.55)';
+    ctx.fillText(c.desc, W/2, H/2 + 64);
+
+    ctx.font = '500 12px DM Sans, sans-serif';
+    ctx.fillStyle = 'rgba(255,255,255,.3)';
+    ctx.fillText('Desafio 30 Dias · FinWise', W/2, H/2 + 90);
+  }
+
+  // Bottom badge
+  ctx.fillStyle = theme.accent+'33';
+  roundRect(ctx, 24, H-54, W-48, 32, 8);
+  ctx.fill();
+  ctx.font = '500 12px DM Sans, sans-serif';
+  ctx.fillStyle = theme.accent;
+  ctx.textAlign = 'center';
+  ctx.fillText('#DesafioFinWise #30DiasSemdDelivery #Poupança', W/2, H-32);
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y);
+  ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r);
+  ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h);
+  ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r);
+  ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+function downloadCard() {
+  // Render em 1080x1080
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080; canvas.height = 1080;
+  const orig = document.getElementById('ig-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.scale(2.7, 2.7);
+  ctx.drawImage(orig, 0, 0);
+  ctx.setTransform(1,0,0,1,0,0);
+  // Re-render at full size
+  const hi = document.createElement('canvas');
+  hi.width = 1080; hi.height = 1080;
+  renderHighRes(hi);
+  setTimeout(() => {
+    const link = document.createElement('a');
+    link.download = 'finwise-card.png';
+    link.href = hi.toDataURL('image/png');
+    link.click();
+  }, 200);
+}
+
+function renderHighRes(canvas) {
+  const ctx = canvas.getContext('2d');
+  const W = 1080, H = 1080;
+  const theme = THEMES[currentCardTheme] || THEMES['dark-fire'];
+  const tipo = document.getElementById('ig-tipo')?.value || 'streak';
+  const nick = document.getElementById('ig-nickname')?.value || 'Anônimo';
+  const ecoInput = parseFloat(document.getElementById('ig-economia')?.value);
+  const eco = isNaN(ecoInput) ? calcEco(state.streak) : ecoInput;
+
+  const grad = ctx.createLinearGradient(0,0,W,H);
+  grad.addColorStop(0, theme.bg1); grad.addColorStop(1, theme.bg2);
+  ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+
+  ctx.globalAlpha = 0.025;
+  for(let i=0;i<40000;i++){
+    ctx.fillStyle=Math.random()>.5?'#fff':'#000';
+    ctx.fillRect(Math.random()*W,Math.random()*H,1.5,1.5);
+  }
+  ctx.globalAlpha=1;
+
+  const glow=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,480);
+  glow.addColorStop(0,theme.accent+'22'); glow.addColorStop(1,'transparent');
+  ctx.fillStyle=glow; ctx.fillRect(0,0,W,H);
+
+  ctx.strokeStyle=theme.accent+'18'; ctx.lineWidth=2;
+  for(let i=0;i<6;i++){ctx.beginPath();ctx.arc(W/2,H/2,160+i*80,0,Math.PI*2);ctx.stroke();}
+
+  ctx.font='bold 42px Poppins,sans-serif'; ctx.fillStyle='rgba(255,255,255,.4)'; ctx.textAlign='left'; ctx.fillText('Fin',64,92);
+  ctx.fillStyle=theme.accent; ctx.fillText('Wise',64+ctx.measureText('Fin').width,92);
+  ctx.font='500 36px DM Sans,sans-serif'; ctx.fillStyle='rgba(255,255,255,.5)'; ctx.textAlign='right'; ctx.fillText('@'+nick,W-64,92);
+
+  if(tipo==='streak'){
+    ctx.textAlign='center';
+    ctx.font='bold 260px "Space Mono",monospace';
+    const g2=ctx.createLinearGradient(W/2-200,H/2-160,W/2+200,H/2+60);
+    g2.addColorStop(0,theme.accent); g2.addColorStop(1,theme.accent2);
+    ctx.fillStyle=g2; ctx.fillText(state.streak,W/2,H/2+60);
+    ctx.font='bold 48px Poppins,sans-serif'; ctx.fillStyle='rgba(255,255,255,.8)'; ctx.fillText('DIAS SEM DELIVERY',W/2,H/2+148);
+    ctx.font='500 34px DM Sans,sans-serif'; ctx.fillStyle='rgba(255,255,255,.4)'; ctx.fillText('Desafio 30 Dias · FinWise',W/2,H/2+210);
+  } else if(tipo==='economia'){
+    ctx.textAlign='center';
+    ctx.font='bold 40px Poppins,sans-serif'; ctx.fillStyle='rgba(255,255,255,.6)'; ctx.fillText('ECONOMIZEI',W/2,H/2-80);
+    ctx.font='bold 130px "Space Mono",monospace';
+    const g2=ctx.createLinearGradient(W/2-260,0,W/2+260,0);
+    g2.addColorStop(0,theme.accent); g2.addColorStop(1,theme.accent2);
+    ctx.fillStyle=g2; ctx.fillText('R$'+eco.toLocaleString('pt-BR'),W/2,H/2+50);
+    ctx.font='bold 44px Poppins,sans-serif'; ctx.fillStyle='rgba(255,255,255,.7)'; ctx.fillText('sem pedir delivery',W/2,H/2+136);
+  } else {
+    const unlocked=S.get('conquistas')||[];
+    const lastId=[...unlocked].pop();
+    const c=CONQUISTAS.find(x=>x.id===lastId)||CONQUISTAS[0];
+    ctx.textAlign='center'; ctx.font='190px serif'; ctx.fillText(c.emoji,W/2,H/2-20);
+    ctx.font='bold 56px Poppins,sans-serif';
+    const g2=ctx.createLinearGradient(W/2-200,0,W/2+200,0);
+    g2.addColorStop(0,theme.accent); g2.addColorStop(1,theme.accent2);
+    ctx.fillStyle=g2; ctx.fillText(c.nome,W/2,H/2+110);
+    ctx.font='500 36px DM Sans,sans-serif'; ctx.fillStyle='rgba(255,255,255,.55)'; ctx.fillText(c.desc,W/2,H/2+164);
+  }
+
+  ctx.fillStyle=theme.accent+'33';
+  roundRect(ctx,64,H-146,W-128,84,20); ctx.fill();
+  ctx.font='500 32px DM Sans,sans-serif'; ctx.fillStyle=theme.accent; ctx.textAlign='center';
+  ctx.fillText('#DesafioFinWise #30DiasSemdDelivery #Poupança',W/2,H-88);
+}
+
+// ────────────────────────────────────────
+// DIVISOR DE CONTAS
+// ────────────────────────────────────────
+let numPessoas = 2;
+let gorjetaPct = 20;
+
+function ajustarPessoas(delta) {
+  numPessoas = Math.max(2, Math.min(20, numPessoas + delta));
+  document.getElementById('num-pessoas').textContent = numPessoas;
+}
+
+function setGorjeta(v) {
+  gorjetaPct = v;
+  document.getElementById('gorjeta-val').value = v;
+  document.querySelectorAll('[id^="g-"]').forEach(b => b.classList.remove('btn--primary'));
+  document.querySelectorAll('[id^="g-"]').forEach(b => b.classList.add('btn--ghost'));
+  const el = document.getElementById('g-'+v);
+  if(el) { el.classList.remove('btn--ghost'); el.classList.add('btn--primary'); }
+}
+
+function calcularDivisao() {
+  const total = parseFloat(document.getElementById('div-total').value);
+  if(isNaN(total) || total <= 0) { alert('Informe um valor válido.'); return; }
+  gorjetaPct = parseFloat(document.getElementById('gorjeta-val').value) || 0;
+
+  const totalComGorjeta = total * (1 + gorjetaPct/100);
+  const porPessoa = totalComGorjeta / numPessoas;
+
+  document.getElementById('divisor-resumo').innerHTML = `
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;margin-bottom:.8rem">
+      <div style="font-size:.85rem;color:var(--text-secondary)">Subtotal: <strong>${fmtR(total)}</strong></div>
+      <div style="font-size:.85rem;color:var(--text-secondary)">Gorjeta (${gorjetaPct}%): <strong>${fmtR(total*gorjetaPct/100)}</strong></div>
+      <div style="font-size:.85rem;color:var(--text-secondary)">Total: <strong>${fmtR(totalComGorjeta)}</strong></div>
+    </div>
+    <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:.5rem">${numPessoas} pessoas</div>
+  `;
+
+  const nomes = ['🐯','🦊','🐻','🦁','🐼','🦄','🐸','🦋','🐙','🦊','🐺','🦝','🐮','🐷','🦅','🦆','🦉','🦇','🐝','🐛'];
+  document.getElementById('divisor-pessoas').innerHTML = Array.from({length:numPessoas}, (_,i) =>
+    `<div class="divisor-person">
+      <span style="font-size:1.1rem">${nomes[i%nomes.length]} Pessoa ${i+1}</span>
+      <span class="divisor-valor">${fmtR(porPessoa)}</span>
+    </div>`
+  ).join('');
+
+  document.getElementById('divisor-result').classList.add('show');
+  document.getElementById('divisor-placeholder').style.display = 'none';
+}
+
+function gerarCardDivisor() {
+  switchTab('card');
+  document.getElementById('ig-tipo').value = 'economia';
+  setTimeout(renderIGCard, 150);
+}
+
+// ────────────────────────────────────────
+// RANKING
+// ────────────────────────────────────────
+const AVATARES = ['🐯','🦊','🐻','🦁','🐼','🦄','🐸','🦋','🐙','🦝','🐺','🦅','🦉','🦇','🐝'];
+const ADJETIVOS = ['Econômico','Poupador','Sábio','Feroz','Veloz','Astuto','Brilhante','Corajoso','Implacável','Zen'];
+const ANIMAIS = ['Tigre','Raposa','Urso','Leão','Lobo','Águia','Pantera','Onça','Coruja','Golfinho'];
+
+function gerarNickname() {
+  const nick = ADJETIVOS[Math.floor(Math.random()*ADJETIVOS.length)] + ANIMAIS[Math.floor(Math.random()*ANIMAIS.length)] + Math.floor(Math.random()*99+1);
+  document.getElementById('rank-nickname').value = nick;
+  state.nickname = nick;
+  S.set('state', state);
+  atualizarRanking();
+}
+
+function atualizarRanking() {
+  const nick = document.getElementById('rank-nickname')?.value || state.nickname || 'Você';
+  state.nickname = nick;
+  S.set('state', state);
+
+  // Gera participantes simulados deterministicamente
+  const seed = 42;
+  const participantes = Array.from({length:18}, (_,i) => {
+    const r = (seed*(i+7)*31337) % 100;
+    const streak = Math.max(1, Math.floor(((seed*(i+3)*17)%28) + 1));
+    const eco = Math.floor(streak/30 * PEDIDOS_MES) * PRECO_DELIVERY + (i*37%200);
+    return {
+      nick: ADJETIVOS[(seed*(i+1)*3)%ADJETIVOS.length] + ANIMAIS[(seed*(i+2)*7)%ANIMAIS.length] + ((seed*(i+5)*11)%99+1),
+      avatar: AVATARES[(seed*(i+4)*5)%AVATARES.length],
+      streak,
+      eco,
+      me: false,
+    };
+  });
+
+  // Insere o usuário
+  const meStreak = state.streak;
+  const meEco = calcEco(meStreak) + Math.floor(Math.random()*100);
+  participantes.push({ nick, avatar:'⭐', streak:meStreak, eco:meEco, me:true });
+
+  // Ordena por eco + streak
+  participantes.sort((a,b) => (b.eco+b.streak*10) - (a.eco+a.streak*10));
+
+  document.getElementById('total-participantes').textContent = participantes.length;
+
+  const posEmojis = ['🥇','🥈','🥉'];
+  document.getElementById('ranking-list').innerHTML = participantes.map((p,i) => {
+    const pos = i+1;
+    const posClass = pos===1?'gold':pos===2?'silver':pos===3?'bronze':'';
+    return `<div class="ranking-row ${p.me?'me':''}">
+      <div class="ranking-pos ${posClass}">${pos<=3?posEmojis[pos-1]:pos}</div>
+      <div class="ranking-avatar" style="background:${p.me?'rgba(0,102,153,.15)':'var(--surface-alt)'}">${p.avatar}</div>
+      <div class="ranking-info">
+        <div class="ranking-name">${p.nick}${p.me?' <span style="font-size:.7rem;background:var(--brand-primary);color:#fff;padding:.1rem .35rem;border-radius:8px;vertical-align:middle">Você</span>':''}</div>
+        <div class="ranking-sub">🔥 ${p.streak} dias · Desafio 30 Dias</div>
+      </div>
+      <div class="ranking-economia">${fmtR(p.eco)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ────────────────────────────────────────
+// UTILITÁRIOS
+// ────────────────────────────────────────
+function fmtR(v) { return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+function mostrarToast(msg) {
+  const t = document.createElement('div');
+  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#111;color:#fff;padding:.7rem 1.4rem;border-radius:50px;font-size:.85rem;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,.4);animation:pop-in .4s ease';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3500);
+}
+
+function dispararConfetti() {
+  const colors = ['#f59e0b','#10b981','#ef4444','#3b82f6','#a78bfa','#fb923c'];
+  for(let i=0;i<30;i++){
+    setTimeout(()=>{
+      const c = document.createElement('div');
+      c.className = 'confetti-piece';
+      c.style.cssText = `left:${Math.random()*100}vw;top:${Math.random()*40+20}vh;background:${colors[Math.floor(Math.random()*colors.length)]};animation-delay:${Math.random()*.4}s;animation-duration:${.6+Math.random()*.4}s;transform:rotate(${Math.random()*360}deg)`;
+      document.body.appendChild(c);
+      setTimeout(()=>c.remove(), 1200);
+    }, i*30);
+  }
+}
+
+// ────────────────────────────────────────
+// INIT
+// ────────────────────────────────────────
+renderStreak();
+renderCalendar();
+renderConquistas();
+verificarConquistas();
+
+// Preenche nickname salvo
+if(state.nickname) {
+  const rnEl = document.getElementById('rank-nickname');
+  if(rnEl) rnEl.value = state.nickname;
+  const igEl = document.getElementById('ig-nickname');
+  if(igEl) igEl.value = state.nickname;
+}
+</script>
+
+<!-- Dark mode -->
+<script>
+(function(){
+  const btn = document.getElementById('darkModeToggle');
+  const saved = localStorage.getItem('fw_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  btn && btn.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('fw_theme', next);
+  });
+})();
+</script>
+
+<!-- Header tickers -->
+<script>
+(function(){
+  const BASE = {dolar:{valor:5.74},bitcoin:{valor:102340},ibov:{valor:133850},ouro:{valor:19840}};
+  function gerar(){const r={};Object.entries(BASE).forEach(([k,b])=>{const v=(Math.random()-.48)*b.valor*.018;r[k]={val:b.valor+v,pct:(v/b.valor)*100};});return r;}
+  function fmt(v,p){const s=v>=10000?v.toLocaleString('pt-BR',{maximumFractionDigits:0}):v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});return p+s;}
+  function render(d){[['ht-dolar','dolar','R$'],['ht-btc','bitcoin','R$'],['ht-ibov','ibov','']].forEach(([id,k,pre])=>{const el=document.getElementById(id);if(!el||!d[k])return;el.textContent=fmt(d[k].val,pre)+' ('+(d[k].pct>=0?'+':'')+d[k].pct.toFixed(1)+'%)';el.className='ticker-val '+(d[k].pct>=0?'up':'down');});}
+  let d=gerar();render(d);setInterval(()=>{d=gerar();render(d);},30000);
+})();
+</script>
+
+<!-- Sidebar -->
+<script>
+(function(){
+  function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebar-overlay').classList.add('open');document.body.style.overflow='hidden';}
+  function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebar-overlay').classList.remove('open');document.body.style.overflow='';}
+  window.openSidebar=openSidebar;window.closeSidebar=closeSidebar;
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSidebar();});
+})();
+</script>
+</body>
+</html>

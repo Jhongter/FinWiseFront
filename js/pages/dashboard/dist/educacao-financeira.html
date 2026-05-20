@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinWise — Educação Financeira</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="pwa-init.js"></script>
+  <link rel="stylesheet" href="dashboard-style.css">
+  <style>
+    /* ─── Layout principal ─── */
+    .edu-layout {
+      display: flex;
+      flex-direction: column;
+      min-height: calc(100vh - 60px);
+    }
+
+    /* ─── Tab navigation ─── */
+    .edu-tabs {
+      display: flex;
+      gap: 0;
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      padding: 0 1.5rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+      position: sticky;
+      top: 60px;
+      z-index: 100;
+    }
+    .edu-tabs::-webkit-scrollbar { display: none; }
+    .edu-tab {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .9rem 1.3rem;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+      transition: color .2s, border-color .2s;
+    }
+    .edu-tab:hover { color: var(--green-500); }
+    .edu-tab.active {
+      color: var(--green-500);
+      border-bottom-color: var(--green-500);
+    }
+    .edu-tab i { font-size: .9rem; }
+
+    /* ─── Page header ─── */
+    .edu-page-header {
+      background: linear-gradient(135deg, var(--header-bg) 0%, #004466 100%);
+      padding: 2.5rem 1.5rem 2rem;
+      color: #fff;
+    }
+    .edu-page-header .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      color: rgba(255,255,255,.75);
+      text-decoration: none;
+      font-size: .85rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      transition: color .2s;
+    }
+    .edu-page-header .back-btn:hover { color: #fff; }
+    .edu-page-header h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: .4rem;
+    }
+    .edu-page-header h1 span { color: var(--green-500); }
+    .edu-page-header p {
+      color: rgba(255,255,255,.75);
+      font-size: .95rem;
+    }
+
+    /* ─── Tab content panels ─── */
+    .tab-panel { display: none; padding: 2rem 1.5rem; max-width: 1280px; margin: 0 auto; width: 100%; }
+    .tab-panel.active { display: block; }
+
+    /* ════════════════════════════════
+       PAINEL 1: VÍDEOS
+    ════════════════════════════════ */
+    .category-filter {
+      display: flex;
+      gap: .6rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .filter-btn {
+      padding: .45rem 1rem;
+      border-radius: 20px;
+      font-size: .82rem;
+      font-weight: 600;
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--green-500);
+      background: var(--green-500);
+      color: #fff;
+    }
+
+    .category-section { margin-bottom: 3rem; }
+    .category-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      padding-bottom: .6rem;
+      border-bottom: 2px solid var(--green-500);
+    }
+    .category-title i { color: var(--green-500); }
+
+    .videos-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.4rem;
+    }
+    .video-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      transition: transform .25s, box-shadow .25s;
+    }
+    .video-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    .video-embed {
+      position: relative;
+      padding-top: 56.25%;
+      background: #000;
+    }
+    .video-embed iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .video-info { padding: 1rem; }
+    .video-tag {
+      display: inline-block;
+      background: rgba(16,185,129,.12);
+      color: var(--green-600);
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 700;
+      padding: .2rem .7rem;
+      margin-bottom: .5rem;
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+    .video-info h4 {
+      font-size: .92rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: .3rem;
+      line-height: 1.35;
+    }
+    .video-info p {
+      font-size: .8rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ════════════════════════════════
+       PAINEL 2: TRILHAS
+    ════════════════════════════════ */
+    .tracks-overview {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.4rem;
+      margin-bottom: 2.5rem;
+    }
+    .track-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--border);
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: all .25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .track-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--track-color, var(--green-500));
+    }
+    .track-card:hover, .track-card.selected {
+      border-color: var(--track-color, var(--green-500));
+      box-shadow: var(--shadow-md);
+    }
+    .track-card.selected { background: rgba(16,185,129,.04); }
+
+    .track-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .35rem .8rem;
+      border-radius: 20px;
+      font-size: .75rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      background: rgba(16,185,129,.1);
+      color: var(--green-600);
+    }
+    .track-badge.intermediario {
+      background: rgba(245,158,11,.1);
+      color: #d97706;
+    }
+    .track-badge.avancado {
+      background: rgba(239,68,68,.1);
+      color: #dc2626;
+    }
+
+    .track-card h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: .4rem;
+    }
+    .track-card p {
+      font-size: .83rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+    .track-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: .78rem;
+      color: var(--text-muted);
+    }
+    .track-meta span { display: flex; align-items: center; gap: .3rem; }
+
+    /* Progress bar */
+    .track-progress {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: .75rem;
+      color: var(--text-secondary);
+      margin-bottom: .4rem;
+    }
+    .progress-bar {
+      height: 7px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--green-500), var(--green-600));
+      border-radius: 99px;
+      transition: width .6s ease;
+    }
+
+    /* Track detail */
+    .track-detail { display: none; }
+    .track-detail.active { display: block; }
+    .track-detail-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .back-to-tracks {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--green-500);
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: .4rem .8rem;
+      border-radius: var(--radius-sm);
+      transition: background .2s;
+    }
+    .back-to-tracks:hover { background: rgba(16,185,129,.08); }
+
+    .track-detail-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .track-detail-title span { color: var(--green-500); }
+
+    /* Lesson list */
+    .lessons-list {
+      display: flex;
+      flex-direction: column;
+      gap: .8rem;
+    }
+    .lesson-item {
+      background: var(--surface);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      padding: 1rem 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+    }
+    .lesson-item:hover { border-color: var(--green-500); background: rgba(16,185,129,.03); }
+    .lesson-item.completed { opacity: .85; }
+    .lesson-item.current { border-color: var(--green-500); box-shadow: 0 0 0 3px rgba(16,185,129,.1); }
+    .lesson-item.locked { opacity: .5; cursor: not-allowed; }
+
+    .lesson-num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      background: var(--surface-alt);
+      color: var(--text-secondary);
+      border: 2px solid var(--border);
+    }
+    .lesson-item.completed .lesson-num {
+      background: var(--green-500);
+      color: #fff;
+      border-color: var(--green-500);
+    }
+    .lesson-item.current .lesson-num {
+      background: var(--green-500);
+      color: #fff;
+      border-color: var(--green-500);
+      animation: pulse-green 2s infinite;
+    }
+    @keyframes pulse-green {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,.4); }
+      50% { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+    }
+
+    .lesson-info { flex: 1; }
+    .lesson-info h4 {
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: .2rem;
+    }
+    .lesson-info p {
+      font-size: .78rem;
+      color: var(--text-secondary);
+    }
+    .lesson-duration {
+      font-size: .75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+      white-space: nowrap;
+    }
+    .lesson-status-icon {
+      font-size: .9rem;
+      width: 20px;
+      text-align: center;
+    }
+    .lesson-status-icon.done { color: var(--green-500); }
+    .lesson-status-icon.play { color: var(--green-500); }
+    .lesson-status-icon.lock { color: var(--text-muted); }
+
+    /* Video modal */
+    .video-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.75);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .video-modal-overlay.open { display: flex; }
+    .video-modal {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 820px;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0,0,0,.4);
+    }
+    .video-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .video-modal-header h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .modal-close-btn {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: var(--surface-alt);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .9rem;
+      transition: background .2s;
+    }
+    .modal-close-btn:hover { background: var(--border); }
+    .modal-video-embed {
+      position: relative;
+      padding-top: 56.25%;
+      background: #000;
+    }
+    .modal-video-embed iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .modal-footer {
+      padding: 1rem 1.2rem;
+      display: flex;
+      justify-content: flex-end;
+      gap: .8rem;
+      border-top: 1px solid var(--border);
+    }
+    .btn-primary {
+      padding: .55rem 1.3rem;
+      background: var(--green-500);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-primary:hover { background: var(--green-600); }
+    .btn-secondary {
+      padding: .55rem 1.3rem;
+      background: var(--surface-alt);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: .88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-secondary:hover { background: var(--border); }
+
+    /* ════════════════════════════════
+       PAINEL 3: GLOSSÁRIO
+    ════════════════════════════════ */
+    .glossary-search-wrap {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    .glossary-search-wrap i {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+    .glossary-search {
+      width: 100%;
+      padding: .75rem 1rem .75rem 2.8rem;
+      border-radius: var(--radius-md);
+      border: 2px solid var(--border);
+      background: var(--surface);
+      color: var(--text-primary);
+      font-size: .95rem;
+      font-family: var(--font-sans);
+      transition: border-color .2s;
+    }
+    .glossary-search:focus {
+      outline: none;
+      border-color: var(--green-500);
+    }
+
+    .glossary-alpha {
+      display: flex;
+      gap: .35rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .alpha-btn {
+      width: 32px; height: 32px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      font-size: .78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .alpha-btn:hover, .alpha-btn.active {
+      background: var(--green-500);
+      border-color: var(--green-500);
+      color: #fff;
+    }
+
+    .glossary-list {
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+    }
+    .glossary-letter-group { margin-bottom: 1.5rem; }
+    .glossary-letter {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--green-500);
+      margin-bottom: .8rem;
+      padding-bottom: .4rem;
+      border-bottom: 2px solid var(--green-50);
+    }
+    [data-theme="dark"] .glossary-letter { border-color: rgba(16,185,129,.15); }
+
+    .term-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: box-shadow .2s;
+    }
+    .term-card:hover { box-shadow: var(--shadow-sm); }
+    .term-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .9rem 1.2rem;
+      cursor: pointer;
+      gap: 1rem;
+    }
+    .term-header-left {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      flex: 1;
+    }
+    .term-acronym {
+      font-size: .8rem;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #fff;
+      background: var(--green-500);
+      padding: .25rem .6rem;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+    }
+    .term-name {
+      font-size: .92rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+    .term-category-tag {
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      padding: .15rem .5rem;
+      border-radius: 99px;
+      white-space: nowrap;
+    }
+    .term-chevron {
+      color: var(--text-muted);
+      font-size: .8rem;
+      transition: transform .2s;
+      flex-shrink: 0;
+    }
+    .term-card.open .term-chevron { transform: rotate(180deg); }
+
+    .term-body {
+      display: none;
+      padding: 0 1.2rem 1.2rem;
+      border-top: 1px solid var(--border);
+    }
+    .term-card.open .term-body { display: block; }
+
+    .term-definition {
+      font-size: .88rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      margin-top: .9rem;
+      margin-bottom: .9rem;
+    }
+
+    .term-example {
+      background: rgba(16,185,129,.06);
+      border-left: 3px solid var(--green-500);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      padding: .75rem 1rem;
+    }
+    .term-example strong {
+      display: block;
+      font-size: .75rem;
+      font-weight: 700;
+      color: var(--green-600);
+      margin-bottom: .3rem;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+    .term-example p {
+      font-size: .84rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    .term-tip {
+      display: flex;
+      align-items: flex-start;
+      gap: .5rem;
+      background: rgba(59,130,246,.06);
+      border: 1px solid rgba(59,130,246,.15);
+      border-radius: var(--radius-sm);
+      padding: .7rem .9rem;
+      margin-top: .8rem;
+      font-size: .82rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .term-tip i { color: #3b82f6; margin-top: .05rem; flex-shrink: 0; }
+
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+    .no-results i { font-size: 2.5rem; margin-bottom: .8rem; display: block; }
+
+    /* ─── Progress toast ─── */
+    .progress-toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: var(--green-500);
+      color: #fff;
+      padding: .8rem 1.2rem;
+      border-radius: var(--radius-md);
+      font-size: .88rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(80px);
+      opacity: 0;
+      transition: transform .35s, opacity .35s;
+      z-index: 2000;
+    }
+    .progress-toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 640px) {
+      .videos-grid { grid-template-columns: 1fr; }
+      .tracks-overview { grid-template-columns: 1fr; }
+      .edu-page-header h1 { font-size: 1.4rem; }
+    }
+  
+    /* Thumbnail play button for restricted videos */
+    .video-thumb-play {
+      position: relative;
+      cursor: pointer;
+      width: 100%;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+      background: #000;
+      border-radius: 8px 8px 0 0;
+    }
+    .video-thumb-play img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .3s, opacity .3s;
+    }
+    .video-thumb-play:hover img { transform: scale(1.04); opacity: .85; }
+    .video-thumb-play .play-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 3.5rem;
+      text-shadow: 0 2px 12px rgba(0,0,0,.5);
+      transition: transform .2s;
+    }
+    .video-thumb-play:hover .play-overlay { transform: scale(1.1); }
+
+    </style>
+  <link rel="icon" type="image/x-icon" href="../../../../favicon.ico">
+</head>
+<body>
+
+<!-- ─── Video Modal ─── -->
+<div id="videoModal" class="video-modal-overlay">
+  <div class="video-modal">
+    <div class="video-modal-header">
+      <h3 id="modalTitle">Aula</h3>
+      <button class="modal-close-btn" id="modalCloseBtn"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-video-embed">
+      <iframe id="modalIframe" src="" title="Aula" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" id="modalCloseBtn2">Fechar</button>
+      <button class="btn-primary" id="modalMarkDone"><i class="fas fa-check"></i> Marcar como concluída</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Toast ─── -->
+<div id="progressToast" class="progress-toast">
+  <i class="fas fa-check-circle"></i>
+  <span id="toastMsg">Aula concluída!</span>
+</div>
+
+<div class="dashboard-container">
+
+  <!-- SIDEBAR NAV -->
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside id="sidebar" class="sidebar-nav">
+    <div class="sidebar-header">
+      <div class="logo sidebar-logo">Fin<span>Wise</span></div>
+      <button class="sidebar-close-btn" onclick="closeSidebar()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="sidebar-group-label">Principal</div>
+      <a href="dashboard.html#resumo" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-house"></i><span>Início</span></a>
+      <a href="dashboard.html#metas" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-bullseye"></i><span>Metas</span></a>
+      <a href="dashboard.html#graficos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-chart-line"></i><span>Gráficos</span></a>
+      <a href="dashboard.html#relatorio" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-file-invoice"></i><span>Relatório</span></a>
+      <div class="sidebar-group-label">Investimentos</div>
+      <a href="dashboard.html#investimentos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-seedling"></i><span>Simulador de Renda Fixa</span></a>
+      <a href="carteira-ficticia.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-briefcase"></i><span>Carteira Fictícia</span></a>
+      <a href="cotacoes.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-globe"></i><span>Cotações ao Vivo</span></a>
+      <div class="sidebar-group-label">Finanças Pessoais</div>
+      <a href="controle-dividas.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-hand-holding-dollar"></i><span>Controle de Dívidas</span></a>
+      <a href="regra-50-30-20.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-chart-pie"></i><span>Regra 50-30-20</span></a>
+      <a href="dashboard.html#comparador-credito" class="sidebar-link"><i class="fas fa-scale-balanced"></i><span>Comparador de Crédito</span></a>
+      <a href="desafio-grupo.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-fire"></i><span>Desafio em Grupo</span></a>
+            <div class="sidebar-group-label">Aprendizado</div>
+      <a href="educacao-financeira.html" class="sidebar-link active"><i class="fas fa-graduation-cap"></i><span>Educação Financeira</span></a>
+      <a href="jogos.html" class="sidebar-link"><i class="fas fa-gamepad"></i><span>Jogos</span></a>
+      <a href="finwise-kids.html" class="sidebar-link"><i class="fas fa-child"></i><span>FinWise Kids</span></a>
+    </nav>
+  </aside>
+
+  <!-- HEADER -->
+  <!-- ====== HEADER ====== -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <button class="header-icon-btn menu-toggle-btn" onclick="openSidebar()" title="Menu"><i class="fas fa-bars"></i></button>
+      <div class="logo">Fin<span>Wise</span></div>
+    </div>
+    <!-- Cotações rápidas no header -->
+    <div class="header-tickers" id="header-tickers">
+      <span class="ticker-item"><span class="ticker-label">USD</span><span id="ht-dolar" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">BTC</span><span id="ht-btc" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">IBOV</span><span id="ht-ibov" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">OURO</span><span id="ht-ouro" class="ticker-val">—</span></span>
+    </div>
+    <div class="header-right">
+      <!-- Alertas -->
+      <button class="header-icon-btn" id="alerts-toggle-btn" title="Alertas">
+        <i class="fas fa-bell"></i>
+        <span id="alerts-badge" class="badge-dot" style="display:none">0</span>
+      </button>
+
+      <!-- Dark mode -->
+      <button id="darkModeToggle" class="header-icon-btn dark-mode-toggle" title="Alternar tema">
+        <span class="dark-mode-icon">🌙</span>
+        <span class="light-mode-icon">☀️</span>
+      </button>
+
+      <!-- Usuário -->
+      <div class="user-chip">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <span id="username-display"></span>
+      </div>
+
+      <!-- Sair -->
+      <button id="logout-btn" class="btn btn--danger btn--sm" title="Sair">
+        <i class="fas fa-right-from-bracket"></i>
+        <span class="btn-label">Sair</span>
+      </button>
+    </div>
+    <button id="pwa-install-btn" style="display:none" class="btn btn--ghost btn--sm">
+  <i class="fas fa-download"></i> <span>Instalar app</span>
+</button>
+  </header>
+
+  <!-- Painel de alertas (drawer lateral) -->
+  <aside id="alerts-panel" class="alerts-panel">
+    <div class="alerts-panel-header">
+      <h3><i class="fas fa-bell"></i> Alertas</h3>
+      <button id="alerts-close-btn" class="header-icon-btn">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div id="alerts-list" class="alerts-list"></div>
+  </aside>
+  <div id="alerts-overlay" class="alerts-overlay"></div>
+
+  <main class="dashboard-main">
+    <div class="edu-layout">
+
+      <!-- Page Header -->
+      <div class="edu-page-header">
+        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Voltar ao Dashboard</a>
+        <h1>Educação <span>Financeira</span></h1>
+        <p>Aprenda do zero ao avançado com vídeos, trilhas e um glossário completo.</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="edu-tabs" role="tablist">
+        <button class="edu-tab active" data-tab="videos" role="tab">
+          <i class="fas fa-play-circle"></i> Vídeos por Categoria
+        </button>
+        <button class="edu-tab" data-tab="trilhas" role="tab">
+          <i class="fas fa-route"></i> Trilhas de Aprendizado
+        </button>
+        <button class="edu-tab" data-tab="glossario" role="tab">
+          <i class="fas fa-book-open"></i> Glossário Financeiro
+        </button>
+      </div>
+
+      <!-- ══════════════════════════════════
+           PAINEL: VÍDEOS
+      ══════════════════════════════════ -->
+      <div id="tab-videos" class="tab-panel active">
+        <div class="category-filter" id="categoryFilter">
+          <button class="filter-btn active" data-filter="all">Todos</button>
+          <button class="filter-btn" data-filter="orcamento"><i class="fas fa-wallet"></i> Orçamento</button>
+          <button class="filter-btn" data-filter="investimentos"><i class="fas fa-chart-line"></i> Investimentos</button>
+          <button class="filter-btn" data-filter="dividas"><i class="fas fa-hand-holding-usd"></i> Dívidas</button>
+          <button class="filter-btn" data-filter="renda-fixa"><i class="fas fa-piggy-bank"></i> Renda Fixa</button>
+          <button class="filter-btn" data-filter="acoes"><i class="fas fa-chart-bar"></i> Ações</button>
+        </div>
+
+        <!-- Orçamento -->
+        <section class="category-section" data-category="orcamento">
+          <div class="category-title"><i class="fas fa-wallet"></i> Orçamento e Controle Financeiro</div>
+          <div class="videos-grid">
+            <div class="video-card">
+              <div class="video-embed">
+                <iframe src="https://www.youtube.com/embed/s8j61aYRYxk" title="Orçamento Familiar - Educação Financeira" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              <div class="video-info">
+                <span class="video-tag">Orçamento</span>
+                <h4>Orçamento Familiar: Como Controlar Seus Gastos</h4>
+                <p>Primeiro passo para controlar os gastos e construir uma vida financeira saudável.</p>
+              </div>
+            </div>
+            <div class="video-card">
+              <div class="video-embed">
+                <iframe src="https://www.youtube.com/embed/86bmHSQY7gc" title="Método 50-30-20 Rico" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              <div class="video-info">
+                <span class="video-tag">Orçamento</span>
+                <h4>Método 50-30-20: Organize Suas Finanças</h4>
+                <p>Aprenda a dividir sua renda de forma inteligente com essa regra simples e eficaz.</p>
+              </div>
+            </div>
+            <div class="video-card">
+              <div class="video-embed">
+                <iframe src="https://www.youtube.com/embed/J2Rm7Wsn2A8" title="Orçamento Pessoal e Planejamento Financeiro" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              <div class="video-info">
+                <span class="video-tag">Orçamento</span>
+                <h4>Orçamento Pessoal e Planejamento Financeiro</h4>
+                <p>Como estruturar seu planejamento financeiro do zero com Cesar Bergo.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Investimentos -->
+        <section class="category-section" data-category="investimentos">
+          <div class="category-title"><i class="fas fa-chart-line"></i> Investimentos para Iniciantes</div>
+          <div class="videos-grid">
+            <div class="video-card">
+              <div class="video-embed">
+                <iframe src="https://www.youtube.com/embed/dJyJ77GkhBE" title="Como investir com pouco dinheiro Primo Rico" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              <div class="video-info">
+                <span class="video-tag">Investimentos</span>
+                <h4>Como Começar a Investir com Pouco Dinheiro</h4>
+                <p>O Primo Rico ensina como dar os primeiros passos nos investimentos sem precisar de muito dinheiro.</p>
+              </div>
+            </div>
+            <div class="video-card">
+              <div class="video-embed">
+                <iframe src="https://www.youtube.com/embed/R2NiLXTvk4s" title="Como montar carteira iniciantes Primo Rico" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              <div class="video-info">
+                <span class="video-tag">Investimentos</span>
+                <h4>Como Montar uma Carteira de Investimentos</h4>
+                <p>Passo a passo simples e rápido para montar sua primeira carteira diversificada.</p>
+              </div>
+            </div>
+<div class="video-card">
+  <div class="video-embed">
+    <!-- Tesouro Direto: Como Ganhar com Renda Fixa -->
+<iframe 
+        width="560" 
+        height="315" 
+      src="https://www.youtube.com/embed/3-5Ujc5dyhE"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+    </iframe>
+  </div>
+  <div class="video-info">
+    <span class="video-tag">Renda Fixa</span>
+    <h4>Tesouro Direto: Como Ganhar com Renda Fixa</h4>
+    <p>Entenda como funciona o Tesouro Direto e como aproveitar as melhores oportunidades.</p>
+  </div>
+</div>
+          </div>
+        </section>
+
+        <!-- Renda Fixa -->
+        <section class="category-section" data-category="renda-fixa">
+          <div class="category-title"><i class="fas fa-piggy-bank"></i> Renda Fixa Avançado</div>
+          <div class="videos-grid">
+            <div class="video-card">
+              <div class="video-embed">
+                <iframe src="https://www.youtube.com/embed/pk6b-sO-sdM" title="Como investir em CDB iniciantes Primo Rico" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              <div class="video-info">
+                <span class="video-tag">Renda Fixa</span>
+                <h4>CDB: Aula Completa para Iniciantes</h4>
+                <p>Tudo sobre o Certificado de Depósito Bancário — o que é, como funciona e onde investir.</p>
+              </div>
+            </div>
+            <div class="video-card">
+              <div class="video-embed">
+               <!-- Tesouro Direto, FIIs e Renda Fixa na Prática -->
+<iframe 
+        width="560" 
+        height="315" 
+ src="https://www.youtube.com/embed/lm7agsHFcS8"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+    </iframe>
+              </div>
+              <div class="video-info">
+                <span class="video-tag">Renda Fixa</span>
+                <h4>Tesouro Direto, FIIs e Renda Fixa na Prática</h4>
+                <p>Como distribuir seus primeiros investimentos entre as melhores opções disponíveis.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Ações -->
+        <section class="category-section" data-category="acoes">
+          <div class="category-title"><i class="fas fa-chart-bar"></i> Ações e Bolsa de Valores</div>
+          <div class="videos-grid">
+            <div class="video-card">
+              <div class="video-embed">
+                <iframe src="https://www.youtube.com/embed/PBcLwHklucM" title="Como investir com pouco dinheiro renda variável" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              <div class="video-info">
+                <span class="video-tag">Ações</span>
+                <h4>Como Começar na Bolsa de Valores</h4>
+                <p>Aprenda a investir em renda variável da forma correta, sem cometer os erros mais comuns.</p>
+              </div>
+            </div>
+            <div class="video-card">
+              <div class="video-embed">
+                <iframe src="https://www.youtube.com/embed/IZ3lySZCbms" title="Como o Primo Pobre investe FIIs ações" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+              <div class="video-info">
+                <span class="video-tag">Ações</span>
+                <h4>Fundos Imobiliários (FIIs): Renda Mensal</h4>
+                <p>Invista em imóveis de forma acessível e receba renda mensal sem precisar comprar um imóvel.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Dívidas -->
+        <section class="category-section" data-category="dividas">
+          <div class="category-title"><i class="fas fa-hand-holding-usd"></i> Sair das Dívidas</div>
+          <div class="videos-grid">
+            <div class="video-card">
+  <div class="video-embed">
+   <!-- Como Sair das Dívidas de Vez -->
+<iframe 
+        width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/CX_DQKthhig"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+    </iframe>
+  </div>
+  <div class="video-info">
+    <span class="video-tag">Dívidas</span>
+    <h4>Como Sair das Dívidas de Vez</h4>
+    <p>Método prático para quitar dívidas e nunca mais se endividar.</p>
+  </div>
+</div>
+           <div class="video-card">
+  <div class="video-embed">
+    <!-- Perigos do Cartão de Crédito e Juros Rotativos -->
+<iframe 
+        width="560" 
+        height="315" 
+      src="https://www.youtube.com/embed/yK9g8o5f1BI"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+    </iframe>
+  </div>
+  <div class="video-info">
+    <span class="video-tag">Dívidas</span>
+    <h4>Perigos do Cartão de Crédito e Juros Rotativos</h4>
+    <p>Por que o rotativo do cartão pode destruir suas finanças e como evitar essa armadilha.</p>
+  </div>
+</div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ══════════════════════════════════
+           PAINEL: TRILHAS
+      ══════════════════════════════════ -->
+      <div id="tab-trilhas" class="tab-panel">
+
+        <!-- Overview cards -->
+        <div id="tracksOverview">
+          <p style="color:var(--text-secondary);margin-bottom:1.5rem;font-size:.9rem;">
+            Siga uma trilha sequencial e acompanhe seu progresso. Cada aula desbloqueada ao concluir a anterior.
+          </p>
+          <div class="tracks-overview">
+
+            <!-- Iniciante -->
+            <div class="track-card" style="--track-color:#10b981" data-track="iniciante">
+              <span class="track-badge"><i class="fas fa-seedling"></i> Iniciante</span>
+              <h3>Fundamentos Financeiros</h3>
+              <p>Para quem quer começar do zero. Orçamento, controle de gastos e primeiros passos.</p>
+              <div class="track-meta">
+                <span><i class="fas fa-book-open"></i> 6 aulas</span>
+                <span><i class="fas fa-clock"></i> ~90 min</span>
+              </div>
+              <div class="track-progress">
+                <div class="progress-label">
+                  <span id="prog-label-iniciante">Progresso</span>
+                  <span id="prog-pct-iniciante">0%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="prog-fill-iniciante" style="width:0%"></div></div>
+              </div>
+            </div>
+
+            <!-- Intermediário -->
+            <div class="track-card" style="--track-color:#f59e0b" data-track="intermediario">
+              <span class="track-badge intermediario"><i class="fas fa-chart-line"></i> Intermediário</span>
+              <h3>Investimentos na Prática</h3>
+              <p>Renda fixa, Tesouro Direto, CDB, LCI/LCA e como montar uma carteira diversificada.</p>
+              <div class="track-meta">
+                <span><i class="fas fa-book-open"></i> 7 aulas</span>
+                <span><i class="fas fa-clock"></i> ~110 min</span>
+              </div>
+              <div class="track-progress">
+                <div class="progress-label">
+                  <span id="prog-label-intermediario">Progresso</span>
+                  <span id="prog-pct-intermediario">0%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="prog-fill-intermediario" style="width:0%;background:linear-gradient(90deg,#f59e0b,#d97706)"></div></div>
+              </div>
+            </div>
+
+            <!-- Avançado -->
+            <div class="track-card" style="--track-color:#ef4444" data-track="avancado">
+              <span class="track-badge avancado"><i class="fas fa-rocket"></i> Avançado</span>
+              <h3>Liberdade Financeira</h3>
+              <p>Ações, FIIs, renda variável, análise fundamentalista e independência financeira.</p>
+              <div class="track-meta">
+                <span><i class="fas fa-book-open"></i> 8 aulas</span>
+                <span><i class="fas fa-clock"></i> ~130 min</span>
+              </div>
+              <div class="track-progress">
+                <div class="progress-label">
+                  <span id="prog-label-avancado">Progresso</span>
+                  <span id="prog-pct-avancado">0%</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="prog-fill-avancado" style="width:0%;background:linear-gradient(90deg,#ef4444,#dc2626)"></div></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Track detail views -->
+        <div id="trackDetail" class="track-detail">
+          <div class="track-detail-header">
+            <button class="back-to-tracks" id="backToTracks">
+              <i class="fas fa-arrow-left"></i> Trilhas
+            </button>
+            <h2 class="track-detail-title" id="trackDetailTitle">Trilha</h2>
+          </div>
+          <div id="lessonsList" class="lessons-list"></div>
+        </div>
+
+      </div>
+
+      <!-- ══════════════════════════════════
+           PAINEL: GLOSSÁRIO
+      ══════════════════════════════════ -->
+      <div id="tab-glossario" class="tab-panel">
+        <div class="glossary-search-wrap">
+          <i class="fas fa-search"></i>
+          <input type="text" class="glossary-search" id="glossarySearch" placeholder="Pesquisar termos: CDI, IPCA, FGC…">
+        </div>
+
+        <div class="glossary-alpha" id="glossaryAlpha"></div>
+
+        <div id="glossaryList"></div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   DADOS
+══════════════════════════════════════════════════════ */
+const TRACKS = {
+  iniciante: {
+    label: 'Fundamentos Financeiros',
+    badge: 'Iniciante',
+    color: '#10b981',
+    lessons: [
+      { id:'i1', title:'Por que organizar suas finanças?', desc:'A importância do controle financeiro na vida prática.', duration:'12 min', videoId:'s8j61aYRYxk' },
+      { id:'i2', title:'Orçamento Familiar na Prática', desc:'Como estruturar o orçamento da família do zero.', duration:'15 min', videoId:'J2Rm7Wsn2A8' },
+      { id:'i3', title:'Método 50-30-20 explicado', desc:'Divida sua renda de forma inteligente com essa regra.', duration:'14 min', videoId:'86bmHSQY7gc' },
+      { id:'i4', title:'Reserva de emergência: o que é e quanto guardar', desc:'Por que ter uma reserva e como construí-la passo a passo.', duration:'15 min', videoId:'dJyJ77GkhBE' },
+      { id:'i5', title:'Como começar a investir com pouco', desc:'Estratégias acessíveis para os primeiros passos no mundo dos investimentos.', duration:'16 min', videoId:'PBcLwHklucM' },
+      { id:'i6', title:'Saindo das dívidas: primeiro passo', desc:'Estratégia para quitar dívidas e nunca mais se endividar.', duration:'18 min', videoId:'aJsV4A-Wuio' },
+    ]
+  },
+  intermediario: {
+    label: 'Investimentos na Prática',
+    badge: 'Intermediário',
+    color: '#f59e0b',
+    lessons: [
+      { id:'m1', title:'Como montar uma carteira de investimentos', desc:'Passo a passo simples para diversificar seus recursos.', duration:'14 min', videoId:'R2NiLXTvk4s' },
+      { id:'m2', title:'Tesouro Direto e Renda Fixa em 2025', desc:'Como ganhar dinheiro com Tesouro Direto e as melhores estratégias.', duration:'13 min', videoId:'3-5Ujc5dyhE' },
+      { id:'m3', title:'CDB: Aula Completa para Iniciantes', desc:'Tudo sobre o CDB — o que é, como funciona e onde investir.', duration:'16 min', videoId:'pk6b-sO-sdM' },
+      { id:'m4', title:'Tesouro Direto, FIIs e Renda Fixa na Prática', desc:'Como distribuir seus investimentos entre as melhores opções.', duration:'18 min', videoId:'_g_gJF9ZOLc' },
+      { id:'m5', title:'Corretora Rico: CDB e Investimentos', desc:'Como acessar CDBs com até 400% do CDI e outras oportunidades.', duration:'16 min', videoId:'P2RuqT11Xxk' },
+      { id:'m6', title:'Orçamento 50-30-20 para investidores', desc:'Como usar o método para garantir sempre os 20% de investimento.', duration:'10 min', videoId:'86bmHSQY7gc' },
+      { id:'m7', title:'Do Mil ao Milhão: Estratégia Completa', desc:'A estratégia do Primo Rico para acumular patrimônio partindo do zero.', duration:'17 min', videoId:'dJyJ77GkhBE' },
+    ]
+  },
+  avancado: {
+    label: 'Liberdade Financeira',
+    badge: 'Avançado',
+    color: '#ef4444',
+    lessons: [
+      { id:'a1', title:'Como investir com pouco — do jeito certo', desc:'Estratégias avançadas para quem quer crescer o patrimônio rapidamente.', duration:'15 min', videoId:'PBcLwHklucM' },
+      { id:'a2', title:'Fundos Imobiliários (FIIs): Renda Mensal', desc:'Como os FIIs funcionam e como selecionar os melhores para sua carteira.', duration:'18 min', videoId:'IZ3lySZCbms' },
+      { id:'a3', title:'Primeiros Investimentos: Tesouro, FIIs e Fiagro', desc:'Estratégia completa para quem quer renda passiva diversificada.', duration:'20 min', videoId:'_g_gJF9ZOLc' },
+      { id:'a4', title:'Marcação a Mercado no Tesouro Direto', desc:'Como lucrar com a variação de preços do Tesouro Direto.', duration:'16 min', videoId:'3-5Ujc5dyhE' },
+      { id:'a5', title:'Carteira Completa de Investimentos', desc:'Como estruturar uma carteira profissional equilibrada e rentável.', duration:'14 min', videoId:'R2NiLXTvk4s' },
+      { id:'a6', title:'CDB com Liquidez Diária: Vale a Pena?', desc:'Análise das melhores opções de CDB disponíveis no mercado.', duration:'13 min', videoId:'P2RuqT11Xxk' },
+      { id:'a7', title:'Como o Primo Pobre Investe seu Dinheiro', desc:'Estratégia real de um investidor focado em FIIs e renda fixa.', duration:'17 min', videoId:'IZ3lySZCbms' },
+      { id:'a8', title:'Independência financeira: construindo seu caminho', desc:'Como calcular sua meta de liberdade financeira e criar um plano real.', duration:'19 min', videoId:'dJyJ77GkhBE' },
+    ]
+  }
+};
+
+const GLOSSARY = [
+  // B
+  { term:'B3', full:'Bolsa, Balcão, Brasil', category:'Mercado', def:'A B3 é a bolsa de valores brasileira, onde são negociadas ações, fundos imobiliários, ETFs e outros títulos. É uma das maiores bolsas da América Latina.', example:'Você compra ações da Petrobras ou do Itaú diretamente na B3.', tip:'A B3 funciona em dias úteis das 10h às 17h30 (horário de Brasília).' },
+  // C
+  { term:'CDB', full:'Certificado de Depósito Bancário', category:'Renda Fixa', def:'Título emitido por bancos para captar dinheiro. Quando você investe num CDB, está emprestando dinheiro para o banco, que paga juros em troca. Tem cobertura do FGC.', example:'Se o CDB rende 110% do CDI e o CDI está em 10,5% ao ano, você ganha aproximadamente 11,55% ao ano.', tip:'Compare a rentabilidade em diferentes bancos — fintechs costumam oferecer CDBs com taxas maiores que os bancos tradicionais.' },
+  { term:'CDI', full:'Certificado de Depósito Interbancário', category:'Indicador', def:'Taxa de referência usada nas operações de empréstimo entre bancos. É muito próxima da Selic e serve como principal benchmarking da renda fixa. Quase todo investimento de renda fixa é comparado ao CDI.', example:'Se o CDI está em 10,5% ao ano e seu CDB rende 100% do CDI, você ganha 10,5% ao ano.', tip:'Procure sempre investimentos que rendam acima de 100% do CDI para ter um retorno real.' },
+  // F
+  { term:'FGC', full:'Fundo Garantidor de Crédito', category:'Proteção', def:'Entidade privada que protege os investidores em caso de falência de uma instituição financeira. Garante até R$ 250.000 por CPF por instituição (limite global de R$ 1 milhão).', example:'Se um banco quebre e você tinha R$ 200.000 em CDB lá, o FGC devolve tudo. Se tinha R$ 300.000, recebe somente R$ 250.000.', tip:'Distribua seus investimentos entre diferentes bancos se tiver valores acima de R$ 250.000.' },
+  { term:'FII', full:'Fundo de Investimento Imobiliário', category:'Investimentos', def:'Fundo que investe em imóveis ou papéis ligados ao setor imobiliário. Distribuem aluguéis mensalmente (isentos de IR para pessoa física) e são negociados na B3 como ações.', example:'Com R$ 100, você pode comprar uma cota de um FII e receber sua parte proporcional do aluguel de um shopping ou galpão logístico todo mês.', tip:'Os rendimentos mensais dos FIIs são isentos de IR para pessoa física — uma grande vantagem fiscal.' },
+  // I
+  { term:'IPCA', full:'Índice de Preços ao Consumidor Amplo', category:'Indicador', def:'Principal índice de inflação do Brasil, calculado pelo IBGE. Mede a variação de preços de uma cesta de produtos e serviços consumidos pelas famílias. É a meta oficial de inflação do Banco Central.', example:'Se o IPCA foi de 4,5% no ano e seu investimento rendeu 6%, seu ganho real foi de aproximadamente 1,5%.', tip:'Sempre compare o retorno dos seus investimentos com o IPCA. Se seu dinheiro render menos que a inflação, você está perdendo poder de compra.' },
+  { term:'IR', full:'Imposto de Renda', category:'Tributação', def:'Imposto federal sobre os rendimentos de investimentos. A alíquota diminui conforme o prazo: 22,5% até 180 dias, 20% de 181 a 360 dias, 17,5% de 361 a 720 dias e 15% acima de 720 dias.', example:'Se você ganhou R$ 1.000 em um CDB com prazo de 2 anos, pagará 15% = R$ 150 de IR, ficando com R$ 850 líquidos.', tip:'Quanto mais tempo você mantiver o investimento, menor o IR. LCI e LCA são isentos de IR para pessoa física.' },
+  // L
+  { term:'LCA', full:'Letra de Crédito do Agronegócio', category:'Renda Fixa', def:'Título emitido por bancos para financiar o setor do agronegócio. Tem isenção de IR para pessoa física, o que aumenta bastante a rentabilidade líquida. Conta com proteção do FGC.', example:'Uma LCA rendendo 90% do CDI pode ser mais vantajosa que um CDB de 105% do CDI quando se compara o rendimento líquido após IR.', tip:'Ao comparar LCI/LCA com CDB, sempre converta para rentabilidade equivalente líquida de IR.' },
+  { term:'LCI', full:'Letra de Crédito Imobiliário', category:'Renda Fixa', def:'Título emitido por bancos para financiar o setor imobiliário. Como a LCA, tem isenção total de IR para pessoa física e proteção do FGC até R$ 250.000.', example:'Um banco pode oferecer LCI a 88% do CDI. Com isenção de IR, isso pode equivaler a cerca de 103% do CDI em um CDB tributado.', tip:'LCI e LCA geralmente exigem prazo mínimo de 90 dias sem resgate. Verifique a liquidez antes de investir.' },
+  // S
+  { term:'Selic', full:'Sistema Especial de Liquidação e de Custódia', category:'Indicador', def:'Taxa básica de juros da economia brasileira, definida pelo Banco Central a cada 45 dias. Serve de referência para todos os juros da economia — crédito, investimentos e inflação.', example:'Quando a Selic sobe, os investimentos em renda fixa como CDB e Tesouro Selic ficam mais atrativos. Quando cai, a renda variável tende a ser mais interessante.', tip:'Acompanhe as reuniões do COPOM (a cada 45 dias) para saber a direção da taxa Selic e tomar decisões melhores de investimento.' },
+  // T
+  { term:'Tesouro Direto', full:'Programa Tesouro Direto', category:'Renda Fixa', def:'Programa do Tesouro Nacional que permite a pessoas físicas comprarem títulos públicos pela internet a partir de R$ 30. É considerado o investimento mais seguro do Brasil, com garantia do governo federal.', example:'Com R$ 100 no Tesouro Selic, você recebe aproximadamente a Selic ao ano. Com R$ 100 no Tesouro IPCA+, garante a inflação + uma taxa prefixada.', tip:'O Tesouro Selic tem liquidez diária — ideal para reserva de emergência. O Tesouro IPCA+ é melhor para objetivos de longo prazo.' },
+  // V
+  { term:'VPA', full:'Valor Patrimonial por Ação', category:'Análise', def:'Valor contábil de cada ação de uma empresa. Calculado dividindo o patrimônio líquido da empresa pelo número de ações. Usado para avaliar se uma ação está cara ou barata.', example:'Se o patrimônio líquido da empresa é R$ 1 bilhão e ela tem 100 milhões de ações, o VPA é R$ 10. Se a ação está cotada a R$ 8, ela pode estar barata (P/VPA < 1).', tip:'Para FIIs, é comum analisar o P/VP: se menor que 1, o fundo está sendo negociado abaixo do valor dos seus ativos.' },
+  // D
+  { term:'Dividendos', full:'Dividendos', category:'Renda Variável', def:'Parte do lucro de uma empresa distribuída aos acionistas. No Brasil, ao menos 25% do lucro líquido deve ser distribuído como dividendos. São isentos de IR para pessoa física.', example:'Se você tem 100 ações de uma empresa e ela declara R$ 2 de dividendo por ação, você recebe R$ 200 livres de imposto.', tip:'Empresas de setores como energia elétrica, bancos e saneamento costumam pagar dividendos consistentes ao longo dos anos.' },
+  // E
+  { term:'ETF', full:'Exchange Traded Fund', category:'Investimentos', def:'Fundo de índice negociado na bolsa como se fosse uma ação. Replica um índice (como o Ibovespa) e permite diversificação com baixo custo e de forma simples.', example:'Comprando uma cota do BOVA11, você investe em todas as ações do Ibovespa de uma vez, com taxa de administração de apenas 0,10% ao ano.', tip:'ETFs são uma das formas mais eficientes de diversificar para investidores iniciantes, com custos muito menores que fundos tradicionais.' },
+  // P
+  { term:'P/L', full:'Preço sobre Lucro', category:'Análise', def:'Indicador que mostra quantos anos levaria para recuperar o valor investido em uma ação, considerando o lucro atual. Quanto menor o P/L, mais barata a ação está em relação ao seu lucro.', example:'Se uma ação custa R$ 30 e a empresa lucra R$ 3 por ação ao ano, o P/L é 10x. Isso significa que demoraria 10 anos para "recuperar" o investimento apenas com lucros.', tip:'Não use o P/L isolado. Compare com empresas do mesmo setor e analise o histórico de crescimento dos lucros.' },
+  // R
+  { term:'Rentabilidade Real', full:'Rentabilidade Real', category:'Conceito', def:'É o ganho de um investimento depois de descontada a inflação (IPCA). Mostra quanto seu dinheiro realmente cresceu em poder de compra.', example:'Se seu investimento rendeu 12% e a inflação foi 5%, a rentabilidade real foi de aproximadamente 6,7% (e não 7%, devido ao efeito composto).', tip:'Sempre avalie seus investimentos pela rentabilidade real. Um rendimento de 8% com inflação de 9% significa que você está perdendo dinheiro.' },
+];
+
+/* ══════════════════════════════════════════════════════
+   PROGRESSO (localStorage)
+══════════════════════════════════════════════════════ */
+const STORAGE_KEY = 'finwise_track_progress';
+
+function getProgress() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+}
+function saveProgress(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+function markLesson(trackId, lessonId) {
+  const p = getProgress();
+  if (!p[trackId]) p[trackId] = [];
+  if (!p[trackId].includes(lessonId)) p[trackId].push(lessonId);
+  saveProgress(p);
+}
+function isCompleted(trackId, lessonId) {
+  const p = getProgress();
+  return (p[trackId] || []).includes(lessonId);
+}
+function completedCount(trackId) {
+  return (getProgress()[trackId] || []).length;
+}
+
+/* ══════════════════════════════════════════════════════
+   TABS
+══════════════════════════════════════════════════════ */
+document.querySelectorAll('.edu-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.edu-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ══════════════════════════════════════════════════════
+   VÍDEOS: FILTRO
+══════════════════════════════════════════════════════ */
+document.getElementById('categoryFilter').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filter = btn.dataset.filter;
+  document.querySelectorAll('.category-section').forEach(sec => {
+    sec.style.display = (filter === 'all' || sec.dataset.category === filter) ? '' : 'none';
+  });
+});
+
+/* ══════════════════════════════════════════════════════
+   TRILHAS
+══════════════════════════════════════════════════════ */
+let currentTrack = null;
+let currentLesson = null;
+
+function updateTrackCards() {
+  Object.keys(TRACKS).forEach(tid => {
+    const track = TRACKS[tid];
+    const done = completedCount(tid);
+    const total = track.lessons.length;
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const fillEl = document.getElementById('prog-fill-' + tid);
+    const pctEl = document.getElementById('prog-pct-' + tid);
+    if (fillEl) fillEl.style.width = pct + '%';
+    if (pctEl) pctEl.textContent = pct + '%';
+  });
+}
+
+function renderLessons(trackId) {
+  const track = TRACKS[trackId];
+  const progress = getProgress();
+  const done = progress[trackId] || [];
+  const list = document.getElementById('lessonsList');
+
+  list.innerHTML = track.lessons.map((lesson, idx) => {
+    const completed = done.includes(lesson.id);
+    const unlocked = idx === 0 || done.includes(track.lessons[idx - 1].id);
+    const isCurrent = unlocked && !completed;
+
+    let stateClass = 'locked';
+    let iconClass = 'lock';
+    let iconHtml = '<i class="fas fa-lock lesson-status-icon lock"></i>';
+    if (completed) {
+      stateClass = 'completed';
+      iconHtml = '<i class="fas fa-check-circle lesson-status-icon done"></i>';
+    } else if (unlocked) {
+      stateClass = isCurrent ? 'current' : '';
+      iconHtml = '<i class="fas fa-play-circle lesson-status-icon play"></i>';
+    }
+
+    const numHtml = completed
+      ? '<i class="fas fa-check" style="font-size:.75rem"></i>'
+      : (idx + 1);
+
+    return `
+      <div class="lesson-item ${stateClass}" data-lesson-idx="${idx}" data-lesson-id="${lesson.id}" data-unlocked="${unlocked}" data-completed="${completed}">
+        <div class="lesson-num">${numHtml}</div>
+        <div class="lesson-info">
+          <h4>${lesson.title}</h4>
+          <p>${lesson.desc}</p>
+        </div>
+        <div class="lesson-duration"><i class="fas fa-clock"></i> ${lesson.duration}</div>
+        ${iconHtml}
+      </div>
+    `;
+  }).join('');
+
+  // Click handler
+  list.querySelectorAll('.lesson-item').forEach(item => {
+    item.addEventListener('click', () => {
+      if (item.dataset.unlocked === 'false') {
+        showToast('⚠️ Conclua a aula anterior primeiro!', '#f59e0b');
+        return;
+      }
+      const lessonIdx = parseInt(item.dataset.lessonIdx);
+      const lesson = track.lessons[lessonIdx];
+      openVideoModal(trackId, lesson);
+    });
+  });
+}
+
+function openTrack(trackId) {
+  currentTrack = trackId;
+  const track = TRACKS[trackId];
+  document.getElementById('tracksOverview').style.display = 'none';
+  const detail = document.getElementById('trackDetail');
+  detail.classList.add('active');
+  document.getElementById('trackDetailTitle').innerHTML =
+    `Trilha <span>${track.badge}</span>: ${track.label}`;
+  renderLessons(trackId);
+}
+
+document.querySelectorAll('.track-card').forEach(card => {
+  card.addEventListener('click', () => openTrack(card.dataset.track));
+});
+
+document.getElementById('backToTracks').addEventListener('click', () => {
+  document.getElementById('tracksOverview').style.display = '';
+  document.getElementById('trackDetail').classList.remove('active');
+  updateTrackCards();
+  currentTrack = null;
+});
+
+/* ══════════════════════════════════════════════════════
+   VIDEO MODAL
+══════════════════════════════════════════════════════ */
+const modal = document.getElementById('videoModal');
+const modalIframe = document.getElementById('modalIframe');
+const modalTitle = document.getElementById('modalTitle');
+
+function openVideoModal(trackId, lesson) {
+  currentLesson = { trackId, lesson };
+  modalTitle.textContent = lesson.title;
+  modalIframe.src = `https://www.youtube.com/embed/${lesson.videoId}?autoplay=1`;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  const markBtn = document.getElementById('modalMarkDone');
+  const alreadyDone = isCompleted(trackId, lesson.id);
+  markBtn.innerHTML = alreadyDone
+    ? '<i class="fas fa-check-double"></i> Já concluída!'
+    : '<i class="fas fa-check"></i> Marcar como concluída';
+  markBtn.disabled = alreadyDone;
+  markBtn.style.opacity = alreadyDone ? '.6' : '';
+}
+
+function closeVideoModal() {
+  modalIframe.src = '';
+  modal.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.getElementById('modalCloseBtn').addEventListener('click', closeVideoModal);
+document.getElementById('modalCloseBtn2').addEventListener('click', closeVideoModal);
+modal.addEventListener('click', e => { if (e.target === modal) closeVideoModal(); });
+
+document.getElementById('modalMarkDone').addEventListener('click', () => {
+  if (!currentLesson) return;
+  const { trackId, lesson } = currentLesson;
+  markLesson(trackId, lesson.id);
+  closeVideoModal();
+  const track = TRACKS[trackId];
+  const done = completedCount(trackId);
+  const total = track.lessons.length;
+  const pct = Math.round((done / total) * 100);
+  showToast(`✅ Aula concluída! ${done}/${total} (${pct}%)`);
+  renderLessons(trackId);
+  updateTrackCards();
+});
+
+/* ══════════════════════════════════════════════════════
+   GLOSSÁRIO
+══════════════════════════════════════════════════════ */
+function buildGlossary(items) {
+  const grouped = {};
+  items.forEach(item => {
+    const letter = item.term[0].toUpperCase();
+    if (!grouped[letter]) grouped[letter] = [];
+    grouped[letter].push(item);
+  });
+
+  const sortedLetters = Object.keys(grouped).sort();
+
+  const container = document.getElementById('glossaryList');
+  container.innerHTML = '';
+
+  if (items.length === 0) {
+    container.innerHTML = '<div class="no-results"><i class="fas fa-search"></i><p>Nenhum termo encontrado. Tente outra busca.</p></div>';
+    return;
+  }
+
+  sortedLetters.forEach(letter => {
+    const group = document.createElement('div');
+    group.className = 'glossary-letter-group';
+    group.dataset.letter = letter;
+    group.innerHTML = `<div class="glossary-letter">${letter}</div>`;
+
+    grouped[letter].forEach(item => {
+      const card = document.createElement('div');
+      card.className = 'term-card';
+      card.innerHTML = `
+        <div class="term-header">
+          <div class="term-header-left">
+            <span class="term-acronym">${item.term}</span>
+            <span class="term-name">${item.full}</span>
+          </div>
+          <span class="term-category-tag">${item.category}</span>
+          <i class="fas fa-chevron-down term-chevron"></i>
+        </div>
+        <div class="term-body">
+          <p class="term-definition">${item.def}</p>
+          <div class="term-example">
+            <strong><i class="fas fa-lightbulb"></i> Exemplo prático</strong>
+            <p>${item.example}</p>
+          </div>
+          ${item.tip ? `<div class="term-tip"><i class="fas fa-info-circle"></i><span><strong>Dica:</strong> ${item.tip}</span></div>` : ''}
+        </div>
+      `;
+      card.querySelector('.term-header').addEventListener('click', () => {
+        const isOpen = card.classList.contains('open');
+        document.querySelectorAll('.term-card.open').forEach(c => c.classList.remove('open'));
+        if (!isOpen) card.classList.add('open');
+      });
+      group.appendChild(card);
+    });
+
+    container.appendChild(group);
+  });
+}
+
+// Alphabet buttons
+const allLetters = [...new Set(GLOSSARY.map(g => g.term[0].toUpperCase()))].sort();
+const alphaContainer = document.getElementById('glossaryAlpha');
+const allBtn = document.createElement('button');
+allBtn.className = 'alpha-btn active';
+allBtn.textContent = 'Todos';
+allBtn.dataset.letter = 'all';
+alphaContainer.appendChild(allBtn);
+allLetters.forEach(l => {
+  const btn = document.createElement('button');
+  btn.className = 'alpha-btn';
+  btn.textContent = l;
+  btn.dataset.letter = l;
+  alphaContainer.appendChild(btn);
+});
+
+alphaContainer.addEventListener('click', e => {
+  const btn = e.target.closest('.alpha-btn');
+  if (!btn) return;
+  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const letter = btn.dataset.letter;
+  document.getElementById('glossarySearch').value = '';
+  if (letter === 'all') {
+    buildGlossary(GLOSSARY);
+  } else {
+    buildGlossary(GLOSSARY.filter(g => g.term[0].toUpperCase() === letter));
+  }
+});
+
+// Search
+document.getElementById('glossarySearch').addEventListener('input', e => {
+  const q = e.target.value.toLowerCase().trim();
+  document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+  allBtn.classList.add('active');
+  if (!q) {
+    buildGlossary(GLOSSARY);
+    return;
+  }
+  const filtered = GLOSSARY.filter(g =>
+    g.term.toLowerCase().includes(q) ||
+    g.full.toLowerCase().includes(q) ||
+    g.def.toLowerCase().includes(q) ||
+    g.category.toLowerCase().includes(q)
+  );
+  buildGlossary(filtered);
+  // Auto-open matching cards after short delay
+  setTimeout(() => {
+    document.querySelectorAll('.term-card').forEach(card => card.classList.add('open'));
+  }, 50);
+});
+
+// Initial render
+buildGlossary(GLOSSARY);
+
+/* ══════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════ */
+function showToast(msg, color) {
+  const toast = document.getElementById('progressToast');
+  const msgEl = document.getElementById('toastMsg');
+  msgEl.textContent = msg;
+  if (color) toast.style.background = color;
+  else toast.style.background = '';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+/* ══════════════════════════════════════════════════════
+   DARK MODE
+══════════════════════════════════════════════════════ */
+const darkBtn = document.getElementById('darkModeToggle');
+const html = document.documentElement;
+const saved = localStorage.getItem('finwise_theme') || localStorage.getItem('theme');
+if (saved) html.setAttribute('data-theme', saved);
+
+darkBtn?.addEventListener('click', () => {
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('finwise_theme', next);
+  localStorage.setItem('theme', next);
+});
+
+/* ══════════════════════════════════════════════════════
+   USERNAME E LOGOUT (igual ao dashboard)
+══════════════════════════════════════════════════════ */
+const usernameDisplay = document.getElementById('username-display');
+if (usernameDisplay) {
+  const storedName = localStorage.getItem('finwise_username') || localStorage.getItem('username') || '';
+  usernameDisplay.textContent = storedName;
+}
+
+document.getElementById('logout-btn')?.addEventListener('click', () => {
+  localStorage.removeItem('finwise_username');
+  localStorage.removeItem('username');
+  window.location.href = '../login/login.html';
+});
+
+/* ══════════════════════════════════════════════════════
+   PAINEL DE ALERTAS (abre/fecha igual ao dashboard)
+══════════════════════════════════════════════════════ */
+const alertsPanel = document.getElementById('alerts-panel');
+const alertsOverlay = document.getElementById('alerts-overlay');
+
+document.getElementById('alerts-toggle-btn')?.addEventListener('click', () => {
+  alertsPanel?.classList.toggle('open');
+  alertsOverlay?.classList.toggle('open');
+});
+document.getElementById('alerts-close-btn')?.addEventListener('click', () => {
+  alertsPanel?.classList.remove('open');
+  alertsOverlay?.classList.remove('open');
+});
+alertsOverlay?.addEventListener('click', () => {
+  alertsPanel?.classList.remove('open');
+  alertsOverlay?.classList.remove('open');
+});
+
+/* ══════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════ */
+updateTrackCards();
+
+// Helper to open video modal from static card thumbnails
+function openCardVideo(id, title, videoId, duration) {
+  openVideoModal('static', { id, title, videoId, duration });
+}
+</script>
+<script>
+// ====== COTAÇÕES HEADER TICKERS ======
+(function(){
+  const BASE = {
+    dolar:   { valor:5.74,   var7:[-0.8,-0.4,+0.2,+0.5,-0.3,+0.1,-0.2] },
+    bitcoin: { valor:102340, var7:[-2.1,+3.4,-1.5,+5.2,-0.8,+1.9,-0.6] },
+    ibov:    { valor:133850, var7:[-0.4,+0.7,-0.2,+1.1,-0.5,+0.3,+0.8] },
+    ouro:    { valor:19840,  var7:[+0.3,-0.2,+0.5,+0.8,-0.1,+0.2,-0.3] },
+  };
+  function gerar() {
+    const r = {};
+    Object.entries(BASE).forEach(([k,b]) => {
+      const varDia = (Math.random()-0.48)*b.valor*0.018;
+      r[k] = { val: b.valor+varDia, pct: (varDia/b.valor)*100 };
+    });
+    return r;
+  }
+  function fmt(v,prefix) {
+    const s = v>=10000 ? v.toLocaleString('pt-BR',{maximumFractionDigits:0})
+                       : v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return prefix+s;
+  }
+  function render(dados) {
+    [['ht-dolar','dolar','R$'],['ht-btc','bitcoin','R$'],['ht-ibov','ibov',''],['ht-ouro','ouro','R$']]
+    .forEach(([id,k,pre]) => {
+      const el = document.getElementById(id); if(!el||!dados[k]) return;
+      const d = dados[k];
+      el.textContent = fmt(d.val,pre)+' ('+(d.pct>=0?'+':'')+d.pct.toFixed(1)+'%)';
+      el.className = 'ticker-val '+(d.pct>=0?'up':'down');
+    });
+  }
+  let dados = gerarDados();
+  function gerarDados() { return gerar(); }
+  dados = gerarDados();
+  render(dados);
+  setInterval(()=>{ dados=gerarDados(); render(dados); }, 30000);
+})();
+</script>
+<script>
+// ====== SIDEBAR MENU ======
+(function() {
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  window.openSidebar = openSidebar;
+  window.closeSidebar = closeSidebar;
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+})();
+</script>
+</body>
+</html>

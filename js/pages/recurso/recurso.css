@@ -1,0 +1,122 @@
+/* Herda todas as variáveis do style.css */
+.resource-hero {
+    background: linear-gradient(135deg, var(--hero-gradient-start) 0%, var(--hero-gradient-end) 100%);
+    padding: 8rem 2rem;
+    color: white;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+}
+
+.resource-hero .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.resource-hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.resource-hero .hero-description {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    opacity: 0.9;
+}
+
+.highlight {
+    color: var(--secondary-color);
+}
+
+/* Tools Section */
+.resource-tools {
+    padding: 5rem 0;
+    background-color: var(--background-color);
+}
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.tool-card {
+    background-color: var(--card-background);
+    border-radius: 15px;
+    padding: 2.5rem;
+    box-shadow: var(--card-shadow);
+    transition: all var(--transition-speed);
+    text-align: center;
+    border-bottom: 4px solid transparent;
+}
+
+.tool-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--card-shadow-hover);
+    border-bottom-color: var(--secondary-color);
+}
+
+.tool-icon {
+    font-size: 3rem;
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+    display: inline-block;
+}
+
+.tool-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+}
+
+.tool-card p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 0.8rem 1.8rem;
+    border-radius: 50px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+    display: inline-block;
+    text-decoration: none;
+}
+
+.btn-outline:hover {
+    background-color: var(--secondary-color);
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(102, 204, 153, 0.3);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .resource-hero {
+        padding: 6rem 1rem;
+        min-height: 50vh;
+    }
+    
+    .resource-hero h1 {
+        font-size: 2.5rem;
+    }
+    
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Dark Mode - Herdado automaticamente pelas variáveis CSS */

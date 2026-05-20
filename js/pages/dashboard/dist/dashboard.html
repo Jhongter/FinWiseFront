@@ -1,0 +1,3887 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinWise — Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard-style.css">
+  <script src="pwa-init.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <link rel="icon" type="image/x-icon" href="../../../../favicon.ico">
+</head>
+<body>
+
+<!-- Spinner global -->
+<div id="global-spinner" class="global-spinner" style="display:none">
+  <div class="spinner-ring"></div>
+</div>
+
+<div class="dashboard-container">
+
+  <!-- ====== HEADER ====== -->
+  <!-- SIDEBAR NAV (menu hambúrguer) -->
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside id="sidebar" class="sidebar-nav">
+    <div class="sidebar-header">
+      <div class="logo sidebar-logo">Fin<span>Wise</span></div>
+      <button class="sidebar-close-btn" onclick="closeSidebar()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="sidebar-group-label">Principal</div>
+      <a href="#resumo" class="sidebar-link active" data-section="resumo" onclick="closeSidebar()">
+        <i class="fas fa-house"></i><span>Início</span>
+      </a>
+      <a href="#metas" class="sidebar-link" data-section="metas" onclick="closeSidebar()">
+        <i class="fas fa-bullseye"></i><span>Metas</span>
+      </a>
+      <a href="#graficos" class="sidebar-link" data-section="graficos" onclick="closeSidebar()">
+        <i class="fas fa-chart-line"></i><span>Gráficos</span>
+      </a>
+      <a href="#relatorio" class="sidebar-link" data-section="relatorio" onclick="closeSidebar()">
+        <i class="fas fa-file-invoice"></i><span>Relatório</span>
+      </a>
+      <div class="sidebar-group-label">Investimentos</div>
+      <a href="#investimentos" class="sidebar-link" data-section="investimentos" onclick="closeSidebar()">
+        <i class="fas fa-seedling"></i><span>Simulador de Renda Fixa</span>
+      </a>
+      <a href="#investimentos" class="sidebar-link" data-section="investimentos" onclick="closeSidebar();setTimeout(()=>document.getElementById('calc-juros-card').scrollIntoView({behavior:'smooth'}),200)">
+        <i class="fas fa-percent"></i><span>Juros Compostos</span>
+      </a>
+      <a href="#investimentos" class="sidebar-link" data-section="investimentos" onclick="closeSidebar();setTimeout(()=>document.getElementById('financ-card').scrollIntoView({behavior:'smooth'}),200)">
+        <i class="fas fa-home"></i><span>Financiamento SAC vs Price</span>
+      </a>
+      <a href="carteira-ficticia.html" class="sidebar-link" onclick="closeSidebar()">
+        <i class="fas fa-briefcase"></i><span>Carteira Fictícia</span>
+      </a>
+      <a href="cotacoes.html" class="sidebar-link">
+        <i class="fas fa-globe"></i><span>Cotações ao Vivo</span>
+      </a>
+      <a href="#investimentos" class="sidebar-link" data-section="investimentos" onclick="closeSidebar();setTimeout(()=>document.getElementById('aposentadoria-card').scrollIntoView({behavior:'smooth'}),200)">
+        <i class="fas fa-umbrella-beach"></i><span>Planejador de Aposentadoria</span>
+      </a>
+      <div class="sidebar-group-label">Finanças Pessoais</div>
+      <a href="controle-dividas.html" class="sidebar-link" onclick="closeSidebar()">
+        <i class="fas fa-hand-holding-dollar"></i><span>Controle de Dívidas</span>
+      </a>
+      <a href="regra-50-30-20.html" class="sidebar-link" onclick="closeSidebar()">
+        <i class="fas fa-chart-pie"></i><span>Regra 50-30-20</span>
+      </a>
+      <a href="#comparador-credito" class="sidebar-link" data-section="comparador-credito" onclick="closeSidebar()">
+        <i class="fas fa-scale-balanced"></i><span>Comparador de Crédito</span>
+      </a>
+      <a href="desafio-grupo.html" class="sidebar-link" onclick="closeSidebar()">
+        <i class="fas fa-fire"></i><span>Desafio em Grupo</span>
+      </a>
+      <div class="sidebar-group-label">Aprendizado</div>
+      <div class="sidebar-group-label">Aprendizado</div>
+      <div class="sidebar-group-label">IA Financeira</div>
+<a href="#ia-financeira" class="sidebar-link" data-section="ia-financeira" onclick="closeSidebar()">
+  <i class="fas fa-brain"></i><span>Plano 90 Dias com IA</span>
+</a>
+<a href="#ia-financeira" class="sidebar-link" data-section="ia-financeira" onclick="closeSidebar();setTimeout(()=>document.getElementById('ia-noticias-card').scrollIntoView({behavior:'smooth'}),200)">
+  <i class="fas fa-newspaper"></i><span>Notícias com Contexto</span>
+</a>
+<a href="#ia-financeira" class="sidebar-link" data-section="ia-financeira" onclick="closeSidebar();setTimeout(()=>document.getElementById('ia-padroes-card').scrollIntoView({behavior:'smooth'}),200)">
+  <i class="fas fa-chart-bar"></i><span>Padrões de Gastos</span>
+</a>
+      <a href="educacao-financeira.html" class="sidebar-link">
+        <i class="fas fa-graduation-cap"></i><span>Educação Financeira</span>
+      </a>
+      <a href="jogos.html" class="sidebar-link">
+        <i class="fas fa-gamepad"></i><span>Jogos</span>
+      </a>
+      <a href="finwise-kids.html" class="sidebar-link">
+        <i class="fas fa-child"></i><span>FinWise Kids</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user-info">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <span id="sidebar-username" style="font-size:.85rem;font-weight:500"></span>
+      </div>
+    </div>
+  </aside>
+
+  <header class="dashboard-header">
+    <div class="header-left">
+      <button id="menu-toggle-btn" class="header-icon-btn menu-toggle-btn" onclick="openSidebar()" title="Menu">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="logo">Fin<span>Wise</span></div>
+    </div>
+    <!-- Cotações rápidas no header -->
+    <div class="header-tickers" id="header-tickers">
+      <span class="ticker-item"><span class="ticker-label">USD</span><span id="ht-dolar" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">BTC</span><span id="ht-btc" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">IBOV</span><span id="ht-ibov" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">OURO</span><span id="ht-ouro" class="ticker-val">—</span></span>
+    </div>
+    <div class="header-right">
+      <!-- Alertas -->
+      <button class="header-icon-btn" id="alerts-toggle-btn" title="Alertas">
+        <i class="fas fa-bell"></i>
+        <span id="alerts-badge" class="badge-dot" style="display:none">0</span>
+      </button>
+
+      <!-- Dark mode -->
+      <button id="darkModeToggle" class="header-icon-btn dark-mode-toggle" title="Alternar tema">
+        <span class="dark-mode-icon">🌙</span>
+        <span class="light-mode-icon">☀️</span>
+      </button>
+
+      <!-- Usuário -->
+      <div class="user-chip">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <span id="username-display"></span>
+      </div>
+
+      <!-- Sair -->
+       <!-- Exportar Excel -->
+<button id="btn-exportar-excel" class="btn btn--ghost btn--sm" title="Exportar dados para Excel" onclick="exportarParaExcel()">
+  <i class="fas fa-file-excel" style="color:#217346"></i>
+  <span class="btn-label">Exportar .xlsx</span>
+</button>
+      <button id="logout-btn" class="btn btn--danger btn--sm" title="Sair">
+        <i class="fas fa-right-from-bracket"></i>
+        <span class="btn-label">Sair</span>
+      </button>
+    </div>
+    <button id="pwa-install-btn" style="display:none" class="btn btn--ghost btn--sm">
+  <i class="fas fa-download"></i> <span>Instalar app</span>
+</button>
+  </header>
+
+  <!-- ====== PAINEL DE ALERTAS (drawer lateral) ====== -->
+  <aside id="alerts-panel" class="alerts-panel">
+    <div class="alerts-panel-header">
+      <h3><i class="fas fa-bell"></i> Alertas</h3>
+      <button id="alerts-close-btn" class="header-icon-btn">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+    <div id="alerts-list" class="alerts-list"></div>
+  </aside>
+  <div id="alerts-overlay" class="alerts-overlay"></div>
+
+  <!-- ====== MAIN ====== -->
+  <main class="dashboard-main" id="main-content">
+
+    <!-- ── SEÇÃO RESUMO ── -->
+    <section id="resumo" class="dash-section">
+
+      <!-- Cards de métricas -->
+      <div class="metrics-row">
+        <div class="metric-card metric-card--income">
+          <div class="metric-icon"><i class="fas fa-arrow-trend-up"></i></div>
+          <div class="metric-info">
+            <span class="metric-label">Receitas do mês</span>
+            <span class="metric-value" id="total-income">R$ 0,00</span>
+          </div>
+        </div>
+        <div class="metric-card metric-card--expense">
+          <div class="metric-icon"><i class="fas fa-arrow-trend-down"></i></div>
+          <div class="metric-info">
+            <span class="metric-label">Despesas do mês</span>
+            <span class="metric-value" id="total-expenses">R$ 0,00</span>
+          </div>
+        </div>
+        <div class="metric-card metric-card--balance">
+          <div class="metric-icon"><i class="fas fa-scale-balanced"></i></div>
+          <div class="metric-info">
+            <span class="metric-label">Saldo disponível</span>
+            <span class="metric-value" id="balance-amount">R$ 0,00</span>
+          </div>
+          <span id="balance-status" class="badge badge--neutral">Neutro</span>
+        </div>
+        <div class="metric-card metric-card--salary">
+          <div class="metric-icon"><i class="fas fa-wallet"></i></div>
+          <div class="metric-info">
+            <span class="metric-label">Salário atual</span>
+            <span class="metric-value" id="current-salary">R$ 0,00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Linha: Atualizar salário + Nova transação -->
+      <div class="forms-row">
+
+        <!-- Salário -->
+        <div class="card">
+          <div class="card-head">
+            <h3><i class="fas fa-wallet"></i> Atualizar Salário</h3>
+          </div>
+          <form id="salary-form" class="salary-form">
+            <div class="input-group">
+              <input type="number" id="salary-input" placeholder="R$ 0,00" min="0" step="0.01">
+              <button type="submit" class="btn btn--primary">
+                <i class="fas fa-sync-alt"></i> Atualizar
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Nova transação -->
+        <div class="card card--wide">
+          <div class="card-head">
+           <h3><i class="fas fa-plus-circle"></i> Nova Transação</h3>
+<button type="button" class="btn btn--ghost btn--sm" id="btn-importar-extrato">
+  <i class="fas fa-file-upload"></i> Importar extrato
+</button>
+          </div>
+          <form id="transaction-form" class="transaction-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="transaction-type">Tipo</label>
+                <select id="transaction-type">
+                  <option value="income">Receita</option>
+                  <option value="expense">Despesa</option>
+                </select>
+              </div>
+              <div class="form-group form-group--span2">
+                <label for="transaction-desc">Descrição</label>
+                <input type="text" id="transaction-desc" placeholder="Ex: Supermercado, Salário..." required>
+              </div>
+              <div class="form-group">
+                <label for="transaction-amount">Valor (R$)</label>
+                <input type="number" id="transaction-amount" placeholder="0,00" min="0" step="0.01" required>
+              </div>
+              <div class="form-group">
+                <label for="transaction-category">Categoria</label>
+                <select id="transaction-category">
+                  <option value="alimentacao">Alimentação</option>
+                  <option value="moradia">Moradia</option>
+                  <option value="transporte">Transporte</option>
+                  <option value="lazer">Lazer</option>
+                  <option value="saude">Saúde</option>
+                  <option value="educacao">Educação</option>
+                  <option value="outros">Outros</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="transaction-date">Data</label>
+                <input type="date" id="transaction-date" required>
+              </div>
+              <div class="form-group form-group--submit">
+                <button type="submit" class="btn btn--primary btn--full">
+                  <i class="fas fa-plus"></i> Adicionar
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Lista de transações -->
+      <div class="card">
+        <div class="card-head">
+          <h3><i class="fas fa-list-ul"></i> Últimas Transações</h3>
+        </div>
+        <ul id="transaction-list" class="transaction-list"></ul>
+      </div>
+    </section>
+
+    <!-- ── SEÇÃO METAS ── -->
+    <section id="metas" class="dash-section">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Minhas Metas</h2>
+          <p class="section-sub">Defina objetivos e acompanhe seu progresso</p>
+        </div>
+        <button id="new-goal-btn" class="btn btn--primary">
+          <i class="fas fa-plus"></i> Nova Meta
+        </button>
+      </div>
+      <div id="goals-list" class="goals-grid"></div>
+    </section>
+
+    <!-- ── SEÇÃO GRÁFICOS ── -->
+    <section id="graficos" class="dash-section">
+      <h2 class="section-title">Análise Visual</h2>
+      <div class="charts-grid">
+        <div class="card chart-card">
+          <div class="card-head">
+            <h3><i class="fas fa-chart-line"></i> Evolução Financeira</h3>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="evolution-chart"></canvas>
+          </div>
+        </div>
+        <div class="card chart-card">
+          <div class="card-head">
+            <h3><i class="fas fa-chart-pie"></i> Distribuição de Gastos</h3>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="expenses-chart"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SEÇÃO RELATÓRIO MENSAL ── -->
+    <section id="relatorio" class="dash-section">
+      <h2 class="section-title">Relatório Mensal</h2>
+      <div class="card">
+        <div id="monthly-report-container" class="monthly-report"></div>
+      </div>
+    </section>
+
+    <!-- ── SEÇÃO INVESTIMENTOS ── -->
+    <section id="investimentos" class="dash-section">
+      <h2 class="section-title">Investimentos</h2>
+      <div class="investments-grid">
+
+        <!-- Simulador de Renda Fixa -->
+        <div class="card">
+          <div class="card-head">
+            <h3><i class="fas fa-calculator"></i> Simulador de Renda Fixa</h3>
+          </div>
+          <form id="investment-form">
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="initial-amount">Valor inicial (R$)</label>
+                <input type="number" id="initial-amount" value="1000" min="0" step="100">
+              </div>
+              <div class="form-group">
+                <label for="investment-months">Prazo (meses)</label>
+                <input type="number" id="investment-months" value="12" min="1" max="360">
+              </div>
+              <div class="form-group form-group--span2">
+                <label for="investment-type">Tipo de investimento</label>
+                <select id="investment-type">
+                  <option value="selic">Tesouro SELIC (10,15% a.a.)</option>
+                  <option value="cdb">CDB (12% a.a.)</option>
+                  <option value="lci">LCI/LCA (8,5% a.a. isento IR)</option>
+                  <option value="tesouro">Tesouro IPCA+ (IPCA+5,5%)</option>
+                  <option value="poupanca">Poupança (6,17% a.a.)</option>
+                </select>
+              </div>
+              <div class="form-group form-group--span2">
+                <button type="submit" class="btn btn--primary btn--full">
+                  <i class="fas fa-play"></i> Simular
+                </button>
+              </div>
+            </div>
+          </form>
+          <div class="simulation-result" id="sim-result-block" style="display:none">
+            <div class="sim-item">
+              <span>Valor investido</span>
+              <strong id="invested-amount" class="sim-value">R$ 0,00</strong>
+            </div>
+            <div class="sim-item">
+              <span>Valor final</span>
+              <strong id="final-amount" class="sim-value sim-value--positive">R$ 0,00</strong>
+            </div>
+            <div class="sim-item">
+              <span>Rendimento bruto</span>
+              <strong id="earnings-amount" class="sim-value sim-value--positive">R$ 0,00</strong>
+            </div>
+            <div class="sim-item">
+              <span>Imposto de Renda</span>
+              <strong id="ir-amount" class="sim-value" style="color:var(--danger,#e53935)">R$ 0,00</strong>
+            </div>
+            <div class="sim-item" style="border-top:1px solid var(--border);padding-top:.6rem;margin-top:.2rem">
+              <span><strong>Rendimento líquido</strong></span>
+              <strong id="net-earnings" class="sim-value sim-value--positive" style="font-size:1.1rem">R$ 0,00</strong>
+            </div>
+            <div class="sim-item">
+              <span>Rentabilidade total</span>
+              <strong id="pct-return" class="sim-value sim-value--positive">0,00%</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comparador de Investimentos -->
+        <div class="card">
+          <div class="card-head">
+            <h3><i class="fas fa-scale-balanced"></i> Comparador de Investimentos</h3>
+          </div>
+          <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">Quanto rende R$ X em Y meses em diferentes aplicações?</p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Valor (R$)</label>
+              <input type="number" id="cmp-valor" value="5000" min="0" step="500">
+            </div>
+            <div class="form-group">
+              <label>Prazo (meses)</label>
+              <input type="number" id="cmp-meses" value="24" min="1" max="360">
+            </div>
+            <div class="form-group form-group--span2">
+              <button class="btn btn--primary btn--full" onclick="compararInvestimentos()">
+                <i class="fas fa-chart-bar"></i> Comparar agora
+              </button>
+            </div>
+          </div>
+          <div id="comparador-resultado" style="display:none;margin-top:1rem">
+            <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:.6rem;text-align:right" id="cmp-titulo"></div>
+            <div id="cmp-bars"></div>
+            <div style="font-size:.75rem;color:var(--text-muted);margin-top:.8rem">
+              ⚠️ Rendimentos com IR descontado conforme tabela regressiva. LCI/LCA isentas de IR. Poupança sem IR.
+            </div>
+          </div>
+        </div>
+
+        <!-- Dicas -->
+        <div class="card">
+          <div class="card-head">
+            <h3><i class="fas fa-lightbulb"></i> Dicas Financeiras</h3>
+          </div>
+          <div class="tips-list">
+            <div class="tip-item">
+              <div class="tip-icon">🛡️</div>
+              <div>
+                <h4>Reserva de Emergência</h4>
+                <p>Mantenha 6 meses de despesas em investimentos com liquidez imediata (Tesouro Selic ou CDB diário).</p>
+              </div>
+            </div>
+            <div class="tip-item">
+              <div class="tip-icon">🎯</div>
+              <div>
+                <h4>Regra 50-30-20</h4>
+                <p>Destine 50% para necessidades, 30% para desejos e 20% para poupança e investimentos.</p>
+              </div>
+            </div>
+            <div class="tip-item">
+              <div class="tip-icon">📈</div>
+              <div>
+                <h4>Invista no longo prazo</h4>
+                <p>Para objetivos acima de 5 anos, considere ações ou fundos de índice para maior rentabilidade.</p>
+              </div>
+            </div>
+            <div class="tip-item">
+              <div class="tip-icon">🔀</div>
+              <div>
+                <h4>Diversifique</h4>
+                <p>Não concentre tudo em um único investimento. Misture renda fixa, variável e imóveis.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ CALCULADORA DE JUROS COMPOSTOS ═══ -->
+        <div class="card" id="calc-juros-card">
+          <div class="card-head">
+            <h3><i class="fas fa-percent"></i> Calculadora de Juros Compostos</h3>
+          </div>
+          <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">Simule o crescimento do seu capital com aportes mensais e visualize mês a mês.</p>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="jc-capital">Capital inicial (R$)</label>
+              <input type="number" id="jc-capital" value="1000" min="0" step="100">
+            </div>
+            <div class="form-group">
+              <label for="jc-aporte">Aporte mensal (R$)</label>
+              <input type="number" id="jc-aporte" value="500" min="0" step="50">
+            </div>
+            <div class="form-group">
+              <label for="jc-taxa">Taxa de juros (% a.m.)</label>
+              <input type="number" id="jc-taxa" value="0.83" min="0.01" step="0.01">
+            </div>
+            <div class="form-group">
+              <label for="jc-periodo">Período (meses)</label>
+              <input type="number" id="jc-periodo" value="24" min="1" max="600">
+            </div>
+            <div class="form-group form-group--span2">
+              <button class="btn btn--primary btn--full" onclick="calcularJurosCompostos()">
+                <i class="fas fa-chart-line"></i> Calcular
+              </button>
+            </div>
+          </div>
+
+          <!-- Resultado resumo -->
+          <div id="jc-result" style="display:none;margin-top:1rem">
+            <div class="simulation-result" style="margin-bottom:1rem">
+              <div class="sim-item">
+                <span>Capital inicial</span>
+                <strong id="jc-res-capital" class="sim-value">R$ 0,00</strong>
+              </div>
+              <div class="sim-item">
+                <span>Total aportado</span>
+                <strong id="jc-res-aportes" class="sim-value">R$ 0,00</strong>
+              </div>
+              <div class="sim-item">
+                <span>Juros acumulados</span>
+                <strong id="jc-res-juros" class="sim-value sim-value--positive">R$ 0,00</strong>
+              </div>
+              <div class="sim-item" style="border-top:1px solid var(--border);padding-top:.6rem;margin-top:.2rem">
+                <span><strong>Montante final</strong></span>
+                <strong id="jc-res-total" class="sim-value sim-value--positive" style="font-size:1.1rem">R$ 0,00</strong>
+              </div>
+              <div class="sim-item">
+                <span>Rentabilidade total</span>
+                <strong id="jc-res-pct" class="sim-value sim-value--positive">0,00%</strong>
+              </div>
+            </div>
+            <!-- Mini gráfico de barras empilhadas -->
+            <div style="font-size:.75rem;font-weight:600;color:var(--text-secondary);margin-bottom:.4rem">Evolução do patrimônio</div>
+            <div style="height:140px;position:relative">
+              <canvas id="jc-chart"></canvas>
+            </div>
+            <!-- Tabela resumida -->
+            <details style="margin-top:.8rem">
+              <summary style="font-size:.78rem;font-weight:600;color:var(--text-secondary);cursor:pointer;padding:.3rem 0">Ver tabela detalhada</summary>
+              <div style="overflow-x:auto;margin-top:.5rem;max-height:220px;overflow-y:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:.75rem">
+                  <thead>
+                    <tr style="background:var(--surface-alt)">
+                      <th style="padding:.35rem .5rem;text-align:left;color:var(--text-muted);font-weight:600">Mês</th>
+                      <th style="padding:.35rem .5rem;text-align:right;color:var(--text-muted);font-weight:600">Saldo</th>
+                      <th style="padding:.35rem .5rem;text-align:right;color:var(--text-muted);font-weight:600">Juros mês</th>
+                      <th style="padding:.35rem .5rem;text-align:right;color:var(--text-muted);font-weight:600">Juros acum.</th>
+                    </tr>
+                  </thead>
+                  <tbody id="jc-tabela"></tbody>
+                </table>
+              </div>
+            </details>
+          </div>
+        </div>
+
+        <!-- ═══ SIMULADOR DE FINANCIAMENTO SAC vs PRICE ═══ -->
+        <div class="card" id="financ-card" style="grid-column: 1 / -1">
+          <div class="card-head">
+            <h3><i class="fas fa-home"></i> Simulador de Financiamento — SAC vs Price</h3>
+          </div>
+          <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">Compare as duas tabelas de amortização mais usadas no Brasil. SAC tem parcelas decrescentes; Price tem parcelas fixas.</p>
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fin-valor">Valor financiado (R$)</label>
+              <input type="number" id="fin-valor" value="300000" min="1000" step="1000">
+            </div>
+            <div class="form-group">
+              <label for="fin-taxa">Taxa de juros (% a.m.)</label>
+              <input type="number" id="fin-taxa" value="0.83" min="0.01" step="0.01">
+            </div>
+            <div class="form-group">
+              <label for="fin-prazo">Prazo (meses)</label>
+              <input type="number" id="fin-prazo" value="360" min="12" max="600">
+            </div>
+            <div class="form-group form-group--span2">
+              <button class="btn btn--primary btn--full" onclick="simularFinanciamento()">
+                <i class="fas fa-calculator"></i> Simular financiamento
+              </button>
+            </div>
+          </div>
+
+          <!-- Resultado comparativo -->
+          <div id="fin-result" style="display:none;margin-top:1.2rem">
+            <!-- Cards comparativos -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.2rem">
+              <!-- SAC -->
+              <div style="background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(16,185,129,.04));border:1.5px solid rgba(16,185,129,.3);border-radius:var(--radius-lg);padding:1rem">
+                <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green-600);margin-bottom:.6rem">🏦 SAC — Amortização Constante</div>
+                <div class="sim-item"><span style="font-size:.82rem">1ª parcela</span><strong id="sac-p1" style="color:var(--green-500)">—</strong></div>
+                <div class="sim-item"><span style="font-size:.82rem">Última parcela</span><strong id="sac-pn">—</strong></div>
+                <div class="sim-item"><span style="font-size:.82rem">Total pago</span><strong id="sac-total">—</strong></div>
+                <div class="sim-item" style="border-top:1px solid rgba(16,185,129,.2);padding-top:.5rem;margin-top:.3rem">
+                  <span style="font-size:.82rem">Total de juros</span>
+                  <strong id="sac-juros" style="color:#e53935">—</strong>
+                </div>
+              </div>
+              <!-- Price -->
+              <div style="background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(59,130,246,.03));border:1.5px solid rgba(59,130,246,.25);border-radius:var(--radius-lg);padding:1rem">
+                <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#2563eb;margin-bottom:.6rem">📐 Price — Parcela Fixa</div>
+                <div class="sim-item"><span style="font-size:.82rem">Parcela fixa</span><strong id="price-parcela" style="color:#3b82f6">—</strong></div>
+                <div class="sim-item"><span style="font-size:.82rem">Amort. 1º mês</span><strong id="price-amort1">—</strong></div>
+                <div class="sim-item"><span style="font-size:.82rem">Total pago</span><strong id="price-total">—</strong></div>
+                <div class="sim-item" style="border-top:1px solid rgba(59,130,246,.2);padding-top:.5rem;margin-top:.3rem">
+                  <span style="font-size:.82rem">Total de juros</span>
+                  <strong id="price-juros" style="color:#e53935">—</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- Diferença em destaque -->
+            <div id="fin-diff" style="text-align:center;padding:.7rem;background:rgba(16,185,129,.07);border-radius:8px;font-size:.85rem;color:var(--text-secondary);margin-bottom:1.2rem"></div>
+
+            <!-- Gráfico comparativo -->
+            <div style="font-size:.75rem;font-weight:600;color:var(--text-secondary);margin-bottom:.4rem">Evolução do saldo devedor</div>
+            <div style="height:180px;position:relative;margin-bottom:1rem">
+              <canvas id="fin-chart"></canvas>
+            </div>
+
+            <!-- Tabs SAC / Price / Comparativo -->
+            <div style="display:flex;gap:.4rem;margin-bottom:.8rem;flex-wrap:wrap">
+              <button class="fin-tab-btn active" id="ftab-sac" onclick="showFinTab('sac')">Tabela SAC</button>
+              <button class="fin-tab-btn" id="ftab-price" onclick="showFinTab('price')">Tabela Price</button>
+            </div>
+            <style>
+              .fin-tab-btn {
+                padding:.4rem 1rem;font-size:.78rem;font-weight:600;border:1.5px solid var(--border);
+                border-radius:999px;background:none;cursor:pointer;color:var(--text-secondary);transition:.2s;
+              }
+              .fin-tab-btn.active {
+                background:var(--green-500);color:#fff;border-color:var(--green-500);
+              }
+            </style>
+            <div style="overflow-x:auto;max-height:260px;overflow-y:auto">
+              <table style="width:100%;border-collapse:collapse;font-size:.75rem" id="fin-tabela">
+                <thead>
+                  <tr style="background:var(--surface-alt);position:sticky;top:0">
+                    <th style="padding:.4rem .5rem;text-align:left;color:var(--text-muted);font-weight:600">Mês</th>
+                    <th style="padding:.4rem .5rem;text-align:right;color:var(--text-muted);font-weight:600">Parcela</th>
+                    <th style="padding:.4rem .5rem;text-align:right;color:var(--text-muted);font-weight:600">Amortização</th>
+                    <th style="padding:.4rem .5rem;text-align:right;color:var(--text-muted);font-weight:600">Juros</th>
+                    <th style="padding:.4rem .5rem;text-align:right;color:var(--text-muted);font-weight:600">Saldo devedor</th>
+                  </tr>
+                </thead>
+                <tbody id="fin-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ PLANEJADOR DE APOSENTADORIA COM INSS ═══ -->
+        <div class="card" id="aposentadoria-card" style="grid-column: 1 / -1">
+          <div class="card-head">
+            <h3><i class="fas fa-umbrella-beach"></i> Planejador de Aposentadoria — INSS + Investimentos</h3>
+          </div>
+          <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1.2rem">Calcule sua aposentadoria considerando o benefício do INSS e quanto precisa investir para complementar a renda desejada.</p>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-bottom:1rem">
+            <div class="form-group">
+              <label for="apos-idade-atual">Idade atual</label>
+              <input type="number" id="apos-idade-atual" value="30" min="16" max="70">
+            </div>
+            <div class="form-group">
+              <label for="apos-idade-apos">Idade de aposentadoria</label>
+              <input type="number" id="apos-idade-apos" value="65" min="55" max="80">
+            </div>
+            <div class="form-group">
+              <label for="apos-expectativa">Expectativa de vida</label>
+              <input type="number" id="apos-expectativa" value="85" min="70" max="100">
+            </div>
+            <div class="form-group">
+              <label for="apos-salario">Salário atual (R$)</label>
+              <input type="number" id="apos-salario" value="3000" min="0" step="100">
+            </div>
+            <div class="form-group">
+              <label for="apos-renda-desejada">Renda mensal desejada na aposentadoria (R$)</label>
+              <input type="number" id="apos-renda-desejada" value="5000" min="0" step="100">
+            </div>
+            <div class="form-group">
+              <label for="apos-patrimonio">Patrimônio investido atual (R$)</label>
+              <input type="number" id="apos-patrimonio" value="0" min="0" step="1000">
+            </div>
+            <div class="form-group">
+              <label for="apos-rentabilidade">Rentabilidade real esperada (% a.a.)</label>
+              <input type="number" id="apos-rentabilidade" value="6" min="1" max="20" step="0.5">
+            </div>
+            <div class="form-group">
+              <label for="apos-tempo-contrib">Tempo de contribuição INSS (anos)</label>
+              <input type="number" id="apos-tempo-contrib" value="10" min="0" max="45">
+            </div>
+          </div>
+
+          <!-- Tipo de contribuição INSS -->
+          <div style="background:var(--surface-alt);border-radius:var(--radius-md);padding:1rem;margin-bottom:1.2rem">
+            <div style="font-size:.8rem;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.7rem">🏛️ Categoria INSS</div>
+            <div style="display:flex;gap:.6rem;flex-wrap:wrap" id="apos-categoria-btns">
+              <button class="apos-cat-btn active" data-cat="empregado" onclick="selecionarCategoria('empregado')">👔 Empregado CLT</button>
+              <button class="apos-cat-btn" data-cat="autonomo" onclick="selecionarCategoria('autonomo')">🧑‍💼 Autônomo (20%)</button>
+              <button class="apos-cat-btn" data-cat="facultativo" onclick="selecionarCategoria('facultativo')">📋 Facultativo (Plano Simples 5%)</button>
+              <button class="apos-cat-btn" data-cat="mei" onclick="selecionarCategoria('mei')">🏪 MEI (5% do salário mínimo)</button>
+            </div>
+          </div>
+
+          <button class="btn btn--primary" style="width:100%;margin-bottom:1.2rem" onclick="calcularAposentadoria()">
+            <i class="fas fa-calculator"></i> Calcular Planejamento
+          </button>
+
+          <!-- Resultado -->
+          <div id="apos-result" style="display:none">
+
+            <!-- Resumo INSS -->
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.8rem;margin-bottom:1.2rem">
+              <div style="background:linear-gradient(135deg,rgba(0,102,153,.12),rgba(0,102,153,.04));border:1.5px solid rgba(0,102,153,.25);border-radius:var(--radius-lg);padding:1rem">
+                <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--brand-primary);margin-bottom:.5rem">🏛️ Benefício INSS</div>
+                <div style="font-size:1.4rem;font-weight:700;color:var(--brand-primary)" id="apos-beneficio-inss">R$ 0</div>
+                <div style="font-size:.72rem;color:var(--text-muted);margin-top:.2rem" id="apos-beneficio-tipo">estimado</div>
+              </div>
+              <div style="background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(16,185,129,.04));border:1.5px solid rgba(16,185,129,.3);border-radius:var(--radius-lg);padding:1rem">
+                <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--green-600);margin-bottom:.5rem">💰 Renda Complementar Necessária</div>
+                <div style="font-size:1.4rem;font-weight:700;color:var(--green-500)" id="apos-complemento">R$ 0</div>
+                <div style="font-size:.72rem;color:var(--text-muted);margin-top:.2rem">por mês</div>
+              </div>
+              <div style="background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(245,158,11,.04));border:1.5px solid rgba(245,158,11,.3);border-radius:var(--radius-lg);padding:1rem">
+                <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--amber-500);margin-bottom:.5rem">🎯 Patrimônio Alvo</div>
+                <div style="font-size:1.4rem;font-weight:700;color:var(--amber-500)" id="apos-patrimonio-alvo">R$ 0</div>
+                <div style="font-size:.72rem;color:var(--text-muted);margin-top:.2rem">para gerar a renda complementar</div>
+              </div>
+              <div style="background:linear-gradient(135deg,rgba(59,130,246,.1),rgba(59,130,246,.04));border:1.5px solid rgba(59,130,246,.25);border-radius:var(--radius-lg);padding:1rem">
+                <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#2563eb;margin-bottom:.5rem">📅 Aporte Mensal Necessário</div>
+                <div style="font-size:1.4rem;font-weight:700;color:#3b82f6" id="apos-aporte-mensal">R$ 0</div>
+                <div style="font-size:.72rem;color:var(--text-muted);margin-top:.2rem">por mês a partir de hoje</div>
+              </div>
+            </div>
+
+            <!-- Detalhes INSS -->
+            <div style="background:var(--surface-alt);border-radius:var(--radius-md);padding:1rem;margin-bottom:1.2rem">
+              <div style="font-size:.8rem;font-weight:700;color:var(--text-secondary);margin-bottom:.8rem">📋 Detalhes da contribuição INSS</div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.5rem" id="apos-inss-detalhes"></div>
+              <div style="font-size:.72rem;color:var(--text-muted);margin-top:.7rem;padding-top:.7rem;border-top:1px solid var(--border)" id="apos-inss-obs"></div>
+            </div>
+
+            <!-- Gráfico de evolução do patrimônio -->
+            <div style="font-size:.75rem;font-weight:600;color:var(--text-secondary);margin-bottom:.4rem">📈 Evolução do patrimônio acumulado</div>
+            <div style="height:180px;position:relative;margin-bottom:1.2rem">
+              <canvas id="apos-chart"></canvas>
+            </div>
+
+            <!-- Tabela resumida por décadas -->
+            <details style="margin-bottom:.8rem">
+              <summary style="font-size:.78rem;font-weight:600;color:var(--text-secondary);cursor:pointer;padding:.3rem 0">📊 Ver projeção detalhada (por ano)</summary>
+              <div style="overflow-x:auto;margin-top:.6rem;max-height:260px;overflow-y:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:.75rem">
+                  <thead>
+                    <tr style="background:var(--surface-alt);position:sticky;top:0">
+                      <th style="padding:.4rem .5rem;text-align:left;color:var(--text-muted);font-weight:600">Ano</th>
+                      <th style="padding:.4rem .5rem;text-align:right;color:var(--text-muted);font-weight:600">Idade</th>
+                      <th style="padding:.4rem .5rem;text-align:right;color:var(--text-muted);font-weight:600">Aporte anual</th>
+                      <th style="padding:.4rem .5rem;text-align:right;color:var(--text-muted);font-weight:600">Rendimento</th>
+                      <th style="padding:.4rem .5rem;text-align:right;color:var(--text-muted);font-weight:600">Patrimônio</th>
+                    </tr>
+                  </thead>
+                  <tbody id="apos-tabela"></tbody>
+                </table>
+              </div>
+            </details>
+
+            <!-- Alerta/dica final -->
+            <div id="apos-alerta" style="padding:.8rem 1rem;border-radius:var(--radius-md);font-size:.82rem;line-height:1.5"></div>
+          </div>
+        </div>
+
+        <style>
+          .apos-cat-btn {
+            padding:.4rem .9rem;font-size:.78rem;font-weight:600;
+            border:1.5px solid var(--border);border-radius:999px;
+            background:none;cursor:pointer;color:var(--text-secondary);
+            transition:.2s;
+          }
+          .apos-cat-btn.active {
+            background:var(--brand-primary);color:#fff;border-color:var(--brand-primary);
+          }
+          .apos-det-item {
+            display:flex;flex-direction:column;gap:.15rem;
+            background:var(--surface);border-radius:var(--radius-sm);
+            padding:.5rem .7rem;
+          }
+          .apos-det-label { font-size:.72rem;color:var(--text-muted); }
+          .apos-det-value { font-size:.88rem;font-weight:600;color:var(--text-primary); }
+        </style>
+
+      </div>
+    </section>
+
+  <!-- ====== SEÇÃO CONTROLE DE DÍVIDAS ====== -->
+  <section id="dividas" class="dash-section" style="display:none">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title"><i class="fas fa-hand-holding-dollar"></i> Controle de Dívidas</h2>
+        <p class="section-sub">Compare as estratégias Bola de Neve e Avalanche para quitar suas dívidas mais rápido</p>
+      </div>
+    </div>
+
+    <style>
+      .dividas-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.4rem; }
+      @media(max-width:768px){ .dividas-grid { grid-template-columns:1fr; } }
+      .divida-table { width:100%; border-collapse:collapse; font-size:.88rem; }
+      .divida-table th { background:var(--surface-alt); padding:.6rem .8rem; text-align:left; font-weight:600; color:var(--text-secondary); font-size:.8rem; text-transform:uppercase; letter-spacing:.03em; }
+      .divida-table td { padding:.6rem .8rem; border-bottom:1px solid var(--border); vertical-align:middle; }
+      .divida-table tr:last-child td { border-bottom:none; }
+      .divida-table .btn-icon { background:none;border:none;cursor:pointer;color:var(--red-500);padding:.2rem .4rem; font-size:.9rem; }
+      .estrategia-card { border:2px solid var(--border); border-radius:var(--radius-md); padding:1rem; }
+      .estrategia-card.active-strat { border-color:var(--green-500); background:var(--green-50); }
+      [data-theme="dark"] .estrategia-card.active-strat { background:rgba(16,185,129,.08); }
+      .strat-badge { display:inline-block; padding:.15rem .5rem; border-radius:20px; font-size:.75rem; font-weight:600; }
+      .strat-badge--snow { background:#dbeafe; color:#1d4ed8; }
+      .strat-badge--aval { background:#fee2e2; color:#b91c1c; }
+      [data-theme="dark"] .strat-badge--snow { background:#1e3a5f; color:#93c5fd; }
+      [data-theme="dark"] .strat-badge--aval { background:#4b1c1c; color:#fca5a5; }
+      .ordem-item { display:flex; align-items:center; gap:.6rem; padding:.5rem .7rem; border-radius:var(--radius-sm); border:1px solid var(--border); margin-bottom:.5rem; font-size:.85rem; }
+      .ordem-num { width:22px; height:22px; border-radius:50%; background:var(--brand-primary); color:#fff; display:flex;align-items:center;justify-content:center; font-size:.72rem; font-weight:700; flex-shrink:0; }
+      .ordem-item.first-pay { border-color:var(--green-500); background:var(--green-50); }
+      [data-theme="dark"] .ordem-item.first-pay { background:rgba(16,185,129,.08); }
+      .resultado-box { display:grid; grid-template-columns:repeat(3,1fr); gap:.8rem; margin-top:1rem; }
+      @media(max-width:600px){ .resultado-box { grid-template-columns:1fr 1fr; } }
+      .res-stat { text-align:center; padding:.8rem; background:var(--surface-alt); border-radius:var(--radius-sm); }
+      .res-stat strong { display:block; font-size:1.05rem; color:var(--text-primary); margin-top:.2rem; }
+      .res-stat span { font-size:.76rem; color:var(--text-secondary); }
+      .progresso-divida { height:8px; background:var(--border); border-radius:4px; overflow:hidden; margin-top:.3rem; }
+      .progresso-divida-fill { height:100%; border-radius:4px; background:var(--brand-primary); transition:width .5s; }
+    </style>
+
+    <div class="card" style="margin-bottom:1.4rem">
+      <div class="card-head">
+        <h3><i class="fas fa-plus-circle"></i> Adicionar Dívida</h3>
+      </div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:.8rem;align-items:end">
+        <div class="input-group" style="flex-direction:column;align-items:flex-start;gap:.3rem">
+          <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500">Nome da dívida</label>
+          <input type="text" id="dv-nome" placeholder="Ex: Cartão Nubank" style="width:100%">
+        </div>
+        <div class="input-group" style="flex-direction:column;align-items:flex-start;gap:.3rem">
+          <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500">Saldo devedor (R$)</label>
+          <input type="number" id="dv-saldo" placeholder="5000" min="0" step="0.01" style="width:100%">
+        </div>
+        <div class="input-group" style="flex-direction:column;align-items:flex-start;gap:.3rem">
+          <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500">Juros mensal (%)</label>
+          <input type="number" id="dv-juros" placeholder="3.5" min="0" step="0.01" style="width:100%">
+        </div>
+        <div class="input-group" style="flex-direction:column;align-items:flex-start;gap:.3rem">
+          <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500">Parcela mínima (R$)</label>
+          <input type="number" id="dv-parcela" placeholder="200" min="0" step="0.01" style="width:100%">
+        </div>
+        <button class="btn btn--primary" onclick="adicionarDivida()" style="white-space:nowrap;height:40px">
+          <i class="fas fa-plus"></i> Adicionar
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabela de dívidas -->
+    <div class="card" style="margin-bottom:1.4rem">
+      <div class="card-head">
+        <h3><i class="fas fa-list"></i> Suas Dívidas</h3>
+        <div style="display:flex;gap:.6rem;align-items:center">
+          <label style="font-size:.82rem;color:var(--text-secondary);font-weight:500">Pagamento extra/mês: R$</label>
+          <input type="number" id="dv-extra" value="0" min="0" step="10" style="width:100px" oninput="calcularEstrategias()">
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="divida-table">
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>Saldo (R$)</th>
+              <th>Juros/mês</th>
+              <th>Parcela mín.</th>
+              <th>Progresso</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="dividas-tbody">
+            <tr id="dividas-empty"><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted)"><i class="fas fa-info-circle"></i> Nenhuma dívida cadastrada. Adicione uma acima!</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Comparativo estratégias -->
+    <div class="dividas-grid">
+      <!-- Bola de Neve -->
+      <div class="card estrategia-card" id="card-bola-neve">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem">
+          <span class="strat-badge strat-badge--snow">❄️ Bola de Neve</span>
+          <span style="font-size:.78rem;color:var(--text-secondary)">Menor saldo primeiro</span>
+        </div>
+        <p style="font-size:.82rem;color:var(--text-secondary);margin-bottom:.8rem">
+          Quita a dívida com <strong>menor saldo</strong> primeiro. Gera vitórias rápidas e mantém a motivação.
+        </p>
+        <div id="ordem-bola-neve" style="margin-bottom:.8rem"></div>
+        <div class="resultado-box" id="res-bola-neve">
+          <div class="res-stat"><span>Total de juros</span><strong id="bn-juros">—</strong></div>
+          <div class="res-stat"><span>Meses para quitar</span><strong id="bn-meses">—</strong></div>
+          <div class="res-stat"><span>Total pago</span><strong id="bn-total">—</strong></div>
+        </div>
+      </div>
+
+      <!-- Avalanche -->
+      <div class="card estrategia-card" id="card-avalanche">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem">
+          <span class="strat-badge strat-badge--aval">🔥 Avalanche</span>
+          <span style="font-size:.78rem;color:var(--text-secondary)">Maior juros primeiro</span>
+        </div>
+        <p style="font-size:.82rem;color:var(--text-secondary);margin-bottom:.8rem">
+          Quita a dívida com <strong>maior taxa de juros</strong> primeiro. Economiza mais dinheiro no longo prazo.
+        </p>
+        <div id="ordem-avalanche" style="margin-bottom:.8rem"></div>
+        <div class="resultado-box" id="res-avalanche">
+          <div class="res-stat"><span>Total de juros</span><strong id="av-juros">—</strong></div>
+          <div class="res-stat"><span>Meses para quitar</span><strong id="av-meses">—</strong></div>
+          <div class="res-stat"><span>Total pago</span><strong id="av-total">—</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparativo final -->
+    <div class="card" id="div-comparativo" style="display:none;margin-top:1rem">
+      <div class="card-head"><h3><i class="fas fa-balance-scale"></i> Comparativo</h3></div>
+      <div id="div-comparativo-content" style="font-size:.9rem;line-height:1.7"></div>
+    </div>
+
+    <script>
+    (function(){
+      let dividas = JSON.parse(localStorage.getItem('fw_dividas') || '[]');
+
+      function salvar(){ localStorage.setItem('fw_dividas', JSON.stringify(dividas)); }
+
+      function fmt(v){ return 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+      window.adicionarDivida = function(){
+        const nome = document.getElementById('dv-nome').value.trim();
+        const saldo = parseFloat(document.getElementById('dv-saldo').value);
+        const juros = parseFloat(document.getElementById('dv-juros').value);
+        const parcela = parseFloat(document.getElementById('dv-parcela').value);
+        if(!nome || isNaN(saldo)||saldo<=0 || isNaN(juros)||juros<0 || isNaN(parcela)||parcela<=0){
+          alert('Preencha todos os campos corretamente.'); return;
+        }
+        dividas.push({id:Date.now(), nome, saldo, saldoOriginal:saldo, juros, parcela});
+        salvar();
+        document.getElementById('dv-nome').value='';
+        document.getElementById('dv-saldo').value='';
+        document.getElementById('dv-juros').value='';
+        document.getElementById('dv-parcela').value='';
+        renderTabela(); calcularEstrategias();
+      };
+
+      window.removerDivida = function(id){
+        dividas = dividas.filter(d=>d.id!==id);
+        salvar(); renderTabela(); calcularEstrategias();
+      };
+
+      function renderTabela(){
+        const tbody = document.getElementById('dividas-tbody');
+        const empty = document.getElementById('dividas-empty');
+        if(dividas.length===0){ tbody.innerHTML=''; tbody.appendChild(empty); return; }
+        tbody.innerHTML = dividas.map(d=>{
+          const pct = Math.max(0,Math.min(100, (1 - d.saldo/d.saldoOriginal)*100));
+          return `<tr>
+            <td><strong>${d.nome}</strong></td>
+            <td>${fmt(d.saldo)}</td>
+            <td>${d.juros.toFixed(2)}%</td>
+            <td>${fmt(d.parcela)}</td>
+            <td style="min-width:100px">
+              <div class="progresso-divida"><div class="progresso-divida-fill" style="width:${pct}%"></div></div>
+              <span style="font-size:.72rem;color:var(--text-muted)">${pct.toFixed(0)}% quitado</span>
+            </td>
+            <td><button class="btn-icon" onclick="removerDivida(${d.id})" title="Remover"><i class="fas fa-trash"></i></button></td>
+          </tr>`;
+        }).join('');
+      }
+
+      function simularEstrategia(ordem, extra){
+        // Simula mês a mês
+        let dvs = ordem.map(d=>({...d, saldo:d.saldo}));
+        let totalJuros=0, meses=0;
+        const MAX_MESES=600;
+        while(dvs.some(d=>d.saldo>0) && meses<MAX_MESES){
+          meses++;
+          // Aplica juros e pagamentos mínimos
+          let sobra = extra;
+          dvs.forEach(d=>{
+            if(d.saldo<=0) return;
+            const j = d.saldo * (d.juros/100);
+            totalJuros+=j;
+            d.saldo += j;
+            const pag = Math.min(d.saldo, d.parcela);
+            d.saldo -= pag;
+          });
+          // Aplica extra na primeira dívida ainda ativa
+          for(let d of dvs){
+            if(d.saldo<=0) continue;
+            const pagExtra = Math.min(d.saldo, sobra);
+            d.saldo -= pagExtra;
+            sobra -= pagExtra;
+            break;
+          }
+          dvs.forEach(d=>{ if(d.saldo<0.01) d.saldo=0; });
+        }
+        const totalPago = dvs.reduce((s,d)=>s+d.saldoOriginal,0) + totalJuros;
+        return {totalJuros, meses, totalPago};
+      }
+
+      window.calcularEstrategias = function(){
+        if(dividas.length===0){
+          ['ordem-bola-neve','ordem-avalanche'].forEach(id=>document.getElementById(id).innerHTML='');
+          ['bn-juros','bn-meses','bn-total','av-juros','av-meses','av-total'].forEach(id=>document.getElementById(id).textContent='—');
+          document.getElementById('div-comparativo').style.display='none';
+          return;
+        }
+        const extra = parseFloat(document.getElementById('dv-extra').value)||0;
+
+        const ordemNeve = [...dividas].sort((a,b)=>a.saldo-b.saldo);
+        const ordemAval = [...dividas].sort((a,b)=>b.juros-a.juros);
+
+        function renderOrdem(containerId, ordem){
+          document.getElementById(containerId).innerHTML = ordem.map((d,i)=>
+            `<div class="ordem-item ${i===0?'first-pay':''}">
+              <div class="ordem-num">${i+1}</div>
+              <div style="flex:1">
+                <strong>${d.nome}</strong>
+                <span style="color:var(--text-muted);font-size:.78rem;margin-left:.4rem">R$ ${d.saldo.toLocaleString('pt-BR',{maximumFractionDigits:0})} · ${d.juros}%/mês</span>
+              </div>
+              ${i===0?'<span style="font-size:.72rem;background:var(--green-500);color:#fff;padding:.1rem .4rem;border-radius:10px">Foco aqui</span>':''}
+            </div>`
+          ).join('');
+        }
+        renderOrdem('ordem-bola-neve', ordemNeve);
+        renderOrdem('ordem-avalanche', ordemAval);
+
+        const rNeve = simularEstrategia(ordemNeve, extra);
+        const rAval = simularEstrategia(ordemAval, extra);
+
+        document.getElementById('bn-juros').textContent = fmt(rNeve.totalJuros);
+        document.getElementById('bn-meses').textContent = rNeve.meses + ' meses';
+        document.getElementById('bn-total').textContent = fmt(rNeve.totalPago);
+        document.getElementById('av-juros').textContent = fmt(rAval.totalJuros);
+        document.getElementById('av-meses').textContent = rAval.meses + ' meses';
+        document.getElementById('av-total').textContent = fmt(rAval.totalPago);
+
+        // Destaque do melhor
+        document.getElementById('card-bola-neve').classList.toggle('active-strat', rNeve.totalJuros <= rAval.totalJuros);
+        document.getElementById('card-avalanche').classList.toggle('active-strat', rAval.totalJuros < rNeve.totalJuros);
+
+        // Comparativo
+        const economia = Math.abs(rNeve.totalJuros - rAval.totalJuros);
+        const mesesDif = Math.abs(rNeve.meses - rAval.meses);
+        const melhor = rAval.totalJuros < rNeve.totalJuros ? 'Avalanche 🔥' : 'Bola de Neve ❄️';
+        const motivo = rAval.totalJuros < rNeve.totalJuros
+          ? `economizará ${fmt(economia)} em juros`
+          : `te dará vitórias psicológicas mais rápidas`;
+        document.getElementById('div-comparativo').style.display='';
+        document.getElementById('div-comparativo-content').innerHTML = `
+          <p>✅ Para o seu perfil, a estratégia <strong>${melhor}</strong> é a mais vantajosa, pois ${motivo}.</p>
+          ${mesesDif>0?`<p>A diferença entre as estratégias é de <strong>${mesesDif} mês(es)</strong> no tempo total de quitação.</p>`:''}
+          <p style="margin-top:.6rem;color:var(--text-muted);font-size:.82rem">💡 Dica: com R$ ${extra.toLocaleString('pt-BR')} de pagamento extra por mês, você acelera significativamente a quitação. Tente aumentar esse valor!</p>
+        `;
+      };
+
+      renderTabela();
+      calcularEstrategias();
+    })();
+    </script>
+  </section>
+
+  <!-- ====== SEÇÃO REGRA 50-30-20 ====== -->
+  <section id="regra503020" class="dash-section" style="display:none">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title"><i class="fas fa-chart-pie"></i> Regra 50-30-20</h2>
+        <p class="section-sub">Distribua sua renda de forma equilibrada entre necessidades, desejos e poupança</p>
+      </div>
+    </div>
+
+    <style>
+      .regra-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+      @media(max-width:768px){ .regra-grid { grid-template-columns:1fr; } }
+      .bucket-card { border-radius:var(--radius-md); padding:1.2rem; border:1px solid var(--border); }
+      .bucket-card--needs { border-left:4px solid #3b82f6; }
+      .bucket-card--wants { border-left:4px solid #f59e0b; }
+      .bucket-card--savings { border-left:4px solid #10b981; }
+      .bucket-header { display:flex; align-items:center; gap:.6rem; margin-bottom:.8rem; }
+      .bucket-emoji { font-size:1.4rem; }
+      .bucket-title { font-weight:700; font-size:.95rem; }
+      .bucket-pct { margin-left:auto; font-size:1.1rem; font-weight:700; }
+      .bucket-bar { height:10px; border-radius:5px; background:var(--border); overflow:hidden; margin:.4rem 0 .6rem; }
+      .bucket-bar-fill { height:100%; border-radius:5px; transition:width .5s; }
+      .bucket-bar-fill--needs { background:#3b82f6; }
+      .bucket-bar-fill--wants { background:#f59e0b; }
+      .bucket-bar-fill--savings { background:#10b981; }
+      .bucket-values { display:flex; justify-content:space-between; font-size:.8rem; color:var(--text-secondary); }
+      .bucket-status { font-size:.78rem; padding:.15rem .5rem; border-radius:10px; font-weight:600; display:inline-block; margin-top:.4rem; }
+      .bucket-status--ok { background:var(--green-50); color:var(--green-600); }
+      .bucket-status--over { background:#fee2e2; color:#b91c1c; }
+      .bucket-status--under { background:#fef3c7; color:#92400e; }
+      [data-theme="dark"] .bucket-status--ok { background:rgba(16,185,129,.15); }
+      [data-theme="dark"] .bucket-status--over { background:rgba(239,68,68,.15); color:#fca5a5; }
+      [data-theme="dark"] .bucket-status--under { background:rgba(245,158,11,.15); color:#fcd34d; }
+      .regra-item-row { display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem; font-size:.85rem; }
+      .regra-item-dot { width:10px;height:10px;border-radius:50%;flex-shrink:0; }
+      .regra-renda-box { background:var(--surface-alt); border-radius:var(--radius-md); padding:1rem; margin-bottom:1.2rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+    </style>
+
+    <!-- Input renda -->
+    <div class="regra-renda-box">
+      <i class="fas fa-wallet" style="color:var(--brand-primary);font-size:1.2rem"></i>
+      <div style="flex:1">
+        <label style="font-size:.8rem;color:var(--text-secondary);font-weight:600;display:block;margin-bottom:.3rem">Sua renda mensal líquida (R$)</label>
+        <input type="number" id="regra-renda" placeholder="Ex: 4500" min="0" step="100" style="max-width:200px" oninput="atualizarRegra()">
+      </div>
+      <div style="font-size:.82rem;color:var(--text-muted);max-width:300px">
+        Insira sua renda após descontos (salário líquido, freelances, etc.)
+      </div>
+    </div>
+
+    <div class="regra-grid">
+      <!-- Coluna esquerda: buckets + gráfico -->
+      <div style="display:flex;flex-direction:column;gap:1rem">
+
+        <!-- Necessidades 50% -->
+        <div class="card bucket-card bucket-card--needs" id="bucket-needs">
+          <div class="bucket-header">
+            <span class="bucket-emoji">🏠</span>
+            <div>
+              <div class="bucket-title">Necessidades</div>
+              <div style="font-size:.76rem;color:var(--text-secondary)">Aluguel, mercado, contas, transporte</div>
+            </div>
+            <span class="bucket-pct" style="color:#3b82f6">50%</span>
+          </div>
+          <div class="bucket-bar"><div class="bucket-bar-fill bucket-bar-fill--needs" id="bar-needs" style="width:0%"></div></div>
+          <div class="bucket-values">
+            <span>Limite: <strong id="lim-needs">R$ 0</strong></span>
+            <span>Gasto: <strong id="gasto-needs">R$ 0</strong></span>
+          </div>
+          <span class="bucket-status bucket-status--ok" id="status-needs">Configure sua renda</span>
+        </div>
+
+        <!-- Desejos 30% -->
+        <div class="card bucket-card bucket-card--wants" id="bucket-wants">
+          <div class="bucket-header">
+            <span class="bucket-emoji">🎬</span>
+            <div>
+              <div class="bucket-title">Desejos</div>
+              <div style="font-size:.76rem;color:var(--text-secondary)">Lazer, restaurantes, streaming, compras</div>
+            </div>
+            <span class="bucket-pct" style="color:#f59e0b">30%</span>
+          </div>
+          <div class="bucket-bar"><div class="bucket-bar-fill bucket-bar-fill--wants" id="bar-wants" style="width:0%"></div></div>
+          <div class="bucket-values">
+            <span>Limite: <strong id="lim-wants">R$ 0</strong></span>
+            <span>Gasto: <strong id="gasto-wants">R$ 0</strong></span>
+          </div>
+          <span class="bucket-status bucket-status--ok" id="status-wants">Configure sua renda</span>
+        </div>
+
+        <!-- Poupança 20% -->
+        <div class="card bucket-card bucket-card--savings" id="bucket-savings">
+          <div class="bucket-header">
+            <span class="bucket-emoji">💰</span>
+            <div>
+              <div class="bucket-title">Poupança & Investimentos</div>
+              <div style="font-size:.76rem;color:var(--text-secondary)">Reserva de emergência, aposentadoria, metas</div>
+            </div>
+            <span class="bucket-pct" style="color:#10b981">20%</span>
+          </div>
+          <div class="bucket-bar"><div class="bucket-bar-fill bucket-bar-fill--savings" id="bar-savings" style="width:0%"></div></div>
+          <div class="bucket-values">
+            <span>Meta: <strong id="lim-savings">R$ 0</strong></span>
+            <span>Guardado: <strong id="gasto-savings">R$ 0</strong></span>
+          </div>
+          <span class="bucket-status bucket-status--ok" id="status-savings">Configure sua renda</span>
+        </div>
+
+      </div>
+
+      <!-- Coluna direita: lançamentos -->
+      <div style="display:flex;flex-direction:column;gap:1rem">
+        <div class="card">
+          <div class="card-head"><h3><i class="fas fa-plus-circle"></i> Lançar Gasto / Poupança</h3></div>
+          <div style="display:flex;flex-direction:column;gap:.7rem">
+            <div>
+              <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500;display:block;margin-bottom:.2rem">Categoria</label>
+              <select id="regra-cat" style="width:100%">
+                <option value="needs">🏠 Necessidade</option>
+                <option value="wants">🎬 Desejo</option>
+                <option value="savings">💰 Poupança/Investimento</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500;display:block;margin-bottom:.2rem">Descrição</label>
+              <input type="text" id="regra-desc" placeholder="Ex: Aluguel, Netflix, Tesouro…" style="width:100%">
+            </div>
+            <div>
+              <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500;display:block;margin-bottom:.2rem">Valor (R$)</label>
+              <input type="number" id="regra-valor" placeholder="0,00" min="0" step="0.01" style="width:100%">
+            </div>
+            <button class="btn btn--primary" onclick="lancarRegra()"><i class="fas fa-check"></i> Registrar</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head"><h3><i class="fas fa-clock-rotate-left"></i> Histórico do Mês</h3></div>
+          <div id="regra-historico" style="max-height:260px;overflow-y:auto;font-size:.84rem">
+            <p style="color:var(--text-muted);text-align:center;padding:1rem">Nenhum lançamento ainda.</p>
+          </div>
+          <button class="btn btn--ghost btn--sm" style="margin-top:.6rem;width:100%" onclick="limparRegra()">
+            <i class="fas fa-trash"></i> Limpar mês
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumo final -->
+    <div class="card" style="margin-top:1.2rem" id="regra-resumo-card">
+      <div class="card-head"><h3><i class="fas fa-lightbulb"></i> Análise do Mês</h3></div>
+      <div id="regra-analise" style="font-size:.9rem;line-height:1.8;color:var(--text-secondary)">
+        Configure sua renda e comece a lançar para ver a análise aqui.
+      </div>
+    </div>
+
+    <script>
+    (function(){
+      let lancamentos = JSON.parse(localStorage.getItem('fw_503020') || '[]');
+      function salvar(){ localStorage.setItem('fw_503020', JSON.stringify(lancamentos)); }
+      function fmt(v){ return 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+      window.atualizarRegra = function(){ renderRegra(); };
+
+      window.lancarRegra = function(){
+        const cat = document.getElementById('regra-cat').value;
+        const desc = document.getElementById('regra-desc').value.trim() || '(sem descrição)';
+        const valor = parseFloat(document.getElementById('regra-valor').value);
+        if(isNaN(valor)||valor<=0){ alert('Informe um valor válido.'); return; }
+        lancamentos.push({id:Date.now(), cat, desc, valor});
+        salvar();
+        document.getElementById('regra-desc').value='';
+        document.getElementById('regra-valor').value='';
+        renderRegra();
+      };
+
+      window.removerLancamento = function(id){
+        lancamentos = lancamentos.filter(l=>l.id!==id);
+        salvar(); renderRegra();
+      };
+
+      window.limparRegra = function(){
+        if(confirm('Limpar todos os lançamentos do mês?')){ lancamentos=[]; salvar(); renderRegra(); }
+      };
+
+      function renderRegra(){
+        const renda = parseFloat(document.getElementById('regra-renda').value)||0;
+        const limites = { needs: renda*.50, wants: renda*.30, savings: renda*.20 };
+        const gastos = { needs:0, wants:0, savings:0 };
+        lancamentos.forEach(l=>{ gastos[l.cat] = (gastos[l.cat]||0) + l.valor; });
+
+        ['needs','wants','savings'].forEach(cat=>{
+          const lim = limites[cat];
+          const gasto = gastos[cat];
+          const pct = lim>0 ? Math.min(120, (gasto/lim)*100) : 0;
+          document.getElementById('lim-'+cat).textContent = fmt(lim);
+          document.getElementById('gasto-'+cat).textContent = fmt(gasto);
+          document.getElementById('bar-'+cat).style.width = pct+'%';
+          const st = document.getElementById('status-'+cat);
+          if(renda===0){ st.className='bucket-status bucket-status--ok'; st.textContent='Configure sua renda'; }
+          else if(gasto > lim){ st.className='bucket-status bucket-status--over'; st.textContent='⚠️ Acima do limite'; }
+          else if(gasto >= lim*.85){ st.className='bucket-status bucket-status--under'; st.textContent='⚡ Perto do limite'; }
+          else { st.className='bucket-status bucket-status--ok'; st.textContent='✅ Dentro do orçamento'; }
+        });
+
+        // Histórico
+        const hist = document.getElementById('regra-historico');
+        if(lancamentos.length===0){
+          hist.innerHTML='<p style="color:var(--text-muted);text-align:center;padding:1rem">Nenhum lançamento ainda.</p>';
+        } else {
+          const catInfo = {needs:{emoji:'🏠',label:'Necessidade',cor:'#3b82f6'}, wants:{emoji:'🎬',label:'Desejo',cor:'#f59e0b'}, savings:{emoji:'💰',label:'Poupança',cor:'#10b981'}};
+          hist.innerHTML = [...lancamentos].reverse().map(l=>`
+            <div style="display:flex;align-items:center;gap:.5rem;padding:.4rem .2rem;border-bottom:1px solid var(--border)">
+              <span style="font-size:1rem">${catInfo[l.cat].emoji}</span>
+              <div style="flex:1">
+                <span style="font-weight:500">${l.desc}</span>
+                <span style="font-size:.74rem;color:${catInfo[l.cat].cor};margin-left:.3rem">${catInfo[l.cat].label}</span>
+              </div>
+              <strong style="color:var(--text-primary)">${fmt(l.valor)}</strong>
+              <button onclick="removerLancamento(${l.id})" style="background:none;border:none;cursor:pointer;color:var(--red-500);font-size:.85rem"><i class="fas fa-times"></i></button>
+            </div>
+          `).join('');
+        }
+
+        // Análise
+        if(renda>0){
+          const totalGasto = gastos.needs+gastos.wants+gastos.savings;
+          const sobra = renda - totalGasto;
+          const linhas = [];
+          if(gastos.needs > limites.needs) linhas.push(`🏠 <strong>Necessidades:</strong> você gastou ${fmt(gastos.needs - limites.needs)} a mais do que o limite de 50%. Revise contas fixas e considere reduzir despesas essenciais.`);
+          else linhas.push(`🏠 <strong>Necessidades:</strong> dentro do limite. Bom trabalho! Sobram ${fmt(limites.needs - gastos.needs)} nessa categoria.`);
+          if(gastos.wants > limites.wants) linhas.push(`🎬 <strong>Desejos:</strong> acima do orçamento em ${fmt(gastos.wants - limites.wants)}. Considere cortar lazer ou gastos supérfluos.`);
+          else linhas.push(`🎬 <strong>Desejos:</strong> dentro do limite. Você ainda pode gastar ${fmt(limites.wants - gastos.wants)} em lazer.`);
+          if(gastos.savings < limites.savings) linhas.push(`💰 <strong>Poupança:</strong> você guardou ${fmt(gastos.savings)} de ${fmt(limites.savings)} recomendados (20%). Tente aumentar os investimentos!`);
+          else linhas.push(`💰 <strong>Poupança:</strong> parabéns! Você guardou ${fmt(gastos.savings)}, superando a meta de 20%.`);
+          if(sobra>0) linhas.push(`💵 <strong>Saldo não alocado:</strong> R$ ${sobra.toLocaleString('pt-BR',{maximumFractionDigits:2})} — considere direcionar para poupança ou investimentos.`);
+          document.getElementById('regra-analise').innerHTML = linhas.map(l=>`<p>${l}</p>`).join('');
+        } else {
+          document.getElementById('regra-analise').textContent = 'Configure sua renda e comece a lançar para ver a análise aqui.';
+        }
+      }
+
+      renderRegra();
+    })();
+    </script>
+  </section>
+
+  <!-- ====== SECAO SIMULADOR DE CARTEIRA ====== -->
+  <section id="carteira" class="dash-section" style="display:none">
+    <div class="section-header">
+      <div>
+        <h2 class="section-title"><i class="fas fa-briefcase"></i> Simulador de Carteira</h2>
+        <p class="section-sub">Monte uma carteira fictícia e acompanhe a performance em tempo real</p>
+      </div>
+      <div style="display:flex;gap:.6rem;align-items:center">
+        <button class="btn btn--ghost" style="font-size:.82rem" onclick="cwSimularVariacao()">
+          <i class="fas fa-random"></i> Simular dia
+        </button>
+        <button class="btn btn--danger" style="font-size:.82rem" onclick="cwLimparCarteira()">
+          <i class="fas fa-trash"></i> Zerar
+        </button>
+      </div>
+    </div>
+
+    <!-- Saldo virtual + resumo topo -->
+    <div class="investments-grid" style="margin-bottom:1.5rem">
+      <div class="card" style="background:linear-gradient(135deg,#1a237e,#283593);color:#fff">
+        <div style="font-size:.8rem;opacity:.75;margin-bottom:.3rem">Patrimônio Virtual</div>
+        <div id="cw-patrimonio" style="font-size:2rem;font-weight:700">R$ 100.000,00</div>
+        <div id="cw-var-total" style="font-size:.85rem;margin-top:.3rem;opacity:.85">Variação total: <span id="cw-var-pct">—</span></div>
+      </div>
+      <div class="card">
+        <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:.3rem">Lucro / Prejuízo</div>
+        <div id="cw-lucro" style="font-size:1.8rem;font-weight:700;color:var(--success)">R$ 0,00</div>
+        <div style="font-size:.8rem;color:var(--text-muted);margin-top:.3rem">desde que montou a carteira</div>
+      </div>
+      <div class="card">
+        <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:.3rem">Saldo disponível</div>
+        <div id="cw-saldo" style="font-size:1.8rem;font-weight:700">R$ 100.000,00</div>
+        <div style="font-size:.8rem;color:var(--text-muted);margin-top:.3rem">para novos aportes</div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+
+      <!-- Adicionar ativo -->
+      <div class="card">
+        <div class="card-head"><h3><i class="fas fa-plus-circle"></i> Adicionar Ativo</h3></div>
+        <div style="display:flex;flex-direction:column;gap:.9rem;margin-top:.8rem">
+          <div class="form-group">
+            <label>Tipo de ativo</label>
+            <select id="cw-tipo">
+              <option value="acoes">📈 Ações (B3)</option>
+              <option value="fii">🏢 Fundos Imobiliários</option>
+              <option value="renda_fixa">🏦 Renda Fixa (CDB/Tesouro)</option>
+              <option value="crypto">₿ Criptomoedas</option>
+              <option value="exterior">🌎 Ações Internacionais</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Nome / Ticker</label>
+            <input type="text" id="cw-ticker" placeholder="Ex: PETR4, MXRF11, BTC…" style="text-transform:uppercase">
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem">
+            <div class="form-group">
+              <label>Preço de compra (R$)</label>
+              <input type="number" id="cw-preco" placeholder="0,00" min="0.01" step="0.01">
+            </div>
+            <div class="form-group">
+              <label>Quantidade</label>
+              <input type="number" id="cw-qtd" placeholder="0" min="1" step="1">
+            </div>
+          </div>
+          <button class="btn btn--primary" onclick="cwAdicionarAtivo()">
+            <i class="fas fa-plus"></i> Adicionar à Carteira
+          </button>
+          <div id="cw-erro" style="color:#e53935;font-size:.82rem;display:none"></div>
+        </div>
+      </div>
+
+      <!-- Distribuição gráfico -->
+      <div class="card">
+        <div class="card-head"><h3><i class="fas fa-chart-pie"></i> Distribuição da Carteira</h3></div>
+        <div style="position:relative;height:220px;display:flex;align-items:center;justify-content:center">
+          <canvas id="cw-chart-pie" style="max-height:220px"></canvas>
+          <div id="cw-empty-pie" style="position:absolute;text-align:center;color:var(--text-muted)">
+            <div style="font-size:2.5rem">📊</div>
+            <div style="font-size:.85rem;margin-top:.5rem">Adicione ativos para<br>ver a distribuição</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela de ativos -->
+    <div class="card">
+      <div class="card-head" style="justify-content:space-between;align-items:center">
+        <h3><i class="fas fa-list"></i> Meus Ativos</h3>
+
+      </div>
+      <div style="overflow-x:auto;margin-top:.8rem">
+        <table style="width:100%;border-collapse:collapse;font-size:.88rem" id="cw-tabela">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border)">
+              <th style="text-align:left;padding:.5rem .4rem;color:var(--text-muted);font-weight:600">Ativo</th>
+              <th style="text-align:right;padding:.5rem .4rem;color:var(--text-muted);font-weight:600">Tipo</th>
+              <th style="text-align:right;padding:.5rem .4rem;color:var(--text-muted);font-weight:600">Qtd</th>
+              <th style="text-align:right;padding:.5rem .4rem;color:var(--text-muted);font-weight:600">Preço médio</th>
+              <th style="text-align:right;padding:.5rem .4rem;color:var(--text-muted);font-weight:600">Preço atual</th>
+              <th style="text-align:right;padding:.5rem .4rem;color:var(--text-muted);font-weight:600">Valor total</th>
+              <th style="text-align:right;padding:.5rem .4rem;color:var(--text-muted);font-weight:600">Variação</th>
+              <th style="padding:.5rem .4rem"></th>
+            </tr>
+          </thead>
+          <tbody id="cw-tbody">
+            <tr id="cw-empty-row">
+              <td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted)">
+                <div style="font-size:2rem">💼</div>
+                <div style="margin-top:.5rem">Sua carteira está vazia. Adicione seu primeiro ativo!</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Histórico de performance -->
+    <div class="card" style="margin-top:1.5rem">
+      <div class="card-head"><h3><i class="fas fa-chart-line"></i> Performance da Carteira</h3></div>
+      <div style="height:200px;position:relative">
+        <canvas id="cw-chart-line"></canvas>
+        <div id="cw-empty-line" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-muted)">
+          <div style="font-size:2rem">📈</div>
+          <div style="font-size:.85rem;margin-top:.5rem">Use "Simular dia" para ver a evolução da carteira</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== SECAO COTACOES ====== -->
+  <section id="cotacoes" class="dash-section" style="display:none">
+    <h2 class="section-title"><i class="fas fa-globe"></i> Cotações em Tempo Real</h2>
+    <p style="color:var(--text-muted);margin-bottom:1.5rem">Acompanhe os principais ativos e índices do mercado financeiro global.</p>
+
+    <!-- última atualização -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+      <span style="font-size:.82rem;color:var(--text-muted)">
+        <i class="fas fa-clock"></i> Atualizado em: <span id="cotacao-hora">—</span>
+      </span>
+      <button class="btn btn--ghost" style="font-size:.82rem;padding:.3rem .9rem" onclick="cotacoesAtualizar()">
+        <i class="fas fa-sync-alt" id="cotacao-spin"></i> Atualizar
+      </button>
+    </div>
+
+    <!-- Grade de cotações -->
+    <div id="cotacoes-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;margin-bottom:1.5rem">
+      <!-- populado via JS -->
+    </div>
+
+    <!-- Mini gráfico de tendência -->
+    <div class="card">
+      <div class="card-head" style="justify-content:space-between;align-items:center">
+        <h3><i class="fas fa-chart-area"></i> Tendência de 7 dias</h3>
+        <select id="cotacao-select-chart" onchange="cotacaoRenderChart(this.value)" style="font-size:.82rem;padding:.3rem .7rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text)">
+          <option value="dolar">Dólar (USD)</option>
+          <option value="euro">Euro (EUR)</option>
+          <option value="bitcoin">Bitcoin (BTC)</option>
+          <option value="ethereum">Ethereum (ETH)</option>
+          <option value="ibov">Ibovespa</option>
+          <option value="sp500">S&P 500</option>
+          <option value="ouro">Ouro</option>
+          <option value="petrobras">PETR4</option>
+          <option value="vale">VALE3</option>
+          <option value="itub">ITUB4</option>
+        </select>
+      </div>
+      <div style="height:200px;margin-top:.8rem"><canvas id="cotacao-chart"></canvas></div>
+    </div>
+
+    <!-- Comparativo tabela -->
+    <div class="card" style="margin-top:1.5rem">
+      <div class="card-head"><h3><i class="fas fa-table"></i> Comparativo Detalhado</h3></div>
+      <div style="overflow-x:auto;margin-top:.8rem">
+        <table style="width:100%;border-collapse:collapse;font-size:.88rem">
+          <thead>
+            <tr style="border-bottom:2px solid var(--border)">
+              <th style="text-align:left;padding:.5rem .6rem;color:var(--text-muted);font-weight:600">Ativo</th>
+              <th style="text-align:right;padding:.5rem .6rem;color:var(--text-muted);font-weight:600">Valor atual</th>
+              <th style="text-align:right;padding:.5rem .6rem;color:var(--text-muted);font-weight:600">Variação dia</th>
+              <th style="text-align:right;padding:.5rem .6rem;color:var(--text-muted);font-weight:600">7 dias</th>
+              <th style="text-align:right;padding:.5rem .6rem;color:var(--text-muted);font-weight:600">30 dias</th>
+            </tr>
+          </thead>
+          <tbody id="cotacao-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+<!-- ====== SEÇÃO COMPARADOR DE CRÉDITO ====== -->
+<section id="comparador-credito" class="dash-section" style="display:none">
+  <div class="section-header">
+    <div>
+      <h2 class="section-title"><i class="fas fa-scale-balanced"></i> Comparador de Crédito</h2>
+      <p class="section-sub">Compare parcelas, CET e juros reais de empréstimos e financiamentos lado a lado</p>
+    </div>
+  </div>
+
+  <style>
+    .comp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.4rem; }
+    @media(max-width: 768px) { .comp-grid { grid-template-columns: 1fr; } }
+    .comp-opcao-header {
+      display: flex; align-items: center; gap: .6rem;
+      font-size: .82rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .05em; margin-bottom: .8rem;
+    }
+    .comp-badge {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 22px; height: 22px; border-radius: 50%;
+      font-size: .72rem; font-weight: 700; color: #fff;
+    }
+    .comp-badge--a { background: var(--brand-primary, #2563eb); }
+    .comp-badge--b { background: #7c3aed; }
+    .comp-result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: .8rem; margin-top: 1rem;
+    }
+    .comp-stat {
+      padding: .85rem 1rem;
+      border-radius: var(--radius-md, 10px);
+      background: var(--surface-alt);
+      border: 1.5px solid var(--border);
+      display: flex; flex-direction: column; gap: .3rem;
+    }
+    .comp-stat__label { font-size: .72rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+    .comp-stat__val { font-size: 1.1rem; font-weight: 700; color: var(--text-primary); }
+    .comp-stat__val--win { color: var(--green-500, #10b981); }
+    .comp-stat__val--lose { color: var(--red-500, #ef4444); }
+    .comp-verdict {
+      margin-top: 1.2rem;
+      padding: 1rem 1.2rem;
+      border-radius: var(--radius-md, 10px);
+      font-size: .88rem;
+      line-height: 1.6;
+      font-weight: 500;
+    }
+    .comp-verdict--a { background: rgba(37,99,235,.09); border: 1.5px solid rgba(37,99,235,.3); color: var(--text-primary); }
+    .comp-verdict--b { background: rgba(124,58,237,.09); border: 1.5px solid rgba(124,58,237,.3); color: var(--text-primary); }
+    .comp-verdict--empate { background: rgba(245,158,11,.09); border: 1.5px solid rgba(245,158,11,.3); color: var(--text-primary); }
+    .comp-table { width: 100%; border-collapse: collapse; font-size: .85rem; margin-top: 1rem; }
+    .comp-table th {
+      background: var(--surface-alt); padding: .55rem .8rem;
+      text-align: right; font-weight: 600; color: var(--text-secondary);
+      font-size: .78rem; text-transform: uppercase; letter-spacing: .03em;
+    }
+    .comp-table th:first-child { text-align: left; }
+    .comp-table td { padding: .5rem .8rem; border-bottom: 1px solid var(--border); text-align: right; }
+    .comp-table td:first-child { text-align: left; color: var(--text-secondary); font-size: .82rem; }
+    .comp-table tr:last-child td { border-bottom: none; font-weight: 700; }
+    .comp-table .win-cell { color: var(--green-500, #10b981); font-weight: 700; }
+    .comp-table .lose-cell { color: var(--red-500, #ef4444); }
+    .comp-tipo-btns { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: .9rem; }
+    .comp-tipo-btn {
+      padding: .35rem .85rem; font-size: .78rem; font-weight: 600;
+      border: 1.5px solid var(--border); border-radius: 999px;
+      background: none; cursor: pointer; color: var(--text-secondary);
+      transition: .2s;
+    }
+    .comp-tipo-btn.active { background: var(--brand-primary, #2563eb); color: #fff; border-color: var(--brand-primary, #2563eb); }
+  </style>
+
+  <!-- Tipo de comparação -->
+  <div class="card" style="margin-bottom:1.2rem">
+    <div class="card-head"><h3><i class="fas fa-sliders"></i> Tipo de operação</h3></div>
+    <div class="comp-tipo-btns" id="comp-tipo-btns">
+      <button class="comp-tipo-btn active" data-tipo="emprestimo" onclick="compSelecionarTipo('emprestimo')">💳 Empréstimo Pessoal</button>
+      <button class="comp-tipo-btn" data-tipo="financiamento" onclick="compSelecionarTipo('financiamento')">🏠 Financiamento</button>
+      <button class="comp-tipo-btn" data-tipo="consignado" onclick="compSelecionarTipo('consignado')">📋 Consignado</button>
+    </div>
+    <p id="comp-tipo-desc" style="font-size:.8rem;color:var(--text-muted);margin:0">
+      Compare dois empréstimos pessoais: veja qual tem menor custo real, menor CET e menor total pago.
+    </p>
+  </div>
+
+  <!-- Inputs das duas opções -->
+  <div class="comp-grid">
+
+    <!-- Opção A -->
+    <div class="card">
+      <div class="comp-opcao-header" style="color:var(--brand-primary,#2563eb)">
+        <span class="comp-badge comp-badge--a">A</span> Opção A
+      </div>
+      <div class="form-group">
+        <label>Nome / Banco (opcional)</label>
+        <input type="text" id="comp-a-nome" placeholder="Ex: Nubank, Bradesco…">
+      </div>
+      <div class="form-group">
+        <label>Valor solicitado (R$)</label>
+        <input type="number" id="comp-a-valor" value="10000" min="0" step="100">
+      </div>
+      <div class="form-group">
+        <label>Taxa de juros mensal (%)</label>
+        <input type="number" id="comp-a-taxa" value="2.5" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Prazo (meses)</label>
+        <input type="number" id="comp-a-prazo" value="24" min="1" max="360">
+      </div>
+      <div class="form-group">
+        <label>Custo de entrada / IOF / Seguro (R$)</label>
+        <input type="number" id="comp-a-custos" value="0" min="0" step="0.01">
+      </div>
+    </div>
+
+    <!-- Opção B -->
+    <div class="card">
+      <div class="comp-opcao-header" style="color:#7c3aed">
+        <span class="comp-badge comp-badge--b">B</span> Opção B
+      </div>
+      <div class="form-group">
+        <label>Nome / Banco (opcional)</label>
+        <input type="text" id="comp-b-nome" placeholder="Ex: Itaú, Caixa…">
+      </div>
+      <div class="form-group">
+        <label>Valor solicitado (R$)</label>
+        <input type="number" id="comp-b-valor" value="10000" min="0" step="100">
+      </div>
+      <div class="form-group">
+        <label>Taxa de juros mensal (%)</label>
+        <input type="number" id="comp-b-taxa" value="1.8" min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label>Prazo (meses)</label>
+        <input type="number" id="comp-b-prazo" value="36" min="1" max="360">
+      </div>
+      <div class="form-group">
+        <label>Custo de entrada / IOF / Seguro (R$)</label>
+        <input type="number" id="comp-b-custos" value="300" min="0" step="0.01">
+      </div>
+    </div>
+  </div>
+
+  <button class="btn btn--primary" style="width:100%;margin-bottom:1.4rem" onclick="compCalcular()">
+    <i class="fas fa-calculator"></i> Comparar agora
+  </button>
+
+  <!-- Resultado -->
+  <div id="comp-resultado" style="display:none">
+
+    <!-- Cards de resultado lado a lado -->
+    <div class="comp-grid">
+
+      <!-- Card resultado A -->
+      <div class="card" id="comp-card-a">
+        <div class="comp-opcao-header" style="color:var(--brand-primary,#2563eb)">
+          <span class="comp-badge comp-badge--a">A</span>
+          <span id="comp-res-nome-a">Opção A</span>
+        </div>
+        <div class="comp-result-grid">
+          <div class="comp-stat">
+            <span class="comp-stat__label">Parcela mensal</span>
+            <span class="comp-stat__val" id="comp-res-parcela-a">—</span>
+          </div>
+          <div class="comp-stat">
+            <span class="comp-stat__label">Total pago</span>
+            <span class="comp-stat__val" id="comp-res-total-a">—</span>
+          </div>
+          <div class="comp-stat">
+            <span class="comp-stat__label">Juros pagos</span>
+            <span class="comp-stat__val" id="comp-res-juros-a">—</span>
+          </div>
+          <div class="comp-stat">
+            <span class="comp-stat__label">CET mensal</span>
+            <span class="comp-stat__val" id="comp-res-cet-a">—</span>
+          </div>
+          <div class="comp-stat">
+            <span class="comp-stat__label">CET anual</span>
+            <span class="comp-stat__val" id="comp-res-ceta-a">—</span>
+          </div>
+          <div class="comp-stat">
+            <span class="comp-stat__label">% do valor em juros</span>
+            <span class="comp-stat__val" id="comp-res-pct-a">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card resultado B -->
+      <div class="card" id="comp-card-b">
+        <div class="comp-opcao-header" style="color:#7c3aed">
+          <span class="comp-badge comp-badge--b">B</span>
+          <span id="comp-res-nome-b">Opção B</span>
+        </div>
+        <div class="comp-result-grid">
+          <div class="comp-stat">
+            <span class="comp-stat__label">Parcela mensal</span>
+            <span class="comp-stat__val" id="comp-res-parcela-b">—</span>
+          </div>
+          <div class="comp-stat">
+            <span class="comp-stat__label">Total pago</span>
+            <span class="comp-stat__val" id="comp-res-total-b">—</span>
+          </div>
+          <div class="comp-stat">
+            <span class="comp-stat__label">Juros pagos</span>
+            <span class="comp-stat__val" id="comp-res-juros-b">—</span>
+          </div>
+          <div class="comp-stat">
+            <span class="comp-stat__label">CET mensal</span>
+            <span class="comp-stat__val" id="comp-res-cet-b">—</span>
+          </div>
+          <div class="comp-stat">
+            <span class="comp-stat__label">CET anual</span>
+            <span class="comp-stat__val" id="comp-res-ceta-b">—</span>
+          </div>
+          <div class="comp-stat">
+            <span class="comp-stat__label">% do valor em juros</span>
+            <span class="comp-stat__val" id="comp-res-pct-b">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabela comparativa detalhada -->
+    <div class="card">
+      <div class="card-head"><h3><i class="fas fa-table"></i> Comparativo detalhado</h3></div>
+      <div style="overflow-x:auto">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Indicador</th>
+              <th id="comp-th-a">Opção A</th>
+              <th id="comp-th-b">Opção B</th>
+              <th>Diferença</th>
+            </tr>
+          </thead>
+          <tbody id="comp-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Veredicto -->
+      <div id="comp-veredicto" class="comp-verdict"></div>
+
+      <!-- Gráfico de barras: juros vs principal -->
+      <div style="margin-top:1.4rem">
+        <div style="font-size:.78rem;font-weight:600;color:var(--text-secondary);margin-bottom:.6rem">
+          📊 Total pago: principal vs juros
+        </div>
+        <div style="height:180px;position:relative">
+          <canvas id="comp-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- Tabela de amortização (detalhes) -->
+      <details style="margin-top:1.2rem">
+        <summary style="font-size:.78rem;font-weight:600;color:var(--text-secondary);cursor:pointer;padding:.3rem 0">
+          📋 Ver tabela de amortização (Price) — primeiras 12 parcelas
+        </summary>
+        <div style="overflow-x:auto;margin-top:.6rem">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+            <div>
+              <div style="font-size:.74rem;font-weight:700;color:var(--brand-primary);margin-bottom:.4rem" id="comp-amort-titulo-a">Opção A</div>
+              <table class="comp-table" id="comp-amort-a"></table>
+            </div>
+            <div>
+              <div style="font-size:.74rem;font-weight:700;color:#7c3aed;margin-bottom:.4rem" id="comp-amort-titulo-b">Opção B</div>
+              <table class="comp-table" id="comp-amort-b"></table>
+            </div>
+          </div>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<script>
+(function() {
+  // ── helpers ──────────────────────────────────────────────
+  const brl = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const pct = v => v.toFixed(4).replace('.', ',') + '%';
+
+  const tipoDesc = {
+    emprestimo:    'Compare dois empréstimos pessoais: veja qual tem menor custo real, menor CET e menor total pago.',
+    financiamento: 'Compare dois financiamentos (imóvel, veículo, etc.): analise parcela, CET e total pago.',
+    consignado:    'Compare dois créditos consignados: veja a diferença de custo mesmo com taxas parecidas.'
+  };
+
+  window.compSelecionarTipo = function(tipo) {
+    document.querySelectorAll('.comp-tipo-btn').forEach(b => b.classList.toggle('active', b.dataset.tipo === tipo));
+    document.getElementById('comp-tipo-desc').textContent = tipoDesc[tipo];
+  };
+
+  // CET via TIR (Newton-Raphson): fluxos = [-PV - custos, PMT, PMT, ..., PMT] n vezes
+  function calcCET(pv, pmt, n, custos) {
+    // valor líquido recebido = pv - custos (IOF, seguro, etc. embutidos no custo total)
+    const vliq = pv - custos;
+    // se custo zero, CET = taxa nominal
+    if (custos <= 0) {
+      // resolve exatamente via Price invertida
+      // taxa = raiz de PMT/PV * (1 - (1+r)^-n) = 1 => Newton
+    }
+    // Newton-Raphson para TIR
+    let r = 0.02;
+    for (let i = 0; i < 200; i++) {
+      const f  = pmt * (1 - Math.pow(1 + r, -n)) / r - vliq;
+      const df = pmt * (Math.pow(1+r, -n) * n / (r * (1+r)) - (1 - Math.pow(1+r,-n)) / (r*r));
+      const rn = r - f / df;
+      if (Math.abs(rn - r) < 1e-10) { r = rn; break; }
+      r = rn;
+    }
+    return r;
+  }
+
+  // PMT Price: parcela fixa
+  function calcPMT(pv, taxa, n) {
+    if (taxa === 0) return pv / n;
+    return pv * taxa / (1 - Math.pow(1 + taxa, -n));
+  }
+
+  // Gera tabela de amortização Price (n linhas, limita a 12)
+  function gerarAmortizacao(pv, taxa, n, limite) {
+    const pmt = calcPMT(pv, taxa, n);
+    const rows = [];
+    let saldo = pv;
+    const lim = Math.min(n, limite || 12);
+    for (let i = 1; i <= lim; i++) {
+      const juros = saldo * taxa;
+      const amort = pmt - juros;
+      saldo -= amort;
+      rows.push({ parc: i, pmt, juros, amort, saldo: Math.max(0, saldo) });
+    }
+    return rows;
+  }
+
+  function renderAmortTable(tableEl, rows) {
+    tableEl.innerHTML = `
+      <thead>
+        <tr>
+          <th style="text-align:left">Parc.</th>
+          <th>Prestação</th>
+          <th>Juros</th>
+          <th>Amortização</th>
+          <th>Saldo</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map(r => `<tr>
+          <td style="text-align:left">${r.parc}</td>
+          <td>${brl(r.pmt)}</td>
+          <td style="color:var(--red-500,#ef4444)">${brl(r.juros)}</td>
+          <td>${brl(r.amort)}</td>
+          <td>${brl(r.saldo)}</td>
+        </tr>`).join('')}
+      </tbody>`;
+  }
+
+  let compChart = null;
+
+  window.compCalcular = function() {
+    const g = id => parseFloat(document.getElementById(id).value) || 0;
+    const gs = id => document.getElementById(id).value.trim();
+
+    const nomeA = gs('comp-a-nome') || 'Opção A';
+    const nomeB = gs('comp-b-nome') || 'Opção B';
+    const pvA   = g('comp-a-valor');
+    const pvB   = g('comp-b-valor');
+    const iA    = g('comp-a-taxa') / 100;
+    const iB    = g('comp-b-taxa') / 100;
+    const nA    = Math.round(g('comp-a-prazo'));
+    const nB    = Math.round(g('comp-b-prazo'));
+    const cA    = g('comp-a-custos');
+    const cB    = g('comp-b-custos');
+
+    if (!pvA || !pvB || !iA || !iB || !nA || !nB) {
+      alert('Preencha todos os campos obrigatórios (valor, taxa e prazo) das duas opções.');
+      return;
+    }
+
+    // ── cálculos A ──
+    const pmtA    = calcPMT(pvA, iA, nA);
+    const totalA  = pmtA * nA + cA;
+    const jurosA  = totalA - pvA;
+    const cetMesA = calcCET(pvA, pmtA, nA, cA);
+    const cetAnoA = (Math.pow(1 + cetMesA, 12) - 1) * 100;
+    const pctA    = (jurosA / pvA) * 100;
+
+    // ── cálculos B ──
+    const pmtB    = calcPMT(pvB, iB, nB);
+    const totalB  = pmtB * nB + cB;
+    const jurosB  = totalB - pvB;
+    const cetMesB = calcCET(pvB, pmtB, nB, cB);
+    const cetAnoB = (Math.pow(1 + cetMesB, 12) - 1) * 100;
+    const pctB    = (jurosB / pvB) * 100;
+
+    // ── preenche cards ──
+    const setV = (id, val) => document.getElementById(id).textContent = val;
+
+    setV('comp-res-nome-a', nomeA);
+    setV('comp-res-nome-b', nomeB);
+    setV('comp-res-parcela-a', brl(pmtA));
+    setV('comp-res-total-a',   brl(totalA));
+    setV('comp-res-juros-a',   brl(jurosA));
+    setV('comp-res-cet-a',     pct(cetMesA * 100));
+    setV('comp-res-ceta-a',    pct(cetAnoA));
+    setV('comp-res-pct-a',     pctA.toFixed(1).replace('.', ',') + '%');
+
+    setV('comp-res-parcela-b', brl(pmtB));
+    setV('comp-res-total-b',   brl(totalB));
+    setV('comp-res-juros-b',   brl(jurosB));
+    setV('comp-res-cet-b',     pct(cetMesB * 100));
+    setV('comp-res-ceta-b',    pct(cetAnoB));
+    setV('comp-res-pct-b',     pctB.toFixed(1).replace('.', ',') + '%');
+
+    // destaque win/lose nas métricas
+    ['parcela','total','juros','cet','ceta','pct'].forEach(k => {
+      const va = document.getElementById(`comp-res-${k}-a`);
+      const vb = document.getElementById(`comp-res-${k}-b`);
+      const numA = parseFloat(va.textContent.replace(/[^0-9,]/g, '').replace(',', '.'));
+      const numB = parseFloat(vb.textContent.replace(/[^0-9,]/g, '').replace(',', '.'));
+      va.className = 'comp-stat__val' + (numA < numB ? ' comp-stat__val--win' : numA > numB ? ' comp-stat__val--lose' : '');
+      vb.className = 'comp-stat__val' + (numB < numA ? ' comp-stat__val--win' : numB > numA ? ' comp-stat__val--lose' : '');
+    });
+
+    // ── tabela comparativa ──
+    document.getElementById('comp-th-a').textContent = nomeA;
+    document.getElementById('comp-th-b').textContent = nomeB;
+
+    const linhas = [
+      ['Valor solicitado',   brl(pvA),              brl(pvB),              brl(Math.abs(pvA - pvB))],
+      ['Prazo',              nA + ' meses',          nB + ' meses',         Math.abs(nA - nB) + ' meses'],
+      ['Taxa mensal',        pct(iA * 100),          pct(iB * 100),         pct(Math.abs(iA - iB) * 100)],
+      ['Parcela (Price)',    brl(pmtA),              brl(pmtB),             brl(Math.abs(pmtA - pmtB))],
+      ['Custos adicionais', brl(cA),                brl(cB),               brl(Math.abs(cA - cB))],
+      ['Total pago',         brl(totalA),            brl(totalB),           brl(Math.abs(totalA - totalB))],
+      ['Juros pagos',        brl(jurosA),            brl(jurosB),           brl(Math.abs(jurosA - jurosB))],
+      ['CET mensal',         pct(cetMesA * 100),     pct(cetMesB * 100),    pct(Math.abs(cetMesA - cetMesB) * 100)],
+      ['CET anual',          pct(cetAnoA),           pct(cetAnoB),          pct(Math.abs(cetAnoA - cetAnoB))],
+      ['% juros / capital',  pctA.toFixed(2) + '%', pctB.toFixed(2) + '%', Math.abs(pctA - pctB).toFixed(2) + '%'],
+    ];
+
+    const tbody = document.getElementById('comp-tbody');
+    tbody.innerHTML = linhas.map(([label, va, vb], i) => {
+      // compara numericamente para colorir (só linhas de custo)
+      const custoLinhas = [3, 5, 6, 7, 8, 9]; // índices de parcela, total, juros, CET...
+      let classA = '', classB = '';
+      if (custoLinhas.includes(i)) {
+        const na = parseFloat(va.replace(/[^0-9,.]/g, '').replace(',', '.'));
+        const nb = parseFloat(vb.replace(/[^0-9,.]/g, '').replace(',', '.'));
+        classA = na < nb ? 'win-cell' : na > nb ? 'lose-cell' : '';
+        classB = nb < na ? 'win-cell' : nb > na ? 'lose-cell' : '';
+      }
+      return `<tr>
+        <td>${label}</td>
+        <td class="${classA}">${va}</td>
+        <td class="${classB}">${vb}</td>
+        <td>${linhas[i][3]}</td>
+      </tr>`;
+    }).join('');
+
+    // ── veredicto ──
+    const verd = document.getElementById('comp-veredicto');
+    const melhorCET = cetMesA <= cetMesB ? 'A' : 'B';
+    const melhorTotal = totalA <= totalB ? 'A' : 'B';
+    const nomeVenc = melhorCET === 'A' ? nomeA : nomeB;
+    const corVenc  = melhorCET === 'A' ? 'comp-verdict--a' : 'comp-verdict--b';
+    const econTotal = Math.abs(totalA - totalB);
+    const econPmtMes = Math.abs(pmtA - pmtB);
+
+    if (melhorCET === melhorTotal) {
+      verd.className = `comp-verdict ${corVenc}`;
+      verd.innerHTML = `✅ <strong>${nomeVenc} é a melhor opção.</strong> Ela tem menor CET (custo efetivo total) <em>e</em> menor valor total pago. Você economiza <strong>${brl(econTotal)}</strong> no total e <strong>${brl(econPmtMes)}</strong> por mês em relação à outra opção.`;
+    } else {
+      // CET e total apontam opções diferentes
+      const nomeVencTotal = melhorTotal === 'A' ? nomeA : nomeB;
+      const nomeVencCET   = melhorCET   === 'A' ? nomeA : nomeB;
+      verd.className = 'comp-verdict comp-verdict--empate';
+      verd.innerHTML = `⚠️ <strong>Atenção: há um trade-off.</strong> <strong>${nomeVencTotal}</strong> tem o menor valor total pago (economia de <strong>${brl(econTotal)}</strong>), mas <strong>${nomeVencCET}</strong> tem o menor CET. Isso acontece geralmente quando uma opção tem prazo menor. Prefira a que tem <strong>menor CET</strong> (${nomeVencCET}) para comparar o custo real do dinheiro — especialmente se os valores financiados forem diferentes.`;
+    }
+
+    // ── gráfico barras ──
+    const ctx = document.getElementById('comp-chart').getContext('2d');
+    if (compChart) compChart.destroy();
+    compChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: [nomeA, nomeB],
+        datasets: [
+          {
+            label: 'Principal',
+            data: [pvA, pvB],
+            backgroundColor: 'rgba(37,99,235,0.7)',
+            borderRadius: 6,
+          },
+          {
+            label: 'Juros + custos',
+            data: [jurosA, jurosB],
+            backgroundColor: 'rgba(239,68,68,0.7)',
+            borderRadius: 6,
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'bottom', labels: { font: { size: 11 } } },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ${ctx.dataset.label}: ${brl(ctx.parsed.y)}`
+            }
+          }
+        },
+        scales: {
+          x: { stacked: true, grid: { display: false } },
+          y: { stacked: true, ticks: { callback: v => 'R$ ' + (v/1000).toFixed(0) + 'k' } }
+        }
+      }
+    });
+
+    // ── tabelas amortização ──
+    const rowsA = gerarAmortizacao(pvA, iA, nA, 12);
+    const rowsB = gerarAmortizacao(pvB, iB, nB, 12);
+    renderAmortTable(document.getElementById('comp-amort-a'), rowsA);
+    renderAmortTable(document.getElementById('comp-amort-b'), rowsB);
+    document.getElementById('comp-amort-titulo-a').textContent = nomeA;
+    document.getElementById('comp-amort-titulo-b').textContent = nomeB;
+
+    document.getElementById('comp-resultado').style.display = 'block';
+    document.getElementById('comp-resultado').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+})();
+</script>
+<!-- ====== EXPORTAÇÃO PARA EXCEL ====== -->
+<style>
+  .export-modal-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,0,0,.45); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity .25s;
+  }
+  .export-modal-overlay.open { opacity: 1; pointer-events: all; }
+  .export-modal {
+    background: var(--bg-card, #fff);
+    border-radius: var(--radius-lg, 14px);
+    box-shadow: 0 24px 60px rgba(0,0,0,.18);
+    padding: 1.8rem 2rem;
+    width: 100%; max-width: 480px;
+    transform: translateY(18px) scale(.97);
+    transition: transform .25s;
+  }
+  .export-modal-overlay.open .export-modal { transform: translateY(0) scale(1); }
+  .export-modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1.2rem;
+  }
+  .export-modal-title {
+    font-size: 1.05rem; font-weight: 700; color: var(--text-primary);
+    display: flex; align-items: center; gap: .5rem;
+  }
+  .export-check-group {
+    display: flex; flex-direction: column; gap: .65rem;
+    margin-bottom: 1.4rem;
+  }
+  .export-check-item {
+    display: flex; align-items: center; gap: .75rem;
+    padding: .7rem .9rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-md, 10px);
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    user-select: none;
+  }
+  .export-check-item:has(input:checked) {
+    border-color: var(--brand-primary, #2563eb);
+    background: rgba(37,99,235,.05);
+  }
+  .export-check-item input[type=checkbox] {
+    width: 17px; height: 17px; accent-color: var(--brand-primary, #2563eb);
+    cursor: pointer; flex-shrink: 0;
+  }
+  .export-check-label { display: flex; flex-direction: column; gap: .1rem; }
+  .export-check-label strong { font-size: .9rem; font-weight: 600; color: var(--text-primary); }
+  .export-check-label span { font-size: .75rem; color: var(--text-muted); }
+  .export-check-icon { font-size: 1.25rem; flex-shrink: 0; }
+  .export-progress {
+    display: none; margin-top: 1rem;
+    padding: .8rem 1rem;
+    background: var(--surface-alt);
+    border-radius: var(--radius-md, 10px);
+    font-size: .84rem; color: var(--text-secondary);
+    align-items: center; gap: .6rem;
+  }
+  .export-progress.show { display: flex; }
+  .export-spinner {
+    width: 16px; height: 16px; border: 2.5px solid var(--border);
+    border-top-color: var(--brand-primary, #2563eb);
+    border-radius: 50%; animation: xspin .7s linear infinite; flex-shrink: 0;
+  }
+  @keyframes xspin { to { transform: rotate(360deg); } }
+</style>
+
+<!-- Modal de seleção -->
+<div id="export-modal-overlay" class="export-modal-overlay" onclick="fecharExportModal(event)">
+  <div class="export-modal" onclick="event.stopPropagation()">
+    <div class="export-modal-header">
+      <div class="export-modal-title">
+        <i class="fas fa-file-excel" style="color:#217346;font-size:1.2rem"></i>
+        Exportar dados para Excel
+      </div>
+      <button class="header-icon-btn" onclick="fecharExportModal()" title="Fechar">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1.1rem">
+      Selecione o que deseja exportar. Cada item vira uma aba separada no arquivo <code>.xlsx</code>.
+    </p>
+
+    <div class="export-check-group">
+      <label class="export-check-item">
+        <input type="checkbox" id="exp-check-transacoes" checked>
+        <span class="export-check-icon">💳</span>
+        <span class="export-check-label">
+          <strong>Transações</strong>
+          <span>Todas as receitas e despesas, com categoria e data</span>
+        </span>
+      </label>
+      <label class="export-check-item">
+        <input type="checkbox" id="exp-check-metas" checked>
+        <span class="export-check-icon">🎯</span>
+        <span class="export-check-label">
+          <strong>Metas financeiras</strong>
+          <span>Nome, valor-alvo, progresso, prazo e status</span>
+        </span>
+      </label>
+      <label class="export-check-item">
+        <input type="checkbox" id="exp-check-resumo" checked>
+        <span class="export-check-icon">📊</span>
+        <span class="export-check-label">
+          <strong>Resumo mensal</strong>
+          <span>Receitas, despesas e saldo agrupados por mês</span>
+        </span>
+      </label>
+      <label class="export-check-item">
+        <input type="checkbox" id="exp-check-categorias" checked>
+        <span class="export-check-icon">🏷️</span>
+        <span class="export-check-label">
+          <strong>Gastos por categoria</strong>
+          <span>Total gasto em cada categoria no período completo</span>
+        </span>
+      </label>
+    </div>
+
+    <button class="btn btn--primary" style="width:100%" onclick="confirmarExportacao()">
+      <i class="fas fa-download"></i> Baixar arquivo .xlsx
+    </button>
+
+    <div class="export-progress" id="export-progress">
+      <div class="export-spinner"></div>
+      <span id="export-progress-msg">Gerando planilha…</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+
+  window.exportarParaExcel = function () {
+    document.getElementById('export-modal-overlay').classList.add('open');
+  };
+
+  window.fecharExportModal = function (e) {
+    if (e && e.target !== document.getElementById('export-modal-overlay')) return;
+    document.getElementById('export-modal-overlay').classList.remove('open');
+  };
+
+  function getData(key) {
+    try { return JSON.parse(localStorage.getItem(key)) || []; }
+    catch { return []; }
+  }
+
+  function fmtData(iso) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    return isNaN(d) ? iso : d.toLocaleDateString('pt-BR');
+  }
+
+  const tipoLabel = { income: 'Receita', expense: 'Despesa' };
+  const catLabel  = {
+    alimentacao: 'Alimentação', transporte: 'Transporte', saude: 'Saúde',
+    educacao: 'Educação', lazer: 'Lazer', moradia: 'Moradia',
+    vestuario: 'Vestuário', outros: 'Outros', salario: 'Salário',
+    investimento: 'Investimento', freelance: 'Freelance'
+  };
+  const statusLabel = { em_andamento: 'Em andamento', concluida: 'Concluída', pausada: 'Pausada' };
+
+  window.confirmarExportacao = async function () {
+    const opcoes = {
+      transacoes:  document.getElementById('exp-check-transacoes').checked,
+      metas:       document.getElementById('exp-check-metas').checked,
+      resumo:      document.getElementById('exp-check-resumo').checked,
+      categorias:  document.getElementById('exp-check-categorias').checked,
+    };
+
+    if (!Object.values(opcoes).some(Boolean)) {
+      alert('Selecione ao menos uma opção para exportar.');
+      return;
+    }
+
+    const prog = document.getElementById('export-progress');
+    const msg  = document.getElementById('export-progress-msg');
+    prog.classList.add('show');
+    msg.textContent = 'Lendo dados…';
+    await new Promise(r => setTimeout(r, 60));
+
+    const transacoes = getData('finwise_transactions');
+    const metas      = getData('finwise_goals');
+    const salario    = Number(localStorage.getItem('finwise_salary')) || 0;
+
+    const wb = XLSX.utils.book_new();
+
+    // ── 1. TRANSAÇÕES ──────────────────────────────────────
+    if (opcoes.transacoes) {
+      msg.textContent = 'Montando aba Transações…';
+      await new Promise(r => setTimeout(r, 40));
+
+      const rows = [['Data', 'Tipo', 'Descrição', 'Categoria', 'Valor (R$)']];
+      transacoes
+        .slice().sort((a, b) => new Date(b.date) - new Date(a.date))
+        .forEach(t => rows.push([
+          fmtData(t.date),
+          tipoLabel[t.type] || t.type,
+          t.description || '',
+          catLabel[t.category] || t.category || '',
+          Number(t.amount) || 0
+        ]));
+
+      const totalRec = transacoes.filter(t => t.type === 'income').reduce((s, t) => s + Number(t.amount), 0);
+      const totalDesp = transacoes.filter(t => t.type === 'expense').reduce((s, t) => s + Number(t.amount), 0);
+      rows.push([]);
+      rows.push(['', '', '', 'Total Receitas:', totalRec]);
+      rows.push(['', '', '', 'Total Despesas:', totalDesp]);
+      rows.push(['', '', '', 'Saldo geral:', totalRec - totalDesp]);
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{ wch: 12 }, { wch: 10 }, { wch: 36 }, { wch: 18 }, { wch: 14 }];
+      XLSX.utils.book_append_sheet(wb, ws, 'Transações');
+    }
+
+    // ── 2. METAS ───────────────────────────────────────────
+    if (opcoes.metas) {
+      msg.textContent = 'Montando aba Metas…';
+      await new Promise(r => setTimeout(r, 40));
+
+      const rows = [['Meta', 'Valor alvo (R$)', 'Valor atual (R$)', 'Progresso (%)', 'Prazo', 'Status', 'Falta (R$)']];
+      metas.forEach(m => {
+        const prog = m.targetAmount > 0 ? Math.min((m.currentAmount / m.targetAmount) * 100, 100) : 0;
+        rows.push([
+          m.name || '',
+          Number(m.targetAmount) || 0,
+          Number(m.currentAmount) || 0,
+          parseFloat(prog.toFixed(1)),
+          fmtData(m.deadline),
+          statusLabel[m.status] || m.status || '',
+          Math.max(0, (m.targetAmount || 0) - (m.currentAmount || 0))
+        ]);
+      });
+      if (!metas.length) rows.push(['Nenhuma meta cadastrada', '', '', '', '', '', '']);
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{ wch: 28 }, { wch: 16 }, { wch: 16 }, { wch: 14 }, { wch: 12 }, { wch: 16 }, { wch: 14 }];
+      XLSX.utils.book_append_sheet(wb, ws, 'Metas');
+    }
+
+    // ── 3. RESUMO MENSAL ───────────────────────────────────
+    if (opcoes.resumo) {
+      msg.textContent = 'Montando aba Resumo Mensal…';
+      await new Promise(r => setTimeout(r, 40));
+
+      const mapa = {};
+      transacoes.forEach(t => {
+        const d = new Date(t.date);
+        if (isNaN(d)) return;
+        const chave = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+        if (!mapa[chave]) mapa[chave] = { receitas: 0, despesas: 0 };
+        if (t.type === 'income')  mapa[chave].receitas  += Number(t.amount);
+        if (t.type === 'expense') mapa[chave].despesas  += Number(t.amount);
+      });
+
+      const rows = [['Mês', 'Receitas (R$)', 'Despesas (R$)', 'Saldo (R$)', 'Salário base (R$)']];
+      Object.keys(mapa).sort((a, b) => b.localeCompare(a)).forEach(chave => {
+        const [ano, mes] = chave.split('-');
+        const nomeMes = new Date(Number(ano), Number(mes) - 1, 1)
+          .toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+        const { receitas, despesas } = mapa[chave];
+        rows.push([
+          nomeMes.charAt(0).toUpperCase() + nomeMes.slice(1),
+          receitas, despesas, receitas - despesas, salario
+        ]);
+      });
+      if (!Object.keys(mapa).length) rows.push(['Nenhuma transação registrada', '', '', '', '']);
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{ wch: 20 }, { wch: 15 }, { wch: 15 }, { wch: 14 }, { wch: 16 }];
+      XLSX.utils.book_append_sheet(wb, ws, 'Resumo Mensal');
+    }
+
+    // ── 4. CATEGORIAS ──────────────────────────────────────
+    if (opcoes.categorias) {
+      msg.textContent = 'Montando aba Categorias…';
+      await new Promise(r => setTimeout(r, 40));
+
+      const mapaC = {};
+      transacoes.filter(t => t.type === 'expense').forEach(t => {
+        const cat = catLabel[t.category] || t.category || 'Outros';
+        mapaC[cat] = (mapaC[cat] || 0) + Number(t.amount);
+      });
+
+      const totalGeral = Object.values(mapaC).reduce((s, v) => s + v, 0);
+      const rows = [['Categoria', 'Total gasto (R$)', '% do total']];
+      Object.entries(mapaC)
+        .sort((a, b) => b[1] - a[1])
+        .forEach(([cat, val]) => {
+          rows.push([cat, val, totalGeral > 0 ? parseFloat((val / totalGeral * 100).toFixed(1)) : 0]);
+        });
+      rows.push([]);
+      rows.push(['TOTAL', totalGeral, 100]);
+      if (!Object.keys(mapaC).length) rows.push(['Nenhuma despesa registrada', '', '']);
+
+      const ws = XLSX.utils.aoa_to_sheet(rows);
+      ws['!cols'] = [{ wch: 20 }, { wch: 18 }, { wch: 12 }];
+      XLSX.utils.book_append_sheet(wb, ws, 'Categorias');
+    }
+
+    // ── gera e baixa ───────────────────────────────────────
+    msg.textContent = 'Gerando arquivo…';
+    await new Promise(r => setTimeout(r, 60));
+
+    const hoje = new Date().toLocaleDateString('pt-BR').replace(/\//g, '-');
+    XLSX.writeFile(wb, `FinWise_${hoje}.xlsx`);
+
+    prog.classList.remove('show');
+    document.getElementById('export-modal-overlay').classList.remove('open');
+
+    if (typeof showToast === 'function') {
+      showToast('Planilha exportada com sucesso! 🎉', 'success');
+    }
+  };
+
+})();
+</script>
+<!-- ====== SEÇÃO IA FINANCEIRA ====== -->
+<section id="ia-financeira" class="dash-section" style="display:none">
+  <div class="section-header">
+    <div>
+      <h2 class="section-title"><i class="fas fa-brain"></i> IA Financeira Pessoal</h2>
+      <p class="section-sub">Análises e planos gerados pela IA com base nos seus dados reais do FinWise</p>
+    </div>
+  </div>
+
+  <!-- Config da API key (salva no localStorage, só aparece se não configurada) -->
+  <div id="ia-config-card" class="card" style="margin-bottom:1.2rem;border:2px solid var(--brand-primary,#2563eb)">
+    <div class="card-head"><h3><i class="fas fa-key"></i> Configurar chave da API</h3></div>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:.8rem">
+      Cole sua chave da API do Claude (Anthropic). Ela fica salva <strong>só no seu navegador</strong>, nunca é enviada para nenhum servidor.
+      <a href="https://console.anthropic.com" target="_blank" style="color:var(--brand-primary)">Obter chave →</a>
+    </p>
+    <div style="display:flex;gap:.6rem;align-items:center">
+      <input type="password" id="ia-api-key-input" placeholder="sk-ant-..." style="flex:1;font-family:monospace;font-size:.85rem">
+      <button class="btn btn--primary" onclick="iaSalvarChave()"><i class="fas fa-save"></i> Salvar</button>
+      <button class="btn btn--ghost btn--sm" onclick="iaToggleKey()" title="Ver/ocultar"><i class="fas fa-eye" id="ia-eye-icon"></i></button>
+    </div>
+    <div id="ia-key-status" style="font-size:.78rem;margin-top:.6rem;color:var(--text-muted)"></div>
+  </div>
+
+  <style>
+    .ia-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.4rem; }
+    @media(max-width:768px){ .ia-grid { grid-template-columns:1fr; } }
+    .ia-result {
+      margin-top:1rem; padding:1.1rem 1.2rem;
+      background:var(--surface-alt); border-radius:var(--radius-md,10px);
+      font-size:.88rem; line-height:1.8; color:var(--text-primary);
+      white-space:pre-wrap; display:none;
+      border-left: 3px solid var(--brand-primary,#2563eb);
+    }
+    .ia-result.show { display:block; }
+    .ia-loading {
+      display:none; align-items:center; gap:.6rem;
+      margin-top:.8rem; font-size:.82rem; color:var(--text-muted);
+    }
+    .ia-loading.show { display:flex; }
+    .ia-spinner {
+      width:16px; height:16px; border:2.5px solid var(--border);
+      border-top-color:var(--brand-primary,#2563eb);
+      border-radius:50%; animation:iaspin .7s linear infinite; flex-shrink:0;
+    }
+    @keyframes iaspin { to { transform:rotate(360deg); } }
+    .ia-noticia-item {
+      padding:.9rem 1rem; border-radius:var(--radius-md,10px);
+      border:1.5px solid var(--border); margin-bottom:.8rem;
+    }
+    .ia-noticia-titulo { font-weight:600; font-size:.9rem; margin-bottom:.3rem; color:var(--text-primary); }
+    .ia-noticia-contexto { font-size:.8rem; color:var(--text-secondary); line-height:1.6; }
+    .ia-noticia-tag {
+      display:inline-block; padding:.15rem .55rem; border-radius:999px;
+      font-size:.72rem; font-weight:600; margin-bottom:.4rem;
+    }
+    .ia-noticia-tag--positivo { background:rgba(16,185,129,.12); color:var(--green-500,#10b981); }
+    .ia-noticia-tag--negativo { background:rgba(239,68,68,.1); color:var(--red-500,#ef4444); }
+    .ia-noticia-tag--neutro   { background:rgba(107,114,128,.1); color:var(--text-secondary); }
+    .ia-padrao-item {
+      display:flex; align-items:flex-start; gap:.8rem;
+      padding:.85rem 1rem; border-radius:var(--radius-md,10px);
+      border:1.5px solid var(--border); margin-bottom:.7rem;
+    }
+    .ia-padrao-emoji { font-size:1.5rem; flex-shrink:0; }
+    .ia-padrao-info { display:flex; flex-direction:column; gap:.2rem; }
+    .ia-padrao-titulo { font-weight:600; font-size:.88rem; color:var(--text-primary); }
+    .ia-padrao-desc   { font-size:.8rem; color:var(--text-secondary); line-height:1.5; }
+  </style>
+
+  <!-- ── CARD 1: Plano 90 Dias ── -->
+  <div class="card" style="margin-bottom:1.4rem">
+    <div class="card-head">
+      <h3><i class="fas fa-calendar-check"></i> Plano Personalizado de 90 Dias</h3>
+    </div>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">
+      A IA analisa suas transações, metas e salário e monta um plano de ação realista para os próximos 3 meses.
+    </p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.8rem;margin-bottom:1rem">
+      <div class="form-group">
+        <label>Seu maior objetivo financeiro agora</label>
+        <select id="ia-objetivo">
+          <option value="quitar_dividas">Quitar dívidas</option>
+          <option value="montar_reserva">Montar reserva de emergência</option>
+          <option value="investir_mais">Começar/aumentar investimentos</option>
+          <option value="economizar">Reduzir gastos e economizar mais</option>
+          <option value="comprar_algo">Juntar para uma compra específica</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Quanto consegue guardar por mês? (R$)</label>
+        <input type="number" id="ia-guardar" placeholder="Ex: 300" min="0" step="50">
+      </div>
+    </div>
+    <div class="form-group" style="margin-bottom:1rem">
+      <label>Alguma dificuldade específica? (opcional)</label>
+      <input type="text" id="ia-dificuldade" placeholder="Ex: gasto demais em delivery, esqueço de registrar despesas…">
+    </div>
+    <button class="btn btn--primary" style="width:100%" onclick="iaGerarPlano90()">
+      <i class="fas fa-wand-magic-sparkles"></i> Gerar meu plano de 90 dias
+    </button>
+    <div class="ia-loading" id="ia-plano-loading"><div class="ia-spinner"></div> A IA está analisando seus dados e montando seu plano…</div>
+    <div class="ia-result" id="ia-plano-result"></div>
+  </div>
+
+  <!-- ── CARD 2: Notícias com contexto ── -->
+  <div class="card" id="ia-noticias-card" style="margin-bottom:1.4rem">
+    <div class="card-head">
+      <h3><i class="fas fa-newspaper"></i> Notícias Financeiras com Contexto Pessoal</h3>
+    </div>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">
+      Cole uma notícia econômica (Selic, inflação, dólar, recessão…) e a IA explica o que ela significa <strong>para o seu bolso</strong>, com base nos seus dados.
+    </p>
+    <div class="form-group" style="margin-bottom:.8rem">
+      <label>Cole o texto ou título da notícia</label>
+      <textarea id="ia-noticia-texto" rows="4"
+        placeholder="Ex: 'Banco Central sobe a Selic para 14,75% ao ano e sinaliza nova alta em junho…'"
+        style="width:100%;resize:vertical;font-size:.85rem;padding:.6rem .8rem;border-radius:var(--radius-md,10px);border:1.5px solid var(--border);background:var(--bg-card);color:var(--text-primary);font-family:inherit"></textarea>
+    </div>
+    <button class="btn btn--primary" style="width:100%" onclick="iaAnalisarNoticia()">
+      <i class="fas fa-magnifying-glass"></i> Analisar notícia para mim
+    </button>
+    <div class="ia-loading" id="ia-noticia-loading"><div class="ia-spinner"></div> Analisando a notícia com base nos seus dados…</div>
+    <div id="ia-noticia-result" style="display:none;margin-top:1rem"></div>
+  </div>
+
+  <!-- ── CARD 3: Padrões comportamentais ── -->
+  <div class="card" id="ia-padroes-card">
+    <div class="card-head">
+      <h3><i class="fas fa-chart-bar"></i> Rastreamento de Padrões Comportamentais</h3>
+    </div>
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">
+      A IA examina o histórico de transações e identifica padrões de comportamento: dias que você mais gasta, categorias que fogem do controle, tendências de melhora ou piora.
+    </p>
+    <button class="btn btn--primary" style="width:100%" onclick="iaAnalisarPadroes()">
+      <i class="fas fa-brain"></i> Identificar meus padrões de gasto
+    </button>
+    <div class="ia-loading" id="ia-padroes-loading"><div class="ia-spinner"></div> Analisando seu histórico de transações…</div>
+    <div id="ia-padroes-result" style="display:none;margin-top:1.2rem"></div>
+  </div>
+
+</section>
+
+<script>
+(function(){
+
+  // ── chave API ─────────────────────────────────────────────
+  const KEY_STORE = 'finwise_anthropic_key';
+
+  function iaGetKey() { return localStorage.getItem(KEY_STORE) || ''; }
+
+  window.iaSalvarChave = function() {
+    const v = document.getElementById('ia-api-key-input').value.trim();
+    if (!v.startsWith('sk-ant-')) {
+      document.getElementById('ia-key-status').innerHTML =
+        '<span style="color:var(--red-500,#ef4444)">⚠️ Chave inválida. Deve começar com <code>sk-ant-</code></span>';
+      return;
+    }
+    localStorage.setItem(KEY_STORE, v);
+    document.getElementById('ia-key-status').innerHTML =
+      '<span style="color:var(--green-500,#10b981)">✅ Chave salva com sucesso!</span>';
+    document.getElementById('ia-config-card').style.borderColor = 'var(--green-500,#10b981)';
+    document.getElementById('ia-api-key-input').value = '••••••••••••••••••••';
+  };
+
+  window.iaToggleKey = function() {
+    const inp  = document.getElementById('ia-api-key-input');
+    const icon = document.getElementById('ia-eye-icon');
+    if (inp.type === 'password') { inp.type = 'text';     icon.className = 'fas fa-eye-slash'; }
+    else                         { inp.type = 'password'; icon.className = 'fas fa-eye'; }
+  };
+
+  // Ao carregar, mostra status da chave
+  document.addEventListener('DOMContentLoaded', () => {
+    const saved = iaGetKey();
+    if (saved) {
+      document.getElementById('ia-key-status').innerHTML =
+        '<span style="color:var(--green-500,#10b981)">✅ Chave configurada. Pronta para usar.</span>';
+      document.getElementById('ia-config-card').style.borderColor = 'var(--green-500,#10b981)';
+    }
+  });
+
+  // ── helpers ───────────────────────────────────────────────
+  function getData(key) {
+    try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; }
+  }
+
+  function resumoFinanceiro() {
+    const transacoes = getData('finwise_transactions');
+    const metas      = getData('finwise_goals');
+    const salario    = Number(localStorage.getItem('finwise_salary')) || 0;
+
+    const now = new Date();
+    const mes3 = transacoes.filter(t => {
+      const d = new Date(t.date);
+      return (now - d) <= 90 * 24 * 60 * 60 * 1000;
+    });
+
+    const receitas  = mes3.filter(t => t.type === 'income').reduce((s,t) => s + Number(t.amount), 0);
+    const despesas  = mes3.filter(t => t.type === 'expense').reduce((s,t) => s + Number(t.amount), 0);
+
+    const cats = {};
+    mes3.filter(t => t.type === 'expense').forEach(t => {
+      cats[t.category] = (cats[t.category] || 0) + Number(t.amount);
+    });
+    const topCats = Object.entries(cats).sort((a,b) => b[1]-a[1]).slice(0,5)
+      .map(([c,v]) => `${c}: R$${v.toFixed(2)}`).join(', ');
+
+    const metasResumo = metas.map(m =>
+      `${m.name} (meta: R$${m.targetAmount}, atual: R$${m.currentAmount}, status: ${m.status})`
+    ).join('; ');
+
+    return `Salário: R$${salario.toFixed(2)} | Últimos 90 dias — Receitas: R$${receitas.toFixed(2)}, Despesas: R$${despesas.toFixed(2)}, Saldo: R$${(receitas-despesas).toFixed(2)} | Top categorias de gasto: ${topCats || 'nenhuma'} | Metas: ${metasResumo || 'nenhuma'}`;
+  }
+
+  function transacoesDetalhadas() {
+    const transacoes = getData('finwise_transactions');
+    const now = new Date();
+    return transacoes
+      .filter(t => (now - new Date(t.date)) <= 90 * 24 * 60 * 60 * 1000)
+      .map(t => `${t.date}|${t.type}|${t.category}|${t.description}|R$${Number(t.amount).toFixed(2)}`)
+      .join('\n');
+  }
+
+  async function chamarClaude(systemPrompt, userMessage) {
+    const key = iaGetKey();
+    if (!key) throw new Error('Chave API não configurada. Configure acima antes de usar.');
+
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userMessage }]
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err?.error?.message || `Erro ${resp.status} na API`);
+    }
+    const data = await resp.json();
+    return data.content?.[0]?.text || '';
+  }
+
+  function setLoading(id, show) {
+    document.getElementById(id).classList.toggle('show', show);
+  }
+
+  function mostrarErro(elementId, msg) {
+    const el = document.getElementById(elementId);
+    el.style.display = 'block';
+    el.innerHTML = `<div style="color:var(--red-500,#ef4444);font-size:.85rem;padding:.8rem 1rem;background:rgba(239,68,68,.08);border-radius:var(--radius-md,10px);border:1.5px solid rgba(239,68,68,.2)">⚠️ ${msg}</div>`;
+  }
+
+  // ── 1. PLANO 90 DIAS ──────────────────────────────────────
+  window.iaGerarPlano90 = async function() {
+    const key = iaGetKey();
+    if (!key) { mostrarErro('ia-plano-result', 'Configure sua chave de API acima antes de continuar.'); document.getElementById('ia-plano-result').style.display='block'; return; }
+
+    const objetivo   = document.getElementById('ia-objetivo').value;
+    const guardar    = document.getElementById('ia-guardar').value;
+    const dificuldade = document.getElementById('ia-dificuldade').value;
+
+    setLoading('ia-plano-loading', true);
+    document.getElementById('ia-plano-result').style.display = 'none';
+
+    const objetivoLabel = {
+      quitar_dividas: 'quitar dívidas',
+      montar_reserva: 'montar reserva de emergência',
+      investir_mais:  'começar ou aumentar investimentos',
+      economizar:     'reduzir gastos e economizar mais',
+      comprar_algo:   'juntar dinheiro para uma compra específica'
+    };
+
+    try {
+      const system = `Você é um consultor financeiro pessoal brasileiro especialista em finanças pessoais. 
+Você recebe dados reais do aplicativo FinWise de um usuário e cria planos práticos, realistas e motivadores.
+Responda sempre em português brasileiro. Seja direto, concreto e use emojis para organizar visualmente.
+Nunca invente dados que não foram fornecidos. Se os dados forem escassos, adapte o plano ao que existe.`;
+
+      const user = `Dados financeiros reais do usuário:
+${resumoFinanceiro()}
+
+Objetivo principal: ${objetivoLabel[objetivo]}
+Consegue guardar por mês: R$${guardar || 'não informado'}
+Dificuldade relatada: ${dificuldade || 'nenhuma'}
+
+Crie um Plano de 90 Dias personalizado com:
+1. 📊 Diagnóstico rápido (2-3 linhas sobre a situação atual com base nos dados)
+2. 🎯 Meta principal dos 90 dias (específica e mensurável)
+3. 📅 Mês 1 — Primeiros 30 dias: 3 ações concretas
+4. 📅 Mês 2 — Dias 31 a 60: 3 ações concretas
+5. 📅 Mês 3 — Dias 61 a 90: 3 ações concretas
+6. ⚠️ Principal armadilha a evitar
+7. 💡 Dica bônus personalizada
+
+Seja específico com os números do usuário. Máximo 400 palavras.`;
+
+      const resposta = await chamarClaude(system, user);
+      const el = document.getElementById('ia-plano-result');
+      el.textContent = resposta;
+      el.style.display = 'block';
+      el.classList.add('show');
+    } catch(e) {
+      mostrarErro('ia-plano-result', e.message);
+      document.getElementById('ia-plano-result').style.display = 'block';
+    } finally {
+      setLoading('ia-plano-loading', false);
+    }
+  };
+
+  // ── 2. NOTÍCIAS COM CONTEXTO ──────────────────────────────
+  window.iaAnalisarNoticia = async function() {
+    const key = iaGetKey();
+    if (!key) { mostrarErro('ia-noticia-result', 'Configure sua chave de API acima antes de continuar.'); document.getElementById('ia-noticia-result').style.display='block'; return; }
+
+    const texto = document.getElementById('ia-noticia-texto').value.trim();
+    if (!texto) { alert('Cole o texto da notícia antes de analisar.'); return; }
+
+    setLoading('ia-noticia-loading', true);
+    document.getElementById('ia-noticia-result').style.display = 'none';
+
+    try {
+      const system = `Você é um especialista em economia brasileira e finanças pessoais.
+Você analisa notícias econômicas e explica o impacto real na vida financeira de uma pessoa específica, com base nos dados dela.
+Responda em português brasileiro. Seja claro, direto e use linguagem acessível. Use emojis para organizar.
+Retorne APENAS um JSON válido, sem markdown, sem explicações fora do JSON, no formato:
+{"impacto":"positivo|negativo|neutro","titulo_resumido":"string","o_que_aconteceu":"string de 2 frases","impacto_direto":"string explicando impacto nos dados do usuário","o_que_fazer":"string com 2-3 ações concretas","urgencia":"alta|media|baixa"}`;
+
+      const user = `Notícia: ${texto}
+
+Dados do usuário:
+${resumoFinanceiro()}
+
+Analise o impacto desta notícia especificamente para esta pessoa.`;
+
+      const resposta = await chamarClaude(system, user);
+      const limpo = resposta.replace(/```json|```/g, '').trim();
+      let dados;
+      try { dados = JSON.parse(limpo); }
+      catch { throw new Error('A IA retornou um formato inesperado. Tente novamente.'); }
+
+      const tagClass = { positivo: 'positivo', negativo: 'negativo', neutro: 'neutro' }[dados.impacto] || 'neutro';
+      const tagLabel = { positivo: '✅ Impacto positivo', negativo: '⚠️ Impacto negativo', neutro: '➡️ Impacto neutro' }[dados.impacto] || 'Neutro';
+      const urgLabel = { alta: '🔴 Urgência alta', media: '🟡 Urgência média', baixa: '🟢 Urgência baixa' }[dados.urgencia] || '';
+
+      document.getElementById('ia-noticia-result').innerHTML = `
+        <div class="ia-noticia-item">
+          <span class="ia-noticia-tag ia-noticia-tag--${tagClass}">${tagLabel}</span>
+          <span class="ia-noticia-tag ia-noticia-tag--neutro" style="margin-left:.4rem">${urgLabel}</span>
+          <div class="ia-noticia-titulo">${dados.titulo_resumido || ''}</div>
+          <div class="ia-noticia-contexto">
+            <strong>📰 O que aconteceu:</strong><br>${dados.o_que_aconteceu || ''}<br><br>
+            <strong>💼 Impacto para você:</strong><br>${dados.impacto_direto || ''}<br><br>
+            <strong>🎯 O que fazer:</strong><br>${dados.o_que_fazer || ''}
+          </div>
+        </div>`;
+      document.getElementById('ia-noticia-result').style.display = 'block';
+    } catch(e) {
+      mostrarErro('ia-noticia-result', e.message);
+      document.getElementById('ia-noticia-result').style.display = 'block';
+    } finally {
+      setLoading('ia-noticia-loading', false);
+    }
+  };
+
+  // ── 3. PADRÕES COMPORTAMENTAIS ────────────────────────────
+  window.iaAnalisarPadroes = async function() {
+    const key = iaGetKey();
+    if (!key) { mostrarErro('ia-padroes-result', 'Configure sua chave de API acima antes de continuar.'); document.getElementById('ia-padroes-result').style.display='block'; return; }
+
+    const detalhe = transacoesDetalhadas();
+    if (!detalhe) { mostrarErro('ia-padroes-result', 'Você ainda não tem transações registradas. Adicione algumas na tela Início.'); document.getElementById('ia-padroes-result').style.display='block'; return; }
+
+    setLoading('ia-padroes-loading', true);
+    document.getElementById('ia-padroes-result').style.display = 'none';
+
+    try {
+      const system = `Você é um psicólogo financeiro e analista de dados especialista em comportamento de gastos.
+Analisa históricos de transações e identifica padrões reais de comportamento financeiro.
+Responda em português brasileiro. Retorne APENAS um JSON válido sem markdown no formato:
+{"padroes":[{"emoji":"string","titulo":"string","descricao":"string","tipo":"alerta|positivo|neutro"}],"resumo_comportamental":"string de 2-3 frases","score_saude":{"valor":0-100,"label":"string","cor":"verde|amarelo|vermelho"}}
+Máximo 5 padrões. Seja específico com os dados reais, não genérico.`;
+
+      const user = `Histórico de transações (formato: data|tipo|categoria|descrição|valor):
+${detalhe}
+
+Resumo geral: ${resumoFinanceiro()}
+
+Identifique padrões comportamentais reais neste histórico.`;
+
+      const resposta = await chamarClaude(system, user);
+      const limpo = resposta.replace(/```json|```/g, '').trim();
+      let dados;
+      try { dados = JSON.parse(limpo); }
+      catch { throw new Error('A IA retornou um formato inesperado. Tente novamente.'); }
+
+      const corMap = { verde: 'var(--green-500,#10b981)', amarelo: '#f59e0b', vermelho: 'var(--red-500,#ef4444)' };
+      const cor = corMap[dados.score_saude?.cor] || '#f59e0b';
+
+      let html = `
+        <div style="display:flex;align-items:center;gap:1.2rem;padding:1rem;background:var(--surface-alt);border-radius:var(--radius-md,10px);margin-bottom:1.2rem">
+          <div style="text-align:center;flex-shrink:0">
+            <div style="font-size:2rem;font-weight:800;color:${cor}">${dados.score_saude?.valor ?? '—'}</div>
+            <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">Score saúde</div>
+            <div style="font-size:.78rem;font-weight:600;color:${cor}">${dados.score_saude?.label || ''}</div>
+          </div>
+          <div style="font-size:.85rem;color:var(--text-secondary);line-height:1.6">${dados.resumo_comportamental || ''}</div>
+        </div>`;
+
+      (dados.padroes || []).forEach(p => {
+        const bg = p.tipo === 'positivo'
+          ? 'rgba(16,185,129,.07)'
+          : p.tipo === 'alerta'
+          ? 'rgba(239,68,68,.07)'
+          : 'var(--surface-alt)';
+        const border = p.tipo === 'positivo'
+          ? 'rgba(16,185,129,.3)'
+          : p.tipo === 'alerta'
+          ? 'rgba(239,68,68,.25)'
+          : 'var(--border)';
+        html += `
+          <div class="ia-padrao-item" style="background:${bg};border-color:${border}">
+            <div class="ia-padrao-emoji">${p.emoji}</div>
+            <div class="ia-padrao-info">
+              <div class="ia-padrao-titulo">${p.titulo}</div>
+              <div class="ia-padrao-desc">${p.descricao}</div>
+            </div>
+          </div>`;
+      });
+
+      document.getElementById('ia-padroes-result').innerHTML = html;
+      document.getElementById('ia-padroes-result').style.display = 'block';
+    } catch(e) {
+      mostrarErro('ia-padroes-result', e.message);
+      document.getElementById('ia-padroes-result').style.display = 'block';
+    } finally {
+      setLoading('ia-padroes-loading', false);
+    }
+  };
+
+})();
+</script>
+</main>
+</div>
+
+<!-- ====== MODAL LOGOUT / PESQUISA ====== -->
+<div id="survey-modal" class="fw-overlay">
+  <div class="fw-modal-box">
+    <div class="fw-modal-emoji">📋</div>
+    <h3>Antes de sair...</h3>
+    <p>Que tal responder uma pesquisa rápida? Sua opinião nos ajuda a melhorar o FinWise!</p>
+    <p class="modal-time"><i class="fas fa-clock"></i> Leva apenas 3 minutos</p>
+    <div class="fw-modal-footer fw-modal-footer--col">
+      <button id="survey-yes-btn" class="btn btn--primary btn--full">
+        <i class="fas fa-clipboard-list"></i> Responder pesquisa
+      </button>
+      <button id="survey-no-btn" class="btn btn--danger btn--full">
+        Sair sem responder
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Script compilado pelo TypeScript (dist/dashboard.js) -->
+<script>
+  // Chave da API Claude — substitua pelo valor real da sua chave Anthropic
+  // Obtenha em: https://console.anthropic.com/
+  window.ANTHROPIC_API_KEY = "SUA_CHAVE_AQUI";
+</script>
+<script type="module" src="./dashboard.js"></script>
+
+<!-- ====== SIMULADOR RENDA FIXA (enhanced) ====== -->
+<script>
+(function(){
+  // Tabela IR regressiva: até 6m=22.5%, 6-12m=20%, 12-24m=17.5%, >24m=15%
+  function aliquotaIR(meses) {
+    if (meses <= 6)  return 0.225;
+    if (meses <= 12) return 0.20;
+    if (meses <= 24) return 0.175;
+    return 0.15;
+  }
+
+  const RATES = {
+    selic:    { taxa: 0.1015, isento: false, nome: 'Tesouro SELIC' },
+    cdb:      { taxa: 0.12,   isento: false, nome: 'CDB' },
+    lci:      { taxa: 0.085,  isento: true,  nome: 'LCI/LCA' },
+    tesouro:  { taxa: 0.1055, isento: false, nome: 'Tesouro IPCA+' }, // IPCA(4%)+5.5%
+    poupanca: { taxa: 0.0617, isento: true,  nome: 'Poupança' },
+  };
+
+  function calcular(valor, meses, tipo) {
+    const r = RATES[tipo];
+    const taxaMensal = Math.pow(1 + r.taxa, 1/12) - 1;
+    const bruto = valor * Math.pow(1 + taxaMensal, meses);
+    const rendBruto = bruto - valor;
+    const ir = r.isento ? 0 : rendBruto * aliquotaIR(meses);
+    const rendLiq = rendBruto - ir;
+    const final = valor + rendLiq;
+    return { bruto, rendBruto, ir, rendLiq, final };
+  }
+
+  function fmt(v){ return 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+  document.getElementById('investment-form')?.addEventListener('submit', function(e){
+    e.preventDefault();
+    const valor  = parseFloat(document.getElementById('initial-amount').value) || 0;
+    const meses  = parseInt(document.getElementById('investment-months').value) || 0;
+    const tipo   = document.getElementById('investment-type').value;
+    if (!valor || !meses) return;
+    const c = calcular(valor, meses, tipo);
+    const pct = ((c.rendLiq / valor) * 100).toFixed(2);
+    const block = document.getElementById('sim-result-block');
+    document.getElementById('invested-amount').textContent  = fmt(valor);
+    document.getElementById('final-amount').textContent     = fmt(c.final);
+    document.getElementById('earnings-amount').textContent  = fmt(c.rendBruto);
+    document.getElementById('ir-amount').textContent        = fmt(c.ir);
+    document.getElementById('net-earnings').textContent     = fmt(c.rendLiq);
+    document.getElementById('pct-return').textContent       = pct + '%';
+    block.style.display = 'block';
+  });
+
+  // ====== COMPARADOR ======
+  const TODOS = [
+    { key:'cdb',      label:'CDB 12% a.a.',        taxa:0.12,   isento:false, color:'#1565C0' },
+    { key:'selic',    label:'Tesouro SELIC 10,15%', taxa:0.1015, isento:false, color:'#2E7D32' },
+    { key:'tesouro',  label:'Tesouro IPCA+ 10,55%', taxa:0.1055, isento:false, color:'#6A1B9A' },
+    { key:'lci',      label:'LCI/LCA 8,5% (isento)',taxa:0.085,  isento:true,  color:'#00695C' },
+    { key:'poupanca', label:'Poupança 6,17%',       taxa:0.0617, isento:true,  color:'#F57F17' },
+  ];
+
+  window.compararInvestimentos = function() {
+    const valor = parseFloat(document.getElementById('cmp-valor').value) || 5000;
+    const meses = parseInt(document.getElementById('cmp-meses').value) || 24;
+    const resultados = TODOS.map(inv => {
+      const taxaMensal = Math.pow(1 + inv.taxa, 1/12) - 1;
+      const bruto = valor * Math.pow(1 + taxaMensal, meses);
+      const rendBruto = bruto - valor;
+      const ir = inv.isento ? 0 : rendBruto * aliquotaIR(meses);
+      const rendLiq = rendBruto - ir;
+      return { ...inv, rendLiq, final: valor + rendLiq };
+    }).sort((a,b) => b.rendLiq - a.rendLiq);
+
+    const maxRend = resultados[0].rendLiq;
+    document.getElementById('cmp-titulo').textContent =
+      `R$ ${valor.toLocaleString('pt-BR')} por ${meses} meses — resultado líquido`;
+
+    document.getElementById('cmp-bars').innerHTML = resultados.map((r,i) => {
+      const pct = ((r.rendLiq / maxRend) * 100).toFixed(1);
+      const pctStr = ((r.rendLiq / valor) * 100).toFixed(2);
+      const medal = i===0 ? '🏆 ' : i===1 ? '🥈 ' : '';
+      return `
+        <div style="margin-bottom:.85rem">
+          <div style="display:flex;justify-content:space-between;font-size:.82rem;font-weight:600;margin-bottom:.25rem">
+            <span>${medal}${r.label}</span>
+            <span style="color:${r.color}">+${pctStr}% · ${fmt(r.rendLiq)}</span>
+          </div>
+          <div style="background:var(--border);border-radius:6px;height:10px;overflow:hidden">
+            <div style="width:${pct}%;background:${r.color};height:100%;border-radius:6px;transition:width .6s ease"></div>
+          </div>
+        </div>`;
+    }).join('');
+
+    document.getElementById('comparador-resultado').style.display = 'block';
+  };
+})();
+</script>
+
+<!-- ====== CALCULADORA DE JUROS COMPOSTOS ====== -->
+<script>
+(function() {
+  let jcChart = null;
+
+  window.calcularJurosCompostos = function() {
+    const capital = parseFloat(document.getElementById('jc-capital').value) || 0;
+    const aporte  = parseFloat(document.getElementById('jc-aporte').value)  || 0;
+    const taxa    = parseFloat(document.getElementById('jc-taxa').value)     / 100 || 0;
+    const meses   = parseInt(document.getElementById('jc-periodo').value)    || 0;
+
+    if (!capital && !aporte) { alert('Informe pelo menos o capital inicial ou um aporte mensal.'); return; }
+    if (!taxa || !meses)     { alert('Informe a taxa e o período.'); return; }
+
+    const fmt = v => v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' });
+
+    let saldo = capital;
+    let totalAportes = capital;
+    let totalJuros   = 0;
+    const labels = [], sSaldo = [], sJuros = [], sAportes = [];
+    const tbody = document.getElementById('jc-tabela');
+    tbody.innerHTML = '';
+
+    for (let m = 1; m <= meses; m++) {
+      const juros = saldo * taxa;
+      totalJuros += juros;
+      saldo = saldo + juros + aporte;
+      if (m > 1) totalAportes += aporte;
+
+      // tabela — every month
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid var(--border)';
+      tr.innerHTML = `
+        <td style="padding:.3rem .5rem;color:var(--text-muted)">${m}</td>
+        <td style="padding:.3rem .5rem;text-align:right;font-weight:600">${fmt(saldo)}</td>
+        <td style="padding:.3rem .5rem;text-align:right;color:var(--green-500)">${fmt(juros)}</td>
+        <td style="padding:.3rem .5rem;text-align:right;color:var(--green-600)">${fmt(totalJuros)}</td>
+      `;
+      tbody.appendChild(tr);
+
+      // chart — only every 6 months or last month (keep labels small)
+      if (m % Math.max(1, Math.floor(meses/24)) === 0 || m === meses) {
+        labels.push('M' + m);
+        sSaldo.push(+(saldo - totalJuros).toFixed(2));
+        sJuros.push(+totalJuros.toFixed(2));
+      }
+    }
+
+    document.getElementById('jc-res-capital').textContent  = fmt(capital);
+    document.getElementById('jc-res-aportes').textContent  = fmt(totalAportes - capital);
+    document.getElementById('jc-res-juros').textContent    = fmt(totalJuros);
+    document.getElementById('jc-res-total').textContent    = fmt(saldo);
+    document.getElementById('jc-res-pct').textContent      = (((saldo / (totalAportes || 1)) - 1) * 100).toFixed(2) + '%';
+
+    document.getElementById('jc-result').style.display = 'block';
+
+    const ctx = document.getElementById('jc-chart');
+    if (jcChart) jcChart.destroy();
+    jcChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Capital + Aportes', data: sSaldo, backgroundColor: 'rgba(16,185,129,.5)', stack: 's' },
+          { label: 'Juros acumulados',  data: sJuros, backgroundColor: 'rgba(16,185,129,.15)', stack: 's' }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { font: { size: 10 } } }, tooltip: {
+          callbacks: { label: ctx => ' ' + ctx.dataset.label + ': ' + ctx.raw.toLocaleString('pt-BR', { style:'currency', currency:'BRL' }) }
+        }},
+        scales: {
+          x: { stacked: true, ticks: { font: { size: 9 } } },
+          y: { stacked: true, ticks: { font: { size: 9 }, callback: v => 'R$' + (v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(0)+'k' : v) } }
+        }
+      }
+    });
+  };
+})();
+</script>
+
+<!-- ====== SIMULADOR DE FINANCIAMENTO SAC vs PRICE ====== -->
+<script>
+(function() {
+  let finChart = null;
+  let _sacRows = [], _priceRows = [];
+
+  function fmt(v) { return v.toLocaleString('pt-BR', { style:'currency', currency:'BRL' }); }
+
+  function calcSAC(pv, i, n) {
+    const amort = pv / n;
+    const rows = [];
+    let saldo = pv;
+    for (let m = 1; m <= n; m++) {
+      const juros   = saldo * i;
+      const parcela = amort + juros;
+      saldo -= amort;
+      rows.push({ m, parcela, amort, juros, saldo: Math.max(0, saldo) });
+    }
+    return rows;
+  }
+
+  function calcPrice(pv, i, n) {
+    const parcela = pv * (i * Math.pow(1+i, n)) / (Math.pow(1+i, n) - 1);
+    const rows = [];
+    let saldo = pv;
+    for (let m = 1; m <= n; m++) {
+      const juros = saldo * i;
+      const amort = parcela - juros;
+      saldo -= amort;
+      rows.push({ m, parcela, amort, juros, saldo: Math.max(0, saldo) });
+    }
+    return rows;
+  }
+
+  window.simularFinanciamento = function() {
+    const pv   = parseFloat(document.getElementById('fin-valor').value) || 0;
+    const taxa  = parseFloat(document.getElementById('fin-taxa').value)  / 100 || 0;
+    const prazo = parseInt(document.getElementById('fin-prazo').value)   || 0;
+
+    if (!pv || !taxa || !prazo) { alert('Preencha todos os campos.'); return; }
+
+    _sacRows   = calcSAC(pv, taxa, prazo);
+    _priceRows = calcPrice(pv, taxa, prazo);
+
+    const sacTotal   = _sacRows.reduce((a, r) => a + r.parcela, 0);
+    const sacJuros   = _sacRows.reduce((a, r) => a + r.juros,   0);
+    const priceTotal = _priceRows.reduce((a, r) => a + r.parcela, 0);
+    const priceJuros = _priceRows.reduce((a, r) => a + r.juros,   0);
+
+    document.getElementById('sac-p1').textContent      = fmt(_sacRows[0].parcela);
+    document.getElementById('sac-pn').textContent      = fmt(_sacRows[_sacRows.length-1].parcela);
+    document.getElementById('sac-total').textContent   = fmt(sacTotal);
+    document.getElementById('sac-juros').textContent   = fmt(sacJuros);
+    document.getElementById('price-parcela').textContent = fmt(_priceRows[0].parcela);
+    document.getElementById('price-amort1').textContent  = fmt(_priceRows[0].amort);
+    document.getElementById('price-total').textContent   = fmt(priceTotal);
+    document.getElementById('price-juros').textContent   = fmt(priceJuros);
+
+    const economia = priceTotal - sacTotal;
+    document.getElementById('fin-diff').innerHTML =
+      economia > 0
+        ? `💡 Com o <strong>SAC</strong>, você economiza <strong>${fmt(economia)}</strong> em juros em relação ao Price ao longo do financiamento.`
+        : `💡 Com o <strong>Price</strong>, você pagaria <strong>${fmt(-economia)}</strong> a menos que o SAC — verifique os cálculos.`;
+
+    // Chart — saldo devedor
+    const step = Math.max(1, Math.floor(prazo / 30));
+    const labels = [], sacSaldo = [], priceSaldo = [];
+    labels.push('0'); sacSaldo.push(pv); priceSaldo.push(pv);
+    for (let m = 0; m < prazo; m++) {
+      if ((m + 1) % step === 0 || m === prazo - 1) {
+        labels.push('M' + (m + 1));
+        sacSaldo.push(+_sacRows[m].saldo.toFixed(2));
+        priceSaldo.push(+_priceRows[m].saldo.toFixed(2));
+      }
+    }
+    const ctx = document.getElementById('fin-chart');
+    if (finChart) finChart.destroy();
+    finChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'SAC',   data: sacSaldo,   borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,.08)', tension: .3, pointRadius: 0, fill: true },
+          { label: 'Price', data: priceSaldo, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.06)', tension: .3, pointRadius: 0, fill: true }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { font: { size: 10 } } }, tooltip: {
+          callbacks: { label: c => ' ' + c.dataset.label + ': ' + (+c.raw).toLocaleString('pt-BR', { style:'currency', currency:'BRL' }) }
+        }},
+        scales: {
+          x: { ticks: { font: { size: 9 }, maxTicksLimit: 12 } },
+          y: { ticks: { font: { size: 9 }, callback: v => 'R$' + (v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1e3 ? (v/1e3).toFixed(0)+'k' : v) } }
+        }
+      }
+    });
+
+    window.showFinTab('sac');
+    document.getElementById('fin-result').style.display = 'block';
+  };
+
+  window.showFinTab = function(tab) {
+    document.getElementById('ftab-sac').classList.toggle('active',   tab === 'sac');
+    document.getElementById('ftab-price').classList.toggle('active', tab === 'price');
+    const rows = tab === 'sac' ? _sacRows : _priceRows;
+    const tbody = document.getElementById('fin-tbody');
+    tbody.innerHTML = '';
+    rows.forEach(r => {
+      const tr = document.createElement('tr');
+      tr.style.borderBottom = '1px solid var(--border)';
+      tr.innerHTML = `
+        <td style="padding:.3rem .5rem;color:var(--text-muted)">${r.m}</td>
+        <td style="padding:.3rem .5rem;text-align:right;font-weight:600">${fmt(r.parcela)}</td>
+        <td style="padding:.3rem .5rem;text-align:right">${fmt(r.amort)}</td>
+        <td style="padding:.3rem .5rem;text-align:right;color:#e53935">${fmt(r.juros)}</td>
+        <td style="padding:.3rem .5rem;text-align:right;color:var(--text-secondary)">${fmt(r.saldo)}</td>
+      `;
+      tbody.appendChild(tr);
+    });
+  };
+})();
+</script>
+
+<!-- ====== SIMULADOR DE CARTEIRA ====== -->
+<script>
+(function(){
+  const SALDO_INICIAL = 100000;
+  let carteira = JSON.parse(localStorage.getItem('fw_carteira') || '[]');
+  let historicoPatrimonio = JSON.parse(localStorage.getItem('fw_hist_patrim') || '[]');
+  let saldoDisponivel = parseFloat(localStorage.getItem('fw_saldo') || SALDO_INICIAL);
+
+  const TIPOS = { acoes:'📈 Ações', fii:'🏢 FII', renda_fixa:'🏦 Renda Fixa', crypto:'₿ Crypto', exterior:'🌎 Exterior' };
+  let pieChart = null, lineChart = null;
+
+  function salvar() {
+    localStorage.setItem('fw_carteira', JSON.stringify(carteira));
+    localStorage.setItem('fw_hist_patrim', JSON.stringify(historicoPatrimonio));
+    localStorage.setItem('fw_saldo', saldoDisponivel);
+  }
+
+  function fmt(v) { return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+  function fmtPct(v) { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
+
+  function varColor(v) { return v >= 0 ? '#43a047' : '#e53935'; }
+
+  function calcPatrimonio() {
+    return carteira.reduce((s, a) => s + a.precoAtual * a.qtd, 0);
+  }
+
+  function atualizarResumo() {
+    const patrim = calcPatrimonio() + saldoDisponivel;
+    const lucro = patrim - SALDO_INICIAL;
+    const pct = ((patrim / SALDO_INICIAL) - 1) * 100;
+    document.getElementById('cw-patrimonio').textContent = fmt(patrim);
+    const lEl = document.getElementById('cw-lucro');
+    lEl.textContent = fmt(lucro);
+    lEl.style.color = varColor(lucro);
+    document.getElementById('cw-saldo').textContent = fmt(saldoDisponivel);
+    document.getElementById('cw-var-pct').textContent = fmtPct(pct);
+    document.getElementById('cw-var-pct').style.color = varColor(pct);
+  }
+
+  function renderTabela() {
+    const tbody = document.getElementById('cw-tbody');
+    if (!carteira.length) {
+      tbody.innerHTML = `<tr id="cw-empty-row"><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted)"><div style="font-size:2rem">💼</div><div style="margin-top:.5rem">Sua carteira está vazia. Adicione seu primeiro ativo!</div></td></tr>`;
+      return;
+    }
+    tbody.innerHTML = carteira.map((a, i) => {
+      const valorTotal = a.precoAtual * a.qtd;
+      const varPct = ((a.precoAtual / a.precoMedio) - 1) * 100;
+      const varValor = (a.precoAtual - a.precoMedio) * a.qtd;
+      return `<tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:.55rem .4rem;font-weight:600">${a.ticker}</td>
+        <td style="text-align:right;padding:.55rem .4rem;font-size:.8rem;color:var(--text-muted)">${TIPOS[a.tipo] || a.tipo}</td>
+        <td style="text-align:right;padding:.55rem .4rem">${a.qtd}</td>
+        <td style="text-align:right;padding:.55rem .4rem">${fmt(a.precoMedio)}</td>
+        <td style="text-align:right;padding:.55rem .4rem">${fmt(a.precoAtual)}</td>
+        <td style="text-align:right;padding:.55rem .4rem;font-weight:600">${fmt(valorTotal)}</td>
+        <td style="text-align:right;padding:.55rem .4rem;font-weight:700;color:${varColor(varPct)}">
+          ${fmtPct(varPct)}<br><span style="font-size:.75rem;font-weight:400">${fmt(varValor)}</span>
+        </td>
+        <td style="padding:.55rem .4rem">
+          <button onclick="cwRemover(${i})" style="background:none;border:none;cursor:pointer;color:#e53935;font-size:1rem" title="Remover">
+            <i class="fas fa-times-circle"></i>
+          </button>
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function renderPie() {
+    const ctx = document.getElementById('cw-chart-pie');
+    if (!carteira.length) {
+      document.getElementById('cw-empty-pie').style.display = 'flex';
+      if (pieChart) { pieChart.destroy(); pieChart = null; }
+      return;
+    }
+    document.getElementById('cw-empty-pie').style.display = 'none';
+    const labels = carteira.map(a => a.ticker);
+    const data = carteira.map(a => a.precoAtual * a.qtd);
+    const colors = ['#1565C0','#2E7D32','#F57F17','#6A1B9A','#AD1457','#00695C','#E64A19','#37474F'];
+    if (pieChart) pieChart.destroy();
+    pieChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: { labels, datasets: [{ data, backgroundColor: colors.slice(0, data.length), borderWidth: 2 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { size: 11 } } } } }
+    });
+  }
+
+  function renderLine() {
+    const ctx = document.getElementById('cw-chart-line');
+    if (!historicoPatrimonio.length) {
+      document.getElementById('cw-empty-line').style.display = 'flex';
+      if (lineChart) { lineChart.destroy(); lineChart = null; }
+      return;
+    }
+    document.getElementById('cw-empty-line').style.display = 'none';
+    const labels = historicoPatrimonio.map((_, i) => 'Dia ' + (i + 1));
+    if (lineChart) lineChart.destroy();
+    lineChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Patrimônio (R$)',
+          data: historicoPatrimonio,
+          borderColor: '#1565C0',
+          backgroundColor: 'rgba(21,101,192,.1)',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { ticks: { callback: v => 'R$' + (v/1000).toFixed(0) + 'k' } } }
+      }
+    });
+  }
+
+  window.cwAdicionarAtivo = function() {
+    const ticker = document.getElementById('cw-ticker').value.trim().toUpperCase();
+    const tipo = document.getElementById('cw-tipo').value;
+    const preco = parseFloat(document.getElementById('cw-preco').value);
+    const qtd = parseInt(document.getElementById('cw-qtd').value);
+    const erro = document.getElementById('cw-erro');
+
+    if (!ticker) { erro.textContent = 'Informe o nome ou ticker do ativo.'; erro.style.display='block'; return; }
+    if (!preco || preco <= 0) { erro.textContent = 'Preço deve ser maior que zero.'; erro.style.display='block'; return; }
+    if (!qtd || qtd < 1) { erro.textContent = 'Quantidade deve ser pelo menos 1.'; erro.style.display='block'; return; }
+    const custo = preco * qtd;
+    if (custo > saldoDisponivel) { erro.textContent = `Saldo insuficiente. Disponível: ${fmt(saldoDisponivel)}`; erro.style.display='block'; return; }
+    erro.style.display = 'none';
+
+    const existente = carteira.findIndex(a => a.ticker === ticker && a.tipo === tipo);
+    if (existente >= 0) {
+      const a = carteira[existente];
+      const totalQtd = a.qtd + qtd;
+      a.precoMedio = ((a.precoMedio * a.qtd) + (preco * qtd)) / totalQtd;
+      a.qtd = totalQtd;
+      a.precoAtual = a.precoMedio;
+    } else {
+      carteira.push({ ticker, tipo, qtd, precoMedio: preco, precoAtual: preco });
+    }
+    saldoDisponivel -= custo;
+    salvar(); renderTabela(); renderPie(); atualizarResumo();
+    document.getElementById('cw-ticker').value = '';
+    document.getElementById('cw-preco').value = '';
+    document.getElementById('cw-qtd').value = '';
+  };
+
+  window.cwRemover = function(i) {
+    const a = carteira[i];
+    saldoDisponivel += a.precoAtual * a.qtd;
+    carteira.splice(i, 1);
+    salvar(); renderTabela(); renderPie(); atualizarResumo();
+  };
+
+  window.cwSimularVariacao = function() {
+    if (!carteira.length) return;
+    carteira = carteira.map(a => {
+      const variacao = (Math.random() - 0.46) * 0.06; // -3% a +3.2%
+      return { ...a, precoAtual: Math.max(0.01, a.precoAtual * (1 + variacao)) };
+    });
+    const patrim = calcPatrimonio() + saldoDisponivel;
+    historicoPatrimonio.push(parseFloat(patrim.toFixed(2)));
+    if (historicoPatrimonio.length > 60) historicoPatrimonio.shift();
+    salvar(); renderTabela(); renderPie(); renderLine(); atualizarResumo();
+  };
+
+  window.cwLimparCarteira = function() {
+    if (!confirm('Zerar a carteira? O saldo volta ao inicial.')) return;
+    carteira = []; historicoPatrimonio = []; saldoDisponivel = SALDO_INICIAL;
+    salvar(); renderTabela(); renderPie(); renderLine(); atualizarResumo();
+  };
+
+  // Init
+  atualizarResumo(); renderTabela(); renderPie(); renderLine();
+})();
+</script>
+
+<!-- ====== SIDEBAR MENU ====== -->
+<script>
+(function() {
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  window.openSidebar = openSidebar;
+  window.closeSidebar = closeSidebar;
+
+  // ── Section navigation ──
+  // Sections inside <main> use display toggling; others (carteira, cotacoes) are outside main
+const MAIN_SECTIONS = ['resumo','metas','graficos','relatorio','investimentos','comparador-credito','ia-financeira'];
+  const EXTRA_SECTIONS = ['carteira','dividas','regra503020']; // cotacoes now has its own page
+
+  function showSection(id) {
+    // Hide all main sections
+    MAIN_SECTIONS.forEach(s => {
+      const el = document.getElementById(s);
+      if (el) el.style.display = 'none';
+    });
+    // Hide extra sections
+    EXTRA_SECTIONS.forEach(s => {
+      const el = document.getElementById(s);
+      if (el) el.style.display = 'none';
+    });
+    // Hide/show main container
+    const mainEl = document.getElementById('main-content');
+
+    if (EXTRA_SECTIONS.includes(id)) {
+      if (mainEl) mainEl.style.display = 'none';
+      const extra = document.getElementById(id);
+      if (extra) { extra.style.display = ''; extra.style.removeProperty('display'); extra.style.display = 'block'; }
+    } else {
+      if (mainEl) mainEl.style.display = '';
+      const target = document.getElementById(id);
+      if (target) target.style.display = '';
+    }
+
+    // Update sidebar active state
+    document.querySelectorAll('.sidebar-link[data-section]').forEach(l => {
+      l.classList.toggle('active', l.dataset.section === id);
+    });
+
+    // Persist
+    history.replaceState(null, '', '#' + id);
+  }
+
+  window.showSection = showSection;
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Wire sidebar links with data-section
+    document.querySelectorAll('.sidebar-link[data-section]').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        showSection(section);
+        closeSidebar();
+      });
+    });
+
+    // Wire nav-links with data-section in header
+    document.querySelectorAll('.nav-link[data-section]').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        showSection(this.dataset.section);
+      });
+    });
+
+    // Read hash on load
+    const hash = location.hash.replace('#', '') || 'resumo';
+    showSection(hash);
+
+    // Sync sidebar username
+    const mainUsername = document.getElementById('username-display');
+    const sidebarUsername = document.getElementById('sidebar-username');
+    if (mainUsername && sidebarUsername) {
+      const syncName = () => { sidebarUsername.textContent = mainUsername.textContent; };
+      syncName();
+      new MutationObserver(syncName).observe(mainUsername, { childList: true, subtree: true, characterData: true });
+    }
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+})();
+</script>
+
+<!-- ====== COTAÇÕES ====== -->
+<script>
+(function(){
+  // Dados simulados realistas (cotações de referência) + variação aleatória leve
+  const BASE = {
+    dolar:    { nome:'Dólar (USD/BRL)', emoji:'🇺🇸', valor:5.74,  var7: [-0.8,-0.4,+0.2,+0.5,-0.3,+0.1,-0.2], var30:-1.2 },
+    euro:     { nome:'Euro (EUR/BRL)',  emoji:'🇪🇺', valor:6.21,  var7: [-0.5,+0.3,+0.6,-0.2,+0.1,-0.4,+0.2], var30:+0.8 },
+    bitcoin:  { nome:'Bitcoin (BTC)',   emoji:'₿',   valor:102340, var7: [-2.1,+3.4,-1.5,+5.2,-0.8,+1.9,-0.6], var30:+18.4 },
+    ibov:     { nome:'Ibovespa',        emoji:'🇧🇷', valor:133850, var7: [-0.4,+0.7,-0.2,+1.1,-0.5,+0.3,+0.8], var30:+4.6 },
+    ouro:     { nome:'Ouro (XAU/BRL)', emoji:'🥇',   valor:19840, var7: [+0.3,-0.2,+0.5,+0.8,-0.1,+0.2,-0.3], var30:+7.2 },
+    ethereum: { nome:'Ethereum (ETH)', emoji:'⟠',    valor:3210,  var7: [-3.1,+4.2,-1.8,+2.9,+0.6,-1.2,+2.1], var30:+22.1 },
+    sp500:    { nome:'S&P 500',         emoji:'🇺🇸', valor:5892,  var7: [-0.3,+0.5,+0.1,-0.4,+0.7,-0.2,+0.3], var30:+3.8 },
+    petrobras:{ nome:'PETR4',           emoji:'🛢️', valor:39.82,  var7: [+1.2,-0.8,+2.1,-1.4,+0.5,+1.8,-0.9], var30:+5.3 },
+    vale:     { nome:'VALE3',           emoji:'⛏️', valor:58.14,  var7: [-0.6,+1.1,-1.2,+2.3,-0.4,+0.9,-0.7], var30:+3.1 },
+    itub:     { nome:'ITUB4',           emoji:'🏦', valor:34.60,  var7: [+0.5,-0.3,+0.8,-0.5,+1.2,-0.2,+0.4], var30:+6.8 },
+  };
+
+  let dados = {};
+
+  function gerarDados() {
+    dados = {};
+    Object.entries(BASE).forEach(([k, b]) => {
+      const varDia = (Math.random() - 0.48) * b.valor * 0.018;
+      const valor = b.valor + varDia;
+      const varDiaPct = (varDia / b.valor) * 100;
+      dados[k] = {
+        ...b,
+        valorAtual: valor,
+        varDiaPct,
+        var7Pct: b.var7.reduce((s, v) => s + v, 0),
+        var30Pct: b.var30
+      };
+    });
+  }
+
+  function fmt(v, casas = 2) {
+    if (v >= 10000) return v.toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    return v.toLocaleString('pt-BR', { minimumFractionDigits: casas, maximumFractionDigits: casas });
+  }
+  function fmtPct(v) { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
+  function varColor(v) { return v >= 0 ? '#43a047' : '#e53935'; }
+  function varBg(v) { return v >= 0 ? 'rgba(67,160,71,.08)' : 'rgba(229,57,53,.08)'; }
+
+  function prefixo(k) {
+    if (['dolar','euro','ouro','petrobras','vale','itub'].includes(k)) return 'R$ ';
+    if (['bitcoin','ethereum','sp500','ibov'].includes(k)) return k === 'ibov' || k === 'sp500' ? '' : 'R$ ';
+    return '';
+  }
+
+  function renderGrade() {
+    const grid = document.getElementById('cotacoes-grid');
+    grid.innerHTML = Object.entries(dados).map(([k, d]) => `
+      <div class="card" style="cursor:pointer;transition:transform .15s" onclick="cotacaoRenderChart('${k}');document.getElementById('cotacao-select-chart').value='${k}'" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform=''">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div style="font-size:1.5rem">${d.emoji}</div>
+            <div style="font-size:.78rem;color:var(--text-muted);margin-top:.2rem">${d.nome}</div>
+          </div>
+          <div style="background:${varBg(d.varDiaPct)};color:${varColor(d.varDiaPct)};font-size:.8rem;font-weight:700;padding:.2rem .5rem;border-radius:20px">${fmtPct(d.varDiaPct)}</div>
+        </div>
+        <div style="font-size:1.35rem;font-weight:700;margin-top:.6rem">${prefixo(k)}${fmt(d.valorAtual)}</div>
+        <div style="font-size:.75rem;color:var(--text-muted);margin-top:.25rem">7d: <span style="color:${varColor(d.var7Pct)};font-weight:600">${fmtPct(d.var7Pct)}</span></div>
+      </div>
+    `).join('');
+  }
+
+  function renderTabela() {
+    const tbody = document.getElementById('cotacao-tbody');
+    tbody.innerHTML = Object.entries(dados).map(([k, d]) => `
+      <tr style="border-bottom:1px solid var(--border)">
+        <td style="padding:.55rem .6rem"><strong>${d.emoji} ${d.nome}</strong></td>
+        <td style="text-align:right;padding:.55rem .6rem;font-weight:600">${prefixo(k)}${fmt(d.valorAtual)}</td>
+        <td style="text-align:right;padding:.55rem .6rem;font-weight:700;color:${varColor(d.varDiaPct)}">${fmtPct(d.varDiaPct)}</td>
+        <td style="text-align:right;padding:.55rem .6rem;font-weight:700;color:${varColor(d.var7Pct)}">${fmtPct(d.var7Pct)}</td>
+        <td style="text-align:right;padding:.55rem .6rem;font-weight:700;color:${varColor(d.var30Pct)}">${fmtPct(d.var30Pct)}</td>
+      </tr>
+    `).join('');
+  }
+
+  let chartCotacao = null;
+  window.cotacaoRenderChart = function(key) {
+    const d = dados[key];
+    if (!d) return;
+    const ctx = document.getElementById('cotacao-chart');
+    const dias = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
+    let val = d.valorAtual;
+    const points = [...d.var7].reverse().map((v, i) => {
+      val = val / (1 + v / 100);
+      return val;
+    }).reverse();
+    points.push(d.valorAtual);
+
+    const cor = d.var7Pct >= 0 ? '#1565C0' : '#c62828';
+    if (chartCotacao) chartCotacao.destroy();
+    chartCotacao = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: [...dias, 'Hoje'],
+        datasets: [{
+          label: d.nome,
+          data: points,
+          borderColor: cor,
+          backgroundColor: cor + '18',
+          fill: true,
+          tension: 0.4,
+          pointRadius: 4,
+          pointBackgroundColor: cor
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { ticks: { callback: v => prefixo(key) + fmt(v) } } }
+      }
+    });
+  };
+
+  window.cotacoesAtualizar = function() {
+    const spin = document.getElementById('cotacao-spin');
+    spin.classList.add('fa-spin');
+    setTimeout(() => {
+      gerarDados();
+      renderGrade(); renderTabela();
+      const sel = document.getElementById('cotacao-select-chart').value;
+      cotacaoRenderChart(sel);
+      document.getElementById('cotacao-hora').textContent = new Date().toLocaleTimeString('pt-BR');
+      spin.classList.remove('fa-spin');
+    }, 800);
+  };
+
+  // Atualiza tickers no header
+  function atualizarHeaderTickers() {
+    function fmt2(v, prefix) {
+      if (v >= 10000) return prefix + v.toLocaleString('pt-BR', {maximumFractionDigits:0});
+      return prefix + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+    function setTicker(id, val, pct, prefix) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const formatted = fmt2(val, prefix);
+      const wasUp = el.classList.contains('up');
+      const wasDown = el.classList.contains('down');
+      el.textContent = formatted + ' (' + (pct>=0?'+':'') + pct.toFixed(1) + '%)';
+      el.classList.remove('up','down','tick-up','tick-down');
+      if (pct >= 0) { el.classList.add('up','tick-up'); }
+      else { el.classList.add('down','tick-down'); }
+    }
+    if (dados.dolar)  setTicker('ht-dolar', dados.dolar.valorAtual, dados.dolar.varDiaPct, 'R$');
+    if (dados.bitcoin) setTicker('ht-btc', dados.bitcoin.valorAtual, dados.bitcoin.varDiaPct, 'R$');
+    if (dados.ibov)   setTicker('ht-ibov', dados.ibov.valorAtual, dados.ibov.varDiaPct, '');
+    if (dados.ouro)   setTicker('ht-ouro', dados.ouro.valorAtual, dados.ouro.varDiaPct, 'R$');
+  }
+
+  // Init
+  gerarDados();
+  renderGrade(); renderTabela();
+  cotacaoRenderChart('dolar');
+  atualizarHeaderTickers();
+  document.getElementById('cotacao-hora').textContent = new Date().toLocaleTimeString('pt-BR');
+
+  // Auto-refresh a cada 30s
+  setInterval(() => {
+    const secao = document.getElementById('cotacoes');
+    if (secao && secao.style.display !== 'none') cotacoesAtualizar();
+    // Sempre atualiza tickers do header
+    gerarDados();
+    atualizarHeaderTickers();
+  }, 30000);
+
+  // Atualiza tickers imediatamente ao carregar
+  window.addEventListener('DOMContentLoaded', function() {
+    gerarDados();
+    atualizarHeaderTickers();
+  });
+})();
+</script>
+<!-- ── MODAL IMPORTAÇÃO OFX/CSV ── -->
+<div id="modal-importar" class="modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modal-importar-titulo">
+  <div class="modal-box modal-box--large">
+
+    <div class="modal-header">
+      <h2 id="modal-importar-titulo"><i class="fas fa-file-upload"></i> Importar Extrato</h2>
+      <button class="modal-close" id="btn-fechar-importar" aria-label="Fechar">&times;</button>
+    </div>
+
+    <!-- Passo 1: Upload -->
+    <div id="importar-step-1">
+      <p class="import-hint">Suportamos extratos <strong>OFX</strong> (todos os bancos brasileiros) e <strong>CSV</strong> (Nubank, Inter, XP, planilhas).</p>
+
+      <div class="import-dropzone" id="import-dropzone">
+        <i class="fas fa-cloud-upload-alt"></i>
+        <p>Arraste o arquivo aqui ou clique para selecionar</p>
+        <span>.ofx ou .csv</span>
+        <input type="file" id="import-file-input" accept=".ofx,.csv,.txt" style="display:none">
+      </div>
+
+      <div class="import-bank-hint">
+        <strong>Como exportar o extrato do seu banco:</strong>
+        <ul>
+          <li><i class="fas fa-university"></i> <strong>Nubank:</strong> App → Perfil → Exportar fatura (CSV)</li>
+          <li><i class="fas fa-university"></i> <strong>Itaú:</strong> Internet Banking → Extrato → Exportar OFX</li>
+          <li><i class="fas fa-university"></i> <strong>Bradesco:</strong> Internet Banking → Extrato → Salvar em OFX</li>
+          <li><i class="fas fa-university"></i> <strong>Inter:</strong> App → Extrato → Exportar CSV</li>
+          <li><i class="fas fa-university"></i> <strong>BB:</strong> Internet Banking → Extrato → Arquivo OFX</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Passo 2: Prévia -->
+    <div id="importar-step-2" style="display:none">
+      <div class="import-preview-header">
+        <span id="import-count-info"></span>
+        <div class="import-filter-row">
+          <label><input type="checkbox" id="import-only-new" checked> Ocultar duplicatas</label>
+          <select id="import-default-category">
+            <option value="">Categoria padrão...</option>
+            <option value="alimentacao">Alimentação</option>
+            <option value="moradia">Moradia</option>
+            <option value="transporte">Transporte</option>
+            <option value="lazer">Lazer</option>
+            <option value="saude">Saúde</option>
+            <option value="educacao">Educação</option>
+            <option value="outros">Outros</option>
+          </select>
+          <button class="btn btn--ghost btn--sm" id="btn-aplicar-categoria">Aplicar a todos</button>
+        </div>
+      </div>
+
+      <div class="import-table-wrap">
+        <table class="import-table">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="import-check-all" checked></th>
+              <th>Data</th>
+              <th>Descrição</th>
+              <th>Valor</th>
+              <th>Tipo</th>
+              <th>Categoria</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="import-preview-body"></tbody>
+        </table>
+      </div>
+
+      <div class="import-actions">
+        <button class="btn btn--ghost" id="btn-importar-voltar">← Voltar</button>
+        <span id="import-selected-count"></span>
+        <button class="btn btn--primary" id="btn-confirmar-importacao">
+          <i class="fas fa-check"></i> Confirmar importação
+        </button>
+      </div>
+    </div>
+
+    <!-- Passo 3: Sucesso -->
+    <div id="importar-step-3" style="display:none" class="import-success">
+      <i class="fas fa-check-circle"></i>
+      <h3 id="import-success-msg"></h3>
+      <p>As transações já aparecem na sua lista e nos gráficos.</p>
+      <button class="btn btn--primary" id="btn-importar-fechar-ok">Fechar</button>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
+<!-- ══════════════════════════════════════════
+     PLANEJADOR DE APOSENTADORIA — INSS + INVEST
+     ══════════════════════════════════════════ -->
+<script>
+(function() {
+  const FAIXAS_INSS = [
+    { ate: 1412.00, aliq: 0.075 },
+    { ate: 2666.68, aliq: 0.090 },
+    { ate: 4000.03, aliq: 0.120 },
+    { ate: 7786.02, aliq: 0.140 },
+  ];
+  const TETO_INSS = 7786.02;
+  const SAL_MIN = 1412.00;
+
+  let categoriaAtual = 'empregado';
+  let aposChartInstance = null;
+
+  window.selecionarCategoria = function(cat) {
+    categoriaAtual = cat;
+    document.querySelectorAll('.apos-cat-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.cat === cat);
+    });
+  };
+
+  function calcContribEmpregado(salario) {
+    let contrib = 0;
+    let salRestante = Math.min(salario, TETO_INSS);
+    let limiteAnterior = 0;
+    for (const faixa of FAIXAS_INSS) {
+      if (salRestante <= 0) break;
+      const base = Math.min(salRestante, faixa.ate - limiteAnterior);
+      contrib += base * faixa.aliq;
+      salRestante -= base;
+      limiteAnterior = faixa.ate;
+    }
+    return contrib;
+  }
+
+  function estimarBeneficioINSS(salario, tempoContrib, idadeAtual, idadeApos, categoria) {
+    const anosAteApos = idadeApos - idadeAtual;
+    const totalContrib = Math.min(tempoContrib + anosAteApos, 45);
+    const salMedio = Math.min(salario, TETO_INSS);
+    let mediaContrib = 0, contribMensal = 0, obs = '', tipoDesc = '';
+
+    if (categoria === 'mei') {
+      contribMensal = SAL_MIN * 0.05;
+      mediaContrib = SAL_MIN;
+      obs = 'MEI: contribuição de 5% sobre o salário mínimo. Benefício limitado a 1 salário mínimo.';
+      tipoDesc = 'MEI (5% do salário mínimo)';
+    } else if (categoria === 'facultativo') {
+      contribMensal = SAL_MIN * 0.05;
+      mediaContrib = SAL_MIN;
+      obs = 'Plano Simplificado: benefício limitado a 1 salário mínimo. Para aposentadoria por tempo de contribuição, migrar para alíquota normal.';
+      tipoDesc = 'Facultativo — Plano Simplificado (5%)';
+    } else if (categoria === 'autonomo') {
+      contribMensal = Math.min(salario, TETO_INSS) * 0.20;
+      mediaContrib = salMedio;
+      obs = 'Contribuinte individual/autônomo: 20% sobre o salário de contribuição (até o teto).';
+      tipoDesc = 'Autônomo / Contribuinte Individual (20%)';
+    } else {
+      contribMensal = calcContribEmpregado(salario);
+      mediaContrib = salMedio;
+      obs = 'Empregado CLT: alíquota progressiva de 7,5% a 14% sobre o salário. Empresa também contribui com 20%.';
+      tipoDesc = 'Empregado CLT (tabela progressiva)';
+    }
+
+    let beneficio = 0, benefTipo = '';
+    if (categoria === 'mei' || categoria === 'facultativo') {
+      beneficio = SAL_MIN;
+      benefTipo = 'Salário mínimo (teto MEI/Simplificado)';
+    } else if (totalContrib < 15) {
+      beneficio = 0;
+      benefTipo = `⚠️ Menos de 15 anos de contribuição — sem direito ao benefício por idade`;
+    } else {
+      const pct = Math.min(0.60 + (Math.max(totalContrib - 15, 0) * 0.02), 1.0);
+      beneficio = Math.min(mediaContrib * pct, TETO_INSS);
+      beneficio = Math.max(beneficio, SAL_MIN);
+      benefTipo = `${(pct * 100).toFixed(0)}% da média salarial (${totalContrib} anos contrib.)`;
+    }
+
+    return { beneficio, benefTipo, contribMensal, mediaContrib, totalContrib, obs, tipoDesc };
+  }
+
+  const fmtR = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+
+  window.calcularAposentadoria = function() {
+    const idadeAtual = +document.getElementById('apos-idade-atual').value;
+    const idadeApos = +document.getElementById('apos-idade-apos').value;
+    const expectativa = +document.getElementById('apos-expectativa').value;
+    const salario = +document.getElementById('apos-salario').value;
+    const rendaDesejada = +document.getElementById('apos-renda-desejada').value;
+    const patrimonioAtual = +document.getElementById('apos-patrimonio').value;
+    const rentabilidadeAA = +document.getElementById('apos-rentabilidade').value / 100;
+    const tempoContrib = +document.getElementById('apos-tempo-contrib').value;
+
+    if (idadeApos <= idadeAtual) { alert('A idade de aposentadoria deve ser maior que a idade atual.'); return; }
+
+    const anosAcumulacao = idadeApos - idadeAtual;
+    const anosUsufruindo = expectativa - idadeApos;
+    const taxaMensal = Math.pow(1 + rentabilidadeAA, 1/12) - 1;
+    const inss = estimarBeneficioINSS(salario, tempoContrib, idadeAtual, idadeApos, categoriaAtual);
+
+    const complemento = Math.max(rendaDesejada - inss.beneficio, 0);
+    const mesesUsufruindo = anosUsufruindo * 12;
+    let patrimonioAlvo = 0;
+    if (complemento > 0 && mesesUsufruindo > 0) {
+      patrimonioAlvo = taxaMensal > 0
+        ? complemento * (1 - Math.pow(1 + taxaMensal, -mesesUsufruindo)) / taxaMensal
+        : complemento * mesesUsufruindo;
+    }
+
+    const vfPatrimonioAtual = patrimonioAtual * Math.pow(1 + rentabilidadeAA, anosAcumulacao);
+    const patrimonioFaltante = Math.max(patrimonioAlvo - vfPatrimonioAtual, 0);
+    const mesesAcumulacao = anosAcumulacao * 12;
+    let aporteMensal = 0;
+    if (patrimonioFaltante > 0 && mesesAcumulacao > 0) {
+      aporteMensal = taxaMensal > 0
+        ? patrimonioFaltante * taxaMensal / (Math.pow(1 + taxaMensal, mesesAcumulacao) - 1)
+        : patrimonioFaltante / mesesAcumulacao;
+    }
+
+    document.getElementById('apos-beneficio-inss').textContent = fmtR(inss.beneficio);
+    document.getElementById('apos-beneficio-tipo').textContent = inss.benefTipo;
+    document.getElementById('apos-complemento').textContent = fmtR(complemento);
+    document.getElementById('apos-patrimonio-alvo').textContent = fmtR(patrimonioAlvo);
+    document.getElementById('apos-aporte-mensal').textContent = fmtR(aporteMensal);
+
+    document.getElementById('apos-inss-detalhes').innerHTML = [
+      { label: 'Categoria', value: inss.tipoDesc },
+      { label: 'Contribuição mensal estimada', value: fmtR(inss.contribMensal) },
+      { label: 'Média salarial (base cálculo)', value: fmtR(inss.mediaContrib) },
+      { label: 'Tempo total de contribuição', value: `${inss.totalContrib} anos` },
+      { label: 'Teto INSS 2024', value: fmtR(TETO_INSS) },
+      { label: 'Salário mínimo 2024', value: fmtR(SAL_MIN) },
+    ].map(d => `<div class="apos-det-item"><span class="apos-det-label">${d.label}</span><span class="apos-det-value">${d.value}</span></div>`).join('');
+    document.getElementById('apos-inss-obs').innerHTML = `ℹ️ ${inss.obs}`;
+
+    // Tabela e gráfico
+    const tbody = document.getElementById('apos-tabela');
+    tbody.innerHTML = '';
+    const labels = [], dataPatrimonio = [], dataAportes = [];
+    let pat = patrimonioAtual;
+    const step = Math.max(1, Math.floor(anosAcumulacao / 20));
+
+    for (let ano = 1; ano <= anosAcumulacao; ano++) {
+      const rendimento = pat * rentabilidadeAA;
+      const aporteAnual = aporteMensal * 12;
+      pat = pat + rendimento + aporteAnual;
+      labels.push(idadeAtual + ano);
+      dataPatrimonio.push(Math.round(pat));
+      dataAportes.push(Math.round(aporteMensal * 12 * ano + patrimonioAtual));
+
+      if (ano % step === 0 || ano === anosAcumulacao) {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid var(--border)';
+        tr.innerHTML = `
+          <td style="padding:.35rem .5rem;color:var(--text-secondary)">${new Date().getFullYear() + ano}</td>
+          <td style="padding:.35rem .5rem;text-align:right">${idadeAtual + ano}</td>
+          <td style="padding:.35rem .5rem;text-align:right;color:var(--brand-primary)">${fmtR(aporteAnual)}</td>
+          <td style="padding:.35rem .5rem;text-align:right;color:var(--green-500)">${fmtR(rendimento)}</td>
+          <td style="padding:.35rem .5rem;text-align:right;font-weight:600">${fmtR(pat)}</td>`;
+        tbody.appendChild(tr);
+      }
+    }
+
+    if (aposChartInstance) aposChartInstance.destroy();
+    aposChartInstance = new Chart(document.getElementById('apos-chart').getContext('2d'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Patrimônio acumulado', data: dataPatrimonio, borderColor: '#10b981', backgroundColor: 'rgba(16,185,129,.12)', fill: true, tension: 0.4, pointRadius: 0 },
+          { label: 'Total investido (sem rendimento)', data: dataAportes, borderColor: '#3b82f6', backgroundColor: 'rgba(59,130,246,.06)', fill: true, tension: 0.4, pointRadius: 0, borderDash: [4,4] }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { font: { size: 11 }, boxWidth: 14 } },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${fmtR(ctx.parsed.y)}` } }
+        },
+        scales: {
+          y: {
+            ticks: { callback: v => v >= 1e6 ? `R$ ${(v/1e6).toFixed(1)}M` : `R$ ${(v/1e3).toFixed(0)}k`, font: { size: 10 } },
+            grid: { color: 'rgba(128,128,128,.12)' }
+          },
+          x: { ticks: { font: { size: 10 } }, title: { display: true, text: 'Idade', font: { size: 10 } } }
+        }
+      }
+    });
+
+    const alertaEl = document.getElementById('apos-alerta');
+    const pctCoberto = inss.beneficio / rendaDesejada;
+    let alertColor, alertMsg;
+    if (inss.beneficio === 0) {
+      alertColor = 'rgba(239,68,68,.1)';
+      alertMsg = `🚨 Atenção: com apenas ${tempoContrib} anos de contribuição, você <strong>não terá direito ao benefício do INSS</strong> (mínimo: 15 anos). Planeje contribuir por mais ${15 - tempoContrib} anos ou optar por uma aposentadoria 100% privada.`;
+    } else if (pctCoberto >= 1) {
+      alertColor = 'rgba(16,185,129,.1)';
+      alertMsg = `🎉 Parabéns! O seu benefício do INSS (${fmtR(inss.beneficio)}) <strong>já cobre toda a renda desejada</strong>. Qualquer investimento adicional será um complemento confortável.`;
+    } else if (pctCoberto >= 0.5) {
+      alertColor = 'rgba(245,158,11,.1)';
+      alertMsg = `⚠️ O INSS cobrirá aproximadamente <strong>${(pctCoberto * 100).toFixed(0)}% da sua renda desejada</strong>. Você precisará investir <strong>${fmtR(aporteMensal)}/mês</strong> para complementar os ${fmtR(complemento)}/mês restantes.`;
+    } else {
+      alertColor = 'rgba(239,68,68,.08)';
+      alertMsg = `📌 O INSS cobrirá apenas <strong>${(pctCoberto * 100).toFixed(0)}% da renda desejada</strong>. A maior parte dependerá de investimentos privados. Inicie quanto antes — cada ano de atraso aumenta significativamente o aporte necessário.`;
+    }
+    alertaEl.style.background = alertColor;
+    alertaEl.style.border = `1px solid ${alertColor.replace('.1)', '.3)').replace('.08)', '.2)')}`;
+    alertaEl.innerHTML = alertMsg;
+
+    document.getElementById('apos-result').style.display = 'block';
+    document.getElementById('apos-result').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+})();
+</script>

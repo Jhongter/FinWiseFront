@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinWise — Carteira Fictícia</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard-style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <script src="pwa-init.js"></script>
+  <style>
+    /* ── Carteira page layout ── */
+    .cw-layout {
+      display: flex;
+      flex-direction: column;
+      min-height: calc(100vh - 60px);
+    }
+
+    /* ── Page header ── */
+    .cw-page-header {
+      background: linear-gradient(135deg, #0d2137 0%, #0a3d62 60%, #1a6b3c 100%);
+      padding: 2.5rem 1.5rem 2rem;
+      color: #fff;
+    }
+    .cw-page-header .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      color: rgba(255,255,255,.75);
+      text-decoration: none;
+      font-size: .85rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      transition: color .2s;
+    }
+    .cw-page-header .back-btn:hover { color: #fff; }
+    .cw-page-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: .4rem; }
+    .cw-page-header h1 span { color: #10b981; }
+    .cw-page-header p { color: rgba(255,255,255,.75); font-size: .95rem; }
+
+    /* ── Tab nav ── */
+    .cw-tabs {
+      display: flex;
+      gap: 0;
+      background: var(--surface);
+      border-bottom: 2px solid var(--border);
+      padding: 0 1.5rem;
+      overflow-x: auto;
+      scrollbar-width: none;
+      position: sticky;
+      top: 60px;
+      z-index: 100;
+    }
+    .cw-tabs::-webkit-scrollbar { display: none; }
+    .cw-tab {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .9rem 1.3rem;
+      font-size: .88rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      white-space: nowrap;
+      transition: color .2s, border-color .2s;
+    }
+    .cw-tab:hover { color: var(--green-500); }
+    .cw-tab.active { color: var(--green-500); border-bottom-color: var(--green-500); }
+
+    .cw-panel { display: none; padding: 2rem 1.5rem; max-width: 1280px; margin: 0 auto; width: 100%; }
+    .cw-panel.active { display: block; }
+
+    /* ── Resumo cards no topo ── */
+    .cw-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .cw-stat-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 1.2rem 1.4rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .cw-stat-card.primary {
+      background: linear-gradient(135deg, #1a237e, #283593);
+      color: #fff;
+      border: none;
+    }
+    .cw-stat-label { font-size: .75rem; font-weight: 600; opacity: .7; text-transform: uppercase; letter-spacing: .04em; margin-bottom: .4rem; }
+    .cw-stat-value { font-size: 1.7rem; font-weight: 700; line-height: 1.1; }
+    .cw-stat-sub { font-size: .78rem; margin-top: .3rem; opacity: .8; }
+    .cw-stat-card:not(.primary) .cw-stat-label { color: var(--text-muted); }
+    .cw-stat-card:not(.primary) .cw-stat-value { color: var(--text-primary); }
+    .cw-stat-card:not(.primary) .cw-stat-sub { color: var(--text-muted); }
+
+    /* ── Main grid layout ── */
+    .cw-main-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    @media (max-width: 768px) { .cw-main-grid { grid-template-columns: 1fr; } }
+
+    /* ── Form ── */
+    .cw-form-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 1.4rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .cw-form-card h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
+    .cw-form-card h3 i { color: var(--green-500); }
+    .cw-form-group { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .8rem; }
+    .cw-form-group label { font-size: .78rem; font-weight: 600; color: var(--text-secondary); }
+    .cw-form-group input, .cw-form-group select {
+      padding: .55rem .75rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: .88rem;
+      background: var(--bg);
+      color: var(--text-primary);
+      transition: border-color .2s;
+      font-family: inherit;
+    }
+    .cw-form-group input:focus, .cw-form-group select:focus {
+      outline: none;
+      border-color: var(--green-500);
+    }
+    .cw-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+    .cw-btn-add {
+      width: 100%;
+      padding: .7rem;
+      background: var(--green-500);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      transition: background .2s, transform .1s;
+      margin-top: .5rem;
+      font-family: inherit;
+    }
+    .cw-btn-add:hover { background: var(--green-600); transform: translateY(-1px); }
+    .cw-erro { color: #e53935; font-size: .8rem; margin-top: .4rem; display: none; }
+
+    /* Sugestões de ativos populares */
+    .cw-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-bottom: .8rem;
+    }
+    .cw-suggestion-chip {
+      padding: .25rem .7rem;
+      border-radius: 20px;
+      font-size: .75rem;
+      font-weight: 600;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all .15s;
+    }
+    .cw-suggestion-chip:hover {
+      border-color: var(--green-500);
+      color: var(--green-500);
+      background: rgba(16,185,129,.07);
+    }
+    .cw-suggest-label { font-size: .73rem; color: var(--text-muted); margin-bottom: .3rem; }
+
+    /* ── Tabela de ativos ── */
+    .cw-table-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 1.4rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.5rem;
+    }
+    .cw-table-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+    .cw-table-head h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: .5rem; }
+    .cw-table-head h3 i { color: var(--green-500); }
+    .cw-table-actions { display: flex; gap: .5rem; }
+    .cw-btn-ghost {
+      padding: .4rem .9rem;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: .8rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      background: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      transition: all .2s;
+      font-family: inherit;
+    }
+    .cw-btn-ghost:hover { border-color: var(--green-500); color: var(--green-500); }
+    .cw-btn-danger {
+      padding: .4rem .9rem;
+      border: 1.5px solid #e53935;
+      border-radius: 8px;
+      font-size: .8rem;
+      font-weight: 600;
+      color: #e53935;
+      background: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      transition: all .2s;
+      font-family: inherit;
+    }
+    .cw-btn-danger:hover { background: #e53935; color: #fff; }
+    .cw-table-wrap { overflow-x: auto; }
+    .cw-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .87rem;
+    }
+    .cw-table th {
+      text-align: left;
+      padding: .5rem .5rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: .76rem;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      border-bottom: 2px solid var(--border);
+    }
+    .cw-table th.r, .cw-table td.r { text-align: right; }
+    .cw-table td { padding: .6rem .5rem; border-bottom: 1px solid var(--border); color: var(--text-primary); }
+    .cw-table tr:last-child td { border-bottom: none; }
+    .cw-table tr:hover td { background: rgba(16,185,129,.04); }
+    .up { color: #2e7d32 !important; }
+    .down { color: #c62828 !important; }
+    .cw-ticker-name { font-weight: 700; font-size: .9rem; }
+    .cw-ticker-tipo { font-size: .73rem; color: var(--text-muted); margin-top: .1rem; }
+    .cw-remove-btn { background: none; border: none; cursor: pointer; color: #bdbdbd; font-size: .95rem; transition: color .15s; }
+    .cw-remove-btn:hover { color: #e53935; }
+    .cw-empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-muted); }
+    .cw-empty-state .cw-empty-icon { font-size: 3rem; margin-bottom: .8rem; }
+
+    /* ── Gráficos ── */
+    .cw-chart-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 1.4rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .cw-chart-card h3 { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
+    .cw-chart-card h3 i { color: var(--green-500); }
+    .cw-chart-wrap { position: relative; height: 240px; display: flex; align-items: center; justify-content: center; }
+    .cw-empty-chart { position: absolute; text-align: center; color: var(--text-muted); }
+    .cw-empty-chart .icon { font-size: 2.5rem; margin-bottom: .5rem; }
+
+    /* ── Painel de Análise (tab 2) ── */
+    .cw-analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    .cw-analysis-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 1.4rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .cw-analysis-card h4 { font-size: .9rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: .4rem; }
+    .cw-analysis-card h4 i { color: var(--green-500); }
+
+    /* Barras de exposição por tipo */
+    .cw-exposure-item { margin-bottom: .9rem; }
+    .cw-exposure-header { display: flex; justify-content: space-between; font-size: .82rem; margin-bottom: .3rem; }
+    .cw-exposure-label { font-weight: 600; color: var(--text-primary); }
+    .cw-exposure-pct { color: var(--text-muted); }
+    .cw-exposure-bar { height: 8px; background: var(--border); border-radius: 99px; overflow: hidden; }
+    .cw-exposure-fill { height: 100%; border-radius: 99px; transition: width .6s ease; }
+
+    /* Score de diversificação */
+    .cw-score-ring {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+    }
+    .cw-score-num { font-size: 2.5rem; font-weight: 800; color: var(--green-500); line-height: 1; }
+    .cw-score-label { font-size: .78rem; color: var(--text-muted); font-weight: 600; }
+    .cw-score-tip { font-size: .78rem; color: var(--text-secondary); text-align: center; line-height: 1.4; }
+
+    /* Indicadores por ativo */
+    .cw-indicator-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .5rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .83rem;
+    }
+    .cw-indicator-row:last-child { border-bottom: none; }
+    .cw-indicator-ticker { font-weight: 700; }
+    .cw-indicator-val { font-weight: 600; }
+
+    /* ── Painel Simulações (tab 3) ── */
+    .cw-sim-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .cw-sim-card {
+      background: var(--surface);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      padding: 1.4rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .cw-sim-card h4 { font-size: .95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; display: flex; align-items: center; gap: .5rem; }
+    .cw-sim-card h4 i { color: var(--green-500); }
+    .cw-sim-scenario {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .6rem .8rem;
+      border-radius: 8px;
+      margin-bottom: .5rem;
+      font-size: .85rem;
+    }
+    .cw-sim-scenario.alta { background: rgba(46,125,50,.1); }
+    .cw-sim-scenario.neutro { background: rgba(100,100,100,.08); }
+    .cw-sim-scenario.baixa { background: rgba(198,40,40,.08); }
+    .cw-sim-scenario .label { font-weight: 600; }
+    .cw-sim-scenario .val { font-weight: 700; }
+    .cw-sim-scenario.alta .val { color: #2e7d32; }
+    .cw-sim-scenario.neutro .val { color: var(--text-primary); }
+    .cw-sim-scenario.baixa .val { color: #c62828; }
+
+    /* Simulação de aporte */
+    .cw-sim-aporte-result {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(16,185,129,.07);
+      border-radius: 8px;
+      border: 1px solid rgba(16,185,129,.2);
+      display: none;
+    }
+    .cw-sim-aporte-result .big { font-size: 1.5rem; font-weight: 700; color: var(--green-500); }
+    .cw-sim-aporte-result .sub { font-size: .78rem; color: var(--text-muted); margin-top: .3rem; }
+
+    /* ── Toast ── */
+    .cw-toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1b5e20;
+      color: #fff;
+      padding: .7rem 1.4rem;
+      border-radius: 999px;
+      font-size: .88rem;
+      font-weight: 600;
+      z-index: 9999;
+      transition: transform .3s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+    .cw-toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── Histórico performance ── */
+    .cw-hist-chart-wrap { height: 220px; position: relative; }
+    .cw-hist-empty {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+    }
+    .cw-hist-empty .icon { font-size: 2rem; margin-bottom: .5rem; }
+
+    /* ── Tooltip de variação no ticker ── */
+    .ticker-val.up { color: #2e7d32; font-weight: 700; }
+    .ticker-val.down { color: #c62828; font-weight: 700; }
+  </style>
+  <link rel="icon" type="image/x-icon" href="../../../../favicon.ico">
+</head>
+<body>
+
+  <!-- SIDEBAR NAV -->
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside id="sidebar" class="sidebar-nav">
+    <div class="sidebar-header">
+      <div class="logo sidebar-logo">Fin<span>Wise</span></div>
+      <button class="sidebar-close-btn" onclick="closeSidebar()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="sidebar-group-label">Principal</div>
+      <a href="dashboard.html#resumo" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-house"></i><span>Início</span></a>
+      <a href="dashboard.html#metas" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-bullseye"></i><span>Metas</span></a>
+      <a href="dashboard.html#graficos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-chart-line"></i><span>Gráficos</span></a>
+      <a href="dashboard.html#relatorio" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-file-invoice"></i><span>Relatório</span></a>
+      <div class="sidebar-group-label">Investimentos</div>
+      <a href="dashboard.html#investimentos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-seedling"></i><span>Simulador de Renda Fixa</span></a>
+      <a href="carteira-ficticia.html" class="sidebar-link active" onclick="closeSidebar()"><i class="fas fa-briefcase"></i><span>Carteira Fictícia</span></a>
+      <a href="cotacoes.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-globe"></i><span>Cotações ao Vivo</span></a>
+      <div class="sidebar-group-label">Finanças Pessoais</div>
+      <a href="controle-dividas.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-hand-holding-dollar"></i><span>Controle de Dívidas</span></a>
+      <a href="regra-50-30-20.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-chart-pie"></i><span>Regra 50-30-20</span></a>
+      <a href="dashboard.html#comparador-credito" class="sidebar-link"><i class="fas fa-scale-balanced"></i><span>Comparador de Crédito</span></a>
+      <a href="desafio-grupo.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-fire"></i><span>Desafio em Grupo</span></a>
+            <div class="sidebar-group-label">Aprendizado</div>
+      <a href="educacao-financeira.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-graduation-cap"></i><span>Educação Financeira</span></a>
+      <a href="jogos.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-gamepad"></i><span>Jogos</span></a>
+      <a href="finwise-kids.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-child"></i><span>FinWise Kids</span></a>
+    </nav>
+  </aside>
+
+  <!-- HEADER -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <button class="header-icon-btn menu-toggle-btn" onclick="openSidebar()" title="Menu"><i class="fas fa-bars"></i></button>
+      <div class="logo">Fin<span>Wise</span></div>
+    </div>
+    <div class="header-tickers" id="header-tickers">
+      <span class="ticker-item"><span class="ticker-label">USD</span><span id="ht-dolar" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">BTC</span><span id="ht-btc" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">IBOV</span><span id="ht-ibov" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">OURO</span><span id="ht-ouro" class="ticker-val">—</span></span>
+    </div>
+    <div class="header-right">
+      <button class="header-icon-btn" id="alerts-toggle-btn" title="Alertas">
+        <i class="fas fa-bell"></i>
+        <span id="alerts-badge" class="badge-dot" style="display:none">0</span>
+      </button>
+      <button id="darkModeToggle" class="header-icon-btn dark-mode-toggle" title="Alternar tema">
+        <span class="dark-mode-icon">🌙</span>
+        <span class="light-mode-icon">☀️</span>
+      </button>
+      <div class="user-chip">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <span id="username-display"></span>
+      </div>
+      <button id="logout-btn" class="btn btn--danger btn--sm" title="Sair">
+        <i class="fas fa-right-from-bracket"></i>
+        <span class="btn-label">Sair</span>
+      </button>
+    </div>
+    <button id="pwa-install-btn" style="display:none" class="btn btn--ghost btn--sm">
+  <i class="fas fa-download"></i> <span>Instalar app</span>
+</button>
+  </header>
+
+  <!-- Alerts panel -->
+  <aside id="alerts-panel" class="alerts-panel">
+    <div class="alerts-panel-header">
+      <h3><i class="fas fa-bell"></i> Alertas</h3>
+      <button id="alerts-close-btn" class="header-icon-btn"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div id="alerts-list" class="alerts-list"></div>
+  </aside>
+  <div id="alerts-overlay" class="alerts-overlay"></div>
+
+  <main class="dashboard-main">
+    <div class="cw-layout">
+
+      <!-- Page Header -->
+      <div class="cw-page-header">
+        <a href="dashboard.html" class="back-btn"><i class="fas fa-arrow-left"></i> Voltar ao Dashboard</a>
+        <h1>Carteira <span>Fictícia</span></h1>
+        <p>Monte, simule e analise sua carteira de investimentos sem arriscar dinheiro real. R$ 100.000 virtuais para você aprender investindo.</p>
+      </div>
+
+      <!-- Tabs -->
+      <div class="cw-tabs" role="tablist">
+        <button class="cw-tab active" data-tab="carteira" role="tab">
+          <i class="fas fa-briefcase"></i> Minha Carteira
+        </button>
+        <button class="cw-tab" data-tab="analise" role="tab">
+          <i class="fas fa-chart-pie"></i> Análise & Diversificação
+        </button>
+        <button class="cw-tab" data-tab="simulacoes" role="tab">
+          <i class="fas fa-flask"></i> Simulações
+        </button>
+        <button class="cw-tab" data-tab="historico" role="tab">
+          <i class="fas fa-chart-line"></i> Histórico
+        </button>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           TAB 1: MINHA CARTEIRA
+      ═══════════════════════════════════ -->
+      <div id="tab-carteira" class="cw-panel active">
+
+        <!-- Resumo topo -->
+        <div class="cw-summary-grid">
+          <div class="cw-stat-card primary">
+            <div class="cw-stat-label">Patrimônio Virtual</div>
+            <div class="cw-stat-value" id="cw-patrimonio">R$ 100.000,00</div>
+            <div class="cw-stat-sub">Variação total: <span id="cw-var-pct" style="font-weight:700">—</span></div>
+          </div>
+          <div class="cw-stat-card">
+            <div class="cw-stat-label">Lucro / Prejuízo</div>
+            <div class="cw-stat-value" id="cw-lucro" style="color:var(--green-500)">R$ 0,00</div>
+            <div class="cw-stat-sub">desde o início da simulação</div>
+          </div>
+          <div class="cw-stat-card">
+            <div class="cw-stat-label">Saldo Disponível</div>
+            <div class="cw-stat-value" id="cw-saldo">R$ 100.000,00</div>
+            <div class="cw-stat-sub">para novos aportes</div>
+          </div>
+          <div class="cw-stat-card">
+            <div class="cw-stat-label">Ativos na Carteira</div>
+            <div class="cw-stat-value" id="cw-num-ativos">0</div>
+            <div class="cw-stat-sub">posições abertas</div>
+          </div>
+        </div>
+
+        <!-- Form + Pie chart -->
+        <div class="cw-main-grid">
+
+          <!-- Adicionar ativo -->
+          <div class="cw-form-card">
+            <h3><i class="fas fa-plus-circle"></i> Adicionar Ativo</h3>
+
+            <div class="cw-form-group">
+              <label>Tipo de ativo</label>
+              <select id="cw-tipo" onchange="cwAtualizarSugestoes()">
+                <option value="acoes">📈 Ações (B3)</option>
+                <option value="fii">🏢 Fundos Imobiliários (FII)</option>
+                <option value="renda_fixa">🏦 Renda Fixa (CDB / Tesouro)</option>
+                <option value="crypto">₿ Criptomoedas</option>
+                <option value="exterior">🌎 Ações Internacionais</option>
+                <option value="etf">📦 ETFs</option>
+              </select>
+            </div>
+
+            <div class="cw-suggest-label">Sugestões populares:</div>
+            <div class="cw-suggestions" id="cw-suggestions"></div>
+
+            <div class="cw-form-group">
+              <label>Nome / Ticker</label>
+              <input type="text" id="cw-ticker" placeholder="Ex: PETR4, MXRF11, BTC…" style="text-transform:uppercase">
+            </div>
+            <div class="cw-form-row">
+              <div class="cw-form-group">
+                <label>Preço de compra (R$)</label>
+                <input type="number" id="cw-preco" placeholder="0,00" min="0.01" step="0.01">
+              </div>
+              <div class="cw-form-group">
+                <label>Quantidade</label>
+                <input type="number" id="cw-qtd" placeholder="0" min="1" step="1">
+              </div>
+            </div>
+            <div id="cw-custo-preview" style="font-size:.8rem;color:var(--text-muted);margin-bottom:.5rem;display:none">
+              Custo total: <strong id="cw-custo-val"></strong>
+            </div>
+            <button class="cw-btn-add" onclick="cwAdicionarAtivo()">
+              <i class="fas fa-plus"></i> Adicionar à Carteira
+            </button>
+            <div class="cw-erro" id="cw-erro"></div>
+          </div>
+
+          <!-- Distribuição gráfico -->
+          <div class="cw-chart-card">
+            <h3><i class="fas fa-chart-pie"></i> Distribuição da Carteira</h3>
+            <div class="cw-chart-wrap">
+              <canvas id="cw-chart-pie" style="max-height:220px"></canvas>
+              <div class="cw-empty-chart" id="cw-empty-pie">
+                <div class="icon">📊</div>
+                <div style="font-size:.85rem">Adicione ativos para<br>ver a distribuição</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabela de ativos -->
+        <div class="cw-table-card">
+          <div class="cw-table-head">
+            <h3><i class="fas fa-list"></i> Meus Ativos</h3>
+            <div class="cw-table-actions">
+              <button class="cw-btn-ghost" onclick="cwSimularVariacao()">
+                <i class="fas fa-random"></i> Simular dia
+              </button>
+              <button class="cw-btn-ghost" onclick="cwSimularMes()">
+                <i class="fas fa-calendar-alt"></i> Simular mês
+              </button>
+              <button class="cw-btn-danger" onclick="cwLimparCarteira()">
+                <i class="fas fa-trash"></i> Zerar tudo
+              </button>
+            </div>
+          </div>
+          <div class="cw-table-wrap">
+            <table class="cw-table" id="cw-tabela">
+              <thead>
+                <tr>
+                  <th>Ativo</th>
+                  <th class="r">Tipo</th>
+                  <th class="r">Qtd</th>
+                  <th class="r">Preço médio</th>
+                  <th class="r">Preço atual</th>
+                  <th class="r">Valor total</th>
+                  <th class="r">Var. %</th>
+                  <th class="r">Lucro/Prej.</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="cw-tbody">
+                <tr>
+                  <td colspan="9">
+                    <div class="cw-empty-state">
+                      <div class="cw-empty-icon">💼</div>
+                      <div>Sua carteira está vazia.</div>
+                      <div style="font-size:.82rem;margin-top:.3rem">Adicione um ativo usando o formulário acima!</div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           TAB 2: ANÁLISE & DIVERSIFICAÇÃO
+      ═══════════════════════════════════ -->
+      <div id="tab-analise" class="cw-panel">
+
+        <div class="cw-analysis-grid">
+
+          <!-- Score de diversificação -->
+          <div class="cw-analysis-card">
+            <h4><i class="fas fa-star"></i> Score de Diversificação</h4>
+            <div class="cw-score-ring">
+              <div class="cw-score-num" id="div-score">—</div>
+              <div class="cw-score-label" id="div-label">Adicione ativos</div>
+              <div class="cw-score-tip" id="div-tip" style="margin-top:.5rem">Monte sua carteira para receber a análise de diversificação personalizada.</div>
+            </div>
+          </div>
+
+          <!-- Exposição por tipo -->
+          <div class="cw-analysis-card">
+            <h4><i class="fas fa-layer-group"></i> Exposição por Classe</h4>
+            <div id="cw-exposure-bars">
+              <div style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:1rem">Nenhum ativo na carteira.</div>
+            </div>
+          </div>
+
+          <!-- Maiores posições -->
+          <div class="cw-analysis-card">
+            <h4><i class="fas fa-trophy"></i> Maiores Posições</h4>
+            <div id="cw-top-positions">
+              <div style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:1rem">Nenhum ativo na carteira.</div>
+            </div>
+          </div>
+
+          <!-- Melhores e piores -->
+          <div class="cw-analysis-card">
+            <h4><i class="fas fa-arrows-alt-v"></i> Destaques</h4>
+            <div id="cw-destaques">
+              <div style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:1rem">Simule pelo menos um dia para ver os destaques.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gráfico de barras por ativo -->
+        <div class="cw-chart-card">
+          <h3><i class="fas fa-chart-bar"></i> Valor por Ativo</h3>
+          <div style="height:260px; position:relative">
+            <canvas id="cw-chart-bar"></canvas>
+            <div id="cw-empty-bar" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-muted)">
+              <div style="font-size:2rem">📊</div>
+              <div style="font-size:.85rem;margin-top:.5rem">Adicione ativos para ver o gráfico</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           TAB 3: SIMULAÇÕES
+      ═══════════════════════════════════ -->
+      <div id="tab-simulacoes" class="cw-panel">
+
+        <div class="cw-sim-grid">
+
+          <!-- Cenários de mercado -->
+          <div class="cw-sim-card">
+            <h4><i class="fas fa-globe"></i> Cenários de Mercado</h4>
+            <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">Como sua carteira se sairia em diferentes condições de mercado?</p>
+            <div id="cw-cenarios">
+              <div style="color:var(--text-muted);font-size:.85rem;padding:.5rem">Adicione ativos para ver as projeções.</div>
+            </div>
+          </div>
+
+          <!-- Simulador de aporte -->
+          <div class="cw-sim-card">
+            <h4><i class="fas fa-piggy-bank"></i> Simulador de Aporte Mensal</h4>
+            <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">Quanto seu patrimônio chegaria se você aportasse mensalmente?</p>
+            <div class="cw-form-group">
+              <label>Aporte mensal (R$)</label>
+              <input type="number" id="sim-aporte" placeholder="500" min="1" step="50">
+            </div>
+            <div class="cw-form-group">
+              <label>Período (anos)</label>
+              <input type="number" id="sim-anos" placeholder="5" min="1" max="30" step="1">
+            </div>
+            <div class="cw-form-group">
+              <label>Rentabilidade anual estimada (%)</label>
+              <input type="number" id="sim-taxa" placeholder="10" min="0.1" step="0.5">
+            </div>
+            <button class="cw-btn-add" onclick="cwSimularAporte()">
+              <i class="fas fa-calculator"></i> Calcular Projeção
+            </button>
+            <div class="cw-sim-aporte-result" id="sim-result">
+              <div style="font-size:.78rem;color:var(--text-muted);margin-bottom:.3rem">Patrimônio estimado em <span id="sim-result-anos"></span> anos:</div>
+              <div class="big" id="sim-result-val"></div>
+              <div class="sub">Aportes totais: <span id="sim-result-aportes"></span> · Juros compostos: <span id="sim-result-juros"></span></div>
+            </div>
+          </div>
+
+          <!-- Simulação de crise -->
+          <div class="cw-sim-card">
+            <h4><i class="fas fa-exclamation-triangle" style="color:#f59e0b"></i> Teste de Estresse</h4>
+            <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1rem">Veja o impacto de crises históricas na sua carteira atual.</p>
+            <div id="cw-stress-results">
+              <div style="color:var(--text-muted);font-size:.85rem;padding:.5rem">Adicione ativos para ver o teste de estresse.</div>
+            </div>
+          </div>
+
+          <!-- Rebalanceamento sugerido -->
+          <div class="cw-sim-card">
+            <h4><i class="fas fa-balance-scale"></i> Sugestão de Rebalanceamento</h4>
+            <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:.8rem">Perfil de risco desejado:</p>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:1rem">
+              <button class="cw-suggestion-chip active" id="perfil-conservador" onclick="cwSelecionarPerfil('conservador',this)">🛡️ Conservador</button>
+              <button class="cw-suggestion-chip" id="perfil-moderado" onclick="cwSelecionarPerfil('moderado',this)">⚖️ Moderado</button>
+              <button class="cw-suggestion-chip" id="perfil-arrojado" onclick="cwSelecionarPerfil('arrojado',this)">🚀 Arrojado</button>
+            </div>
+            <div id="cw-rebalance">
+              <div style="color:var(--text-muted);font-size:.85rem;padding:.5rem">Adicione ativos para ver sugestões de rebalanceamento.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════
+           TAB 4: HISTÓRICO
+      ═══════════════════════════════════ -->
+      <div id="tab-historico" class="cw-panel">
+
+        <div class="cw-chart-card" style="margin-bottom:1.5rem">
+          <h3><i class="fas fa-chart-area"></i> Evolução do Patrimônio</h3>
+          <div class="cw-hist-chart-wrap">
+            <canvas id="cw-chart-line"></canvas>
+            <div class="cw-hist-empty" id="cw-empty-line">
+              <div class="icon">📈</div>
+              <div style="font-size:.85rem">Use "Simular dia" ou "Simular mês" para registrar a evolução da carteira</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Log de operações -->
+        <div class="cw-table-card">
+          <div class="cw-table-head">
+            <h3><i class="fas fa-history"></i> Histórico de Operações</h3>
+            <button class="cw-btn-ghost" onclick="cwLimparHistorico()" style="font-size:.78rem">
+              <i class="fas fa-trash-alt"></i> Limpar log
+            </button>
+          </div>
+          <div class="cw-table-wrap">
+            <table class="cw-table">
+              <thead>
+                <tr>
+                  <th>Data/Hora</th>
+                  <th>Operação</th>
+                  <th class="r">Ativo</th>
+                  <th class="r">Qtd</th>
+                  <th class="r">Preço</th>
+                  <th class="r">Total</th>
+                </tr>
+              </thead>
+              <tbody id="cw-log-tbody">
+                <tr><td colspan="6"><div class="cw-empty-state"><div class="cw-empty-icon">📋</div><div>Nenhuma operação registrada.</div></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /cw-layout -->
+  </main>
+
+  <!-- Toast -->
+  <div class="cw-toast" id="cw-toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   CONSTANTES E ESTADO
+══════════════════════════════════════════════════════ */
+const SALDO_INICIAL = 100000;
+const TIPOS_LABEL = {
+  acoes: '📈 Ações',
+  fii: '🏢 FII',
+  renda_fixa: '🏦 Renda Fixa',
+  crypto: '₿ Crypto',
+  exterior: '🌎 Exterior',
+  etf: '📦 ETF'
+};
+const SUGESTOES = {
+  acoes: ['PETR4','VALE3','ITUB4','BBDC4','ABEV3','WEGE3','RENT3','MGLU3'],
+  fii: ['MXRF11','HGLG11','XPML11','KNRI11','VISC11','BCFF11'],
+  renda_fixa: ['Tesouro Selic','Tesouro IPCA+','CDB 110% CDI','LCI'],
+  crypto: ['BTC','ETH','BNB','SOL','ADA'],
+  exterior: ['AAPL','MSFT','GOOGL','AMZN','TSLA','NVDA'],
+  etf: ['BOVA11','SMAL11','IVVB11','SPY','QQQ']
+};
+const CORES = ['#1565C0','#2E7D32','#F57F17','#6A1B9A','#AD1457','#00695C','#E64A19','#37474F','#0288D1','#558B2F'];
+const VOLATILIDADE = { acoes: 0.025, fii: 0.012, renda_fixa: 0.003, crypto: 0.06, exterior: 0.018, etf: 0.015 };
+
+let carteira = JSON.parse(localStorage.getItem('fw_carteira_v2') || '[]');
+let historicoPatrimonio = JSON.parse(localStorage.getItem('fw_hist_patrim_v2') || '[]');
+let saldoDisponivel = parseFloat(localStorage.getItem('fw_saldo_v2') || SALDO_INICIAL);
+let logOperacoes = JSON.parse(localStorage.getItem('fw_log_v2') || '[]');
+let perfilSelecionado = localStorage.getItem('fw_perfil') || 'conservador';
+
+let pieChart = null, lineChart = null, barChart = null;
+
+/* ══════════════════════════════════════════════════════
+   PERSISTÊNCIA
+══════════════════════════════════════════════════════ */
+function salvar() {
+  localStorage.setItem('fw_carteira_v2', JSON.stringify(carteira));
+  localStorage.setItem('fw_hist_patrim_v2', JSON.stringify(historicoPatrimonio));
+  localStorage.setItem('fw_saldo_v2', saldoDisponivel);
+  localStorage.setItem('fw_log_v2', JSON.stringify(logOperacoes));
+  localStorage.setItem('fw_perfil', perfilSelecionado);
+}
+
+/* ══════════════════════════════════════════════════════
+   FORMATAÇÃO
+══════════════════════════════════════════════════════ */
+function fmt(v) { return 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+function fmtPct(v) { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
+function varColor(v) { return v >= 0 ? '#2e7d32' : '#c62828'; }
+
+/* ══════════════════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════════════════ */
+function showToast(msg, cor) {
+  const t = document.getElementById('cw-toast');
+  t.textContent = msg;
+  t.style.background = cor || '#1b5e20';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ══════════════════════════════════════════════════════
+   RESUMO
+══════════════════════════════════════════════════════ */
+function calcPatrimonio() {
+  return carteira.reduce((s, a) => s + a.precoAtual * a.qtd, 0);
+}
+
+function atualizarResumo() {
+  const invest = calcPatrimonio();
+  const total = invest + saldoDisponivel;
+  const lucro = total - SALDO_INICIAL;
+  const pct = ((total / SALDO_INICIAL) - 1) * 100;
+
+  document.getElementById('cw-patrimonio').textContent = fmt(total);
+  const lEl = document.getElementById('cw-lucro');
+  lEl.textContent = fmt(lucro);
+  lEl.style.color = varColor(lucro);
+  document.getElementById('cw-saldo').textContent = fmt(saldoDisponivel);
+  const vEl = document.getElementById('cw-var-pct');
+  vEl.textContent = fmtPct(pct);
+  vEl.style.color = varColor(pct);
+  document.getElementById('cw-num-ativos').textContent = carteira.length;
+}
+
+/* ══════════════════════════════════════════════════════
+   SUGESTÕES DE TICKER
+══════════════════════════════════════════════════════ */
+function cwAtualizarSugestoes() {
+  const tipo = document.getElementById('cw-tipo').value;
+  const container = document.getElementById('cw-suggestions');
+  const lista = SUGESTOES[tipo] || [];
+  container.innerHTML = lista.map(s =>
+    `<button class="cw-suggestion-chip" onclick="cwUsarSugestao('${s}')">${s}</button>`
+  ).join('');
+}
+
+function cwUsarSugestao(ticker) {
+  document.getElementById('cw-ticker').value = ticker;
+  document.getElementById('cw-preco').focus();
+}
+
+// Pré-visualização do custo
+function cwAtualizarCusto() {
+  const p = parseFloat(document.getElementById('cw-preco').value);
+  const q = parseInt(document.getElementById('cw-qtd').value);
+  const preview = document.getElementById('cw-custo-preview');
+  if (p > 0 && q > 0) {
+    document.getElementById('cw-custo-val').textContent = fmt(p * q);
+    preview.style.display = 'block';
+  } else {
+    preview.style.display = 'none';
+  }
+}
+document.getElementById('cw-preco').addEventListener('input', cwAtualizarCusto);
+document.getElementById('cw-qtd').addEventListener('input', cwAtualizarCusto);
+
+/* ══════════════════════════════════════════════════════
+   ADICIONAR ATIVO
+══════════════════════════════════════════════════════ */
+function cwAdicionarAtivo() {
+  const ticker = document.getElementById('cw-ticker').value.trim().toUpperCase();
+  const tipo = document.getElementById('cw-tipo').value;
+  const preco = parseFloat(document.getElementById('cw-preco').value);
+  const qtd = parseInt(document.getElementById('cw-qtd').value);
+  const erro = document.getElementById('cw-erro');
+
+  if (!ticker) { erro.textContent = 'Informe o nome ou ticker do ativo.'; erro.style.display='block'; return; }
+  if (!preco || preco <= 0) { erro.textContent = 'Preço deve ser maior que zero.'; erro.style.display='block'; return; }
+  if (!qtd || qtd < 1) { erro.textContent = 'Quantidade deve ser pelo menos 1.'; erro.style.display='block'; return; }
+  const custo = preco * qtd;
+  if (custo > saldoDisponivel) { erro.textContent = `Saldo insuficiente. Disponível: ${fmt(saldoDisponivel)}`; erro.style.display='block'; return; }
+  erro.style.display = 'none';
+
+  const existente = carteira.findIndex(a => a.ticker === ticker && a.tipo === tipo);
+  if (existente >= 0) {
+    const a = carteira[existente];
+    const totalQtd = a.qtd + qtd;
+    a.precoMedio = ((a.precoMedio * a.qtd) + (preco * qtd)) / totalQtd;
+    a.qtd = totalQtd;
+    a.precoAtual = a.precoMedio;
+  } else {
+    carteira.push({ ticker, tipo, qtd, precoMedio: preco, precoAtual: preco });
+  }
+  saldoDisponivel -= custo;
+  registrarLog('COMPRA', ticker, qtd, preco);
+  salvar();
+  renderTudo();
+  document.getElementById('cw-ticker').value = '';
+  document.getElementById('cw-preco').value = '';
+  document.getElementById('cw-qtd').value = '';
+  document.getElementById('cw-custo-preview').style.display = 'none';
+  showToast(`✅ ${ticker} adicionado à carteira!`);
+}
+
+/* ══════════════════════════════════════════════════════
+   REMOVER ATIVO
+══════════════════════════════════════════════════════ */
+window.cwRemover = function(i) {
+  const a = carteira[i];
+  saldoDisponivel += a.precoAtual * a.qtd;
+  registrarLog('VENDA', a.ticker, a.qtd, a.precoAtual);
+  carteira.splice(i, 1);
+  salvar();
+  renderTudo();
+  showToast('🗑️ Ativo removido.', '#555');
+};
+
+/* ══════════════════════════════════════════════════════
+   SIMULAR VARIAÇÃO
+══════════════════════════════════════════════════════ */
+window.cwSimularVariacao = function() {
+  if (!carteira.length) { showToast('⚠️ Adicione ativos primeiro!', '#f59e0b'); return; }
+  carteira = carteira.map(a => {
+    const vol = VOLATILIDADE[a.tipo] || 0.02;
+    const variacao = (Math.random() - 0.47) * vol * 2;
+    return { ...a, precoAtual: Math.max(0.01, a.precoAtual * (1 + variacao)) };
+  });
+  historicoPatrimonio.push(calcPatrimonio() + saldoDisponivel);
+  if (historicoPatrimonio.length > 90) historicoPatrimonio.shift();
+  salvar();
+  renderTudo();
+  showToast('📊 Dia simulado!');
+};
+
+window.cwSimularMes = function() {
+  if (!carteira.length) { showToast('⚠️ Adicione ativos primeiro!', '#f59e0b'); return; }
+  for (let d = 0; d < 22; d++) {
+    carteira = carteira.map(a => {
+      const vol = VOLATILIDADE[a.tipo] || 0.02;
+      const variacao = (Math.random() - 0.47) * vol * 2;
+      return { ...a, precoAtual: Math.max(0.01, a.precoAtual * (1 + variacao)) };
+    });
+    historicoPatrimonio.push(calcPatrimonio() + saldoDisponivel);
+  }
+  if (historicoPatrimonio.length > 90) historicoPatrimonio = historicoPatrimonio.slice(-90);
+  salvar();
+  renderTudo();
+  showToast('📅 Mês simulado! (22 dias úteis)');
+};
+
+/* ══════════════════════════════════════════════════════
+   ZERAR CARTEIRA
+══════════════════════════════════════════════════════ */
+window.cwLimparCarteira = function() {
+  if (!confirm('Zerar toda a carteira e reiniciar com R$ 100.000?')) return;
+  carteira = [];
+  historicoPatrimonio = [];
+  logOperacoes = [];
+  saldoDisponivel = SALDO_INICIAL;
+  salvar();
+  renderTudo();
+  showToast('🔄 Carteira zerada!', '#555');
+};
+
+/* ══════════════════════════════════════════════════════
+   LOG DE OPERAÇÕES
+══════════════════════════════════════════════════════ */
+function registrarLog(op, ticker, qtd, preco) {
+  const agora = new Date();
+  logOperacoes.unshift({
+    data: agora.toLocaleDateString('pt-BR') + ' ' + agora.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'}),
+    op, ticker, qtd, preco
+  });
+  if (logOperacoes.length > 50) logOperacoes.pop();
+}
+
+window.cwLimparHistorico = function() {
+  logOperacoes = [];
+  salvar();
+  renderLog();
+};
+
+function renderLog() {
+  const tbody = document.getElementById('cw-log-tbody');
+  if (!logOperacoes.length) {
+    tbody.innerHTML = '<tr><td colspan="6"><div class="cw-empty-state"><div class="cw-empty-icon">📋</div><div>Nenhuma operação registrada.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = logOperacoes.map(l => `
+    <tr>
+      <td style="font-size:.8rem;color:var(--text-muted)">${l.data}</td>
+      <td><span style="font-weight:700;color:${l.op==='COMPRA'?'#2e7d32':'#c62828'}">${l.op}</span></td>
+      <td class="r" style="font-weight:700">${l.ticker}</td>
+      <td class="r">${l.qtd}</td>
+      <td class="r">${fmt(l.preco)}</td>
+      <td class="r" style="font-weight:700">${fmt(l.preco * l.qtd)}</td>
+    </tr>
+  `).join('');
+}
+
+/* ══════════════════════════════════════════════════════
+   TABELA DE ATIVOS
+══════════════════════════════════════════════════════ */
+function renderTabela() {
+  const tbody = document.getElementById('cw-tbody');
+  if (!carteira.length) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="cw-empty-state"><div class="cw-empty-icon">💼</div><div>Sua carteira está vazia.</div><div style="font-size:.82rem;margin-top:.3rem">Adicione um ativo usando o formulário acima!</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML = carteira.map((a, i) => {
+    const valorTotal = a.precoAtual * a.qtd;
+    const varPct = ((a.precoAtual / a.precoMedio) - 1) * 100;
+    const varValor = (a.precoAtual - a.precoMedio) * a.qtd;
+    return `<tr>
+      <td>
+        <div class="cw-ticker-name">${a.ticker}</div>
+        <div class="cw-ticker-tipo">${TIPOS_LABEL[a.tipo] || a.tipo}</div>
+      </td>
+      <td class="r" style="font-size:.8rem;color:var(--text-muted)">${a.tipo.toUpperCase()}</td>
+      <td class="r">${a.qtd}</td>
+      <td class="r">${fmt(a.precoMedio)}</td>
+      <td class="r" style="font-weight:600">${fmt(a.precoAtual)}</td>
+      <td class="r" style="font-weight:700">${fmt(valorTotal)}</td>
+      <td class="r" style="font-weight:700;color:${varColor(varPct)}">${fmtPct(varPct)}</td>
+      <td class="r" style="font-weight:600;color:${varColor(varValor)}">${fmt(varValor)}</td>
+      <td>
+        <button class="cw-remove-btn" onclick="cwRemover(${i})" title="Remover">
+          <i class="fas fa-times-circle"></i>
+        </button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════════════════════
+   GRÁFICO PIE
+══════════════════════════════════════════════════════ */
+function renderPie() {
+  const ctx = document.getElementById('cw-chart-pie');
+  const emptyEl = document.getElementById('cw-empty-pie');
+  if (!carteira.length) {
+    emptyEl.style.display = 'flex';
+    if (pieChart) { pieChart.destroy(); pieChart = null; }
+    return;
+  }
+  emptyEl.style.display = 'none';
+  const labels = carteira.map(a => a.ticker);
+  const data = carteira.map(a => a.precoAtual * a.qtd);
+  if (pieChart) pieChart.destroy();
+  pieChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: { labels, datasets: [{ data, backgroundColor: CORES.slice(0, data.length), borderWidth: 2, borderColor: 'transparent' }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { font: { size: 11 }, padding: 8 } } } }
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   GRÁFICO LINHA (histórico)
+══════════════════════════════════════════════════════ */
+function renderLine() {
+  const ctx = document.getElementById('cw-chart-line');
+  const emptyEl = document.getElementById('cw-empty-line');
+  if (!historicoPatrimonio.length) {
+    emptyEl.style.display = 'flex';
+    if (lineChart) { lineChart.destroy(); lineChart = null; }
+    return;
+  }
+  emptyEl.style.display = 'none';
+  const labels = historicoPatrimonio.map((_, i) => 'D' + (i + 1));
+  if (lineChart) lineChart.destroy();
+  lineChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Patrimônio (R$)',
+        data: historicoPatrimonio,
+        borderColor: '#1565C0',
+        backgroundColor: 'rgba(21,101,192,.1)',
+        fill: true, tension: 0.4, pointRadius: historicoPatrimonio.length > 30 ? 0 : 3
+      }, {
+        label: 'Inicial (R$ 100k)',
+        data: Array(historicoPatrimonio.length).fill(SALDO_INICIAL),
+        borderColor: '#bdbdbd', borderDash: [5,5], pointRadius: 0, fill: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { labels: { font: { size: 11 } } } },
+      scales: { y: { ticks: { callback: v => 'R$' + (v/1000).toFixed(0) + 'k' } } }
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   GRÁFICO BARRA (análise)
+══════════════════════════════════════════════════════ */
+function renderBar() {
+  const ctx = document.getElementById('cw-chart-bar');
+  const emptyEl = document.getElementById('cw-empty-bar');
+  if (!carteira.length) {
+    emptyEl.style.display = 'flex';
+    if (barChart) { barChart.destroy(); barChart = null; }
+    return;
+  }
+  emptyEl.style.display = 'none';
+  const sorted = [...carteira].sort((a,b) => (b.precoAtual*b.qtd) - (a.precoAtual*a.qtd));
+  const labels = sorted.map(a => a.ticker);
+  const data = sorted.map(a => a.precoAtual * a.qtd);
+  if (barChart) barChart.destroy();
+  barChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Valor (R$)',
+        data,
+        backgroundColor: CORES.slice(0, data.length),
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { y: { ticks: { callback: v => 'R$' + (v/1000).toFixed(1) + 'k' } } }
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════
+   ANÁLISE DE DIVERSIFICAÇÃO
+══════════════════════════════════════════════════════ */
+function renderAnalise() {
+  renderBar();
+
+  const total = calcPatrimonio();
+  const scoreEl = document.getElementById('div-score');
+  const labelEl = document.getElementById('div-label');
+  const tipEl = document.getElementById('div-tip');
+  const exposEl = document.getElementById('cw-exposure-bars');
+  const topEl = document.getElementById('cw-top-positions');
+  const destEl = document.getElementById('cw-destaques');
+
+  if (!carteira.length) {
+    scoreEl.textContent = '—';
+    labelEl.textContent = 'Adicione ativos';
+    tipEl.textContent = 'Monte sua carteira para receber a análise personalizada.';
+    exposEl.innerHTML = '<div style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:1rem">Nenhum ativo na carteira.</div>';
+    topEl.innerHTML = '<div style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:1rem">Nenhum ativo na carteira.</div>';
+    destEl.innerHTML = '<div style="color:var(--text-muted);font-size:.85rem;text-align:center;padding:1rem">Simule pelo menos um dia.</div>';
+    return;
+  }
+
+  // Score de diversificação (0-100)
+  const tiposUnicos = new Set(carteira.map(a => a.tipo)).size;
+  const numAtivos = carteira.length;
+  const maxPosicao = Math.max(...carteira.map(a => (a.precoAtual * a.qtd) / total));
+  let score = 0;
+  score += Math.min(tiposUnicos * 15, 40); // até 40 pts por classes
+  score += Math.min(numAtivos * 5, 30);    // até 30 pts por qtd de ativos
+  score += Math.max(0, 30 - Math.round(maxPosicao * 100)); // penaliza concentração
+  score = Math.max(0, Math.min(100, score));
+
+  scoreEl.textContent = score;
+  if (score >= 70) { labelEl.textContent = 'Excelente'; scoreEl.style.color = '#2e7d32'; tipEl.textContent = 'Sua carteira está bem diversificada entre classes e ativos.'; }
+  else if (score >= 50) { labelEl.textContent = 'Moderada'; scoreEl.style.color = '#f57f17'; tipEl.textContent = 'Boa diversificação. Considere adicionar mais classes de ativos.'; }
+  else if (score >= 30) { labelEl.textContent = 'Baixa'; scoreEl.style.color = '#e65100'; tipEl.textContent = 'Diversifique mais. Concentração alta aumenta o risco.'; }
+  else { labelEl.textContent = 'Muito baixa'; scoreEl.style.color = '#c62828'; tipEl.textContent = 'Carteira muito concentrada. Considere distribuir em mais ativos e classes.'; }
+
+  // Exposição por classe
+  const porTipo = {};
+  carteira.forEach(a => {
+    porTipo[a.tipo] = (porTipo[a.tipo] || 0) + a.precoAtual * a.qtd;
+  });
+  const tipoCores = { acoes:'#1565C0', fii:'#2E7D32', renda_fixa:'#F57F17', crypto:'#6A1B9A', exterior:'#AD1457', etf:'#00695C' };
+  exposEl.innerHTML = Object.entries(porTipo)
+    .sort((a,b) => b[1]-a[1])
+    .map(([tipo, val]) => {
+      const pct = (val / total) * 100;
+      return `<div class="cw-exposure-item">
+        <div class="cw-exposure-header">
+          <span class="cw-exposure-label">${TIPOS_LABEL[tipo] || tipo}</span>
+          <span class="cw-exposure-pct">${pct.toFixed(1)}% · ${fmt(val)}</span>
+        </div>
+        <div class="cw-exposure-bar">
+          <div class="cw-exposure-fill" style="width:${pct}%;background:${tipoCores[tipo]||'#555'}"></div>
+        </div>
+      </div>`;
+    }).join('');
+
+  // Top posições
+  const sorted = [...carteira].sort((a,b) => (b.precoAtual*b.qtd)-(a.precoAtual*a.qtd));
+  topEl.innerHTML = sorted.slice(0,5).map(a => {
+    const val = a.precoAtual * a.qtd;
+    const pct = (val / total) * 100;
+    return `<div class="cw-indicator-row">
+      <span class="cw-indicator-ticker">${a.ticker}</span>
+      <span style="font-size:.78rem;color:var(--text-muted)">${pct.toFixed(1)}%</span>
+      <span class="cw-indicator-val">${fmt(val)}</span>
+    </div>`;
+  }).join('');
+
+  // Destaques: melhor e pior
+  if (carteira.length >= 2) {
+    const comVar = carteira.map(a => ({ ticker: a.ticker, var: ((a.precoAtual/a.precoMedio)-1)*100 }));
+    const melhor = comVar.reduce((m,c) => c.var > m.var ? c : m);
+    const pior = comVar.reduce((m,c) => c.var < m.var ? c : m);
+    destEl.innerHTML = `
+      <div class="cw-indicator-row">
+        <span>🏆 Melhor</span>
+        <span class="cw-indicator-ticker">${melhor.ticker}</span>
+        <span class="cw-indicator-val up">${fmtPct(melhor.var)}</span>
+      </div>
+      <div class="cw-indicator-row">
+        <span>⚠️ Pior</span>
+        <span class="cw-indicator-ticker">${pior.ticker}</span>
+        <span class="cw-indicator-val down">${fmtPct(pior.var)}</span>
+      </div>`;
+  } else {
+    destEl.innerHTML = '<div style="color:var(--text-muted);font-size:.85rem;padding:.5rem">Adicione ao menos 2 ativos e simule um dia.</div>';
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   SIMULAÇÕES
+══════════════════════════════════════════════════════ */
+function renderSimulacoes() {
+  const total = calcPatrimonio() + saldoDisponivel;
+
+  // Cenários de mercado
+  const cEl = document.getElementById('cw-cenarios');
+  if (!carteira.length) {
+    cEl.innerHTML = '<div style="color:var(--text-muted);font-size:.85rem;padding:.5rem">Adicione ativos para ver as projeções.</div>';
+  } else {
+    const cenarios = [
+      { label: '🚀 Alta forte (+15%)', pct: 0.15, classe: 'alta' },
+      { label: '📈 Alta moderada (+8%)', pct: 0.08, classe: 'alta' },
+      { label: '➡️ Mercado lateral', pct: 0, classe: 'neutro' },
+      { label: '📉 Queda moderada (-10%)', pct: -0.10, classe: 'baixa' },
+      { label: '🔻 Crise forte (-30%)', pct: -0.30, classe: 'baixa' },
+    ];
+    const invest = calcPatrimonio();
+    cEl.innerHTML = cenarios.map(c => {
+      const newInvest = invest * (1 + c.pct);
+      const newTotal = newInvest + saldoDisponivel;
+      const diff = newTotal - total;
+      return `<div class="cw-sim-scenario ${c.classe}">
+        <span class="label">${c.label}</span>
+        <span class="val">${fmt(newTotal)} <small style="font-weight:400">(${diff>=0?'+':''}${fmt(diff)})</small></span>
+      </div>`;
+    }).join('');
+  }
+
+  // Teste de estresse
+  const sEl = document.getElementById('cw-stress-results');
+  if (!carteira.length) {
+    sEl.innerHTML = '<div style="color:var(--text-muted);font-size:.85rem;padding:.5rem">Adicione ativos para ver o teste de estresse.</div>';
+  } else {
+    const invest = calcPatrimonio();
+    const crises = [
+      { nome: 'Covid-19 (2020)', queda: -0.44 },
+      { nome: 'Crise 2008', queda: -0.60 },
+      { nome: 'Crash Cripto 2022', queda: -0.55 },
+      { nome: 'Ibovespa 2015', queda: -0.13 },
+    ];
+    sEl.innerHTML = crises.map(c => {
+      const impacto = invest * c.queda;
+      const novoPat = invest * (1 + c.queda) + saldoDisponivel;
+      return `<div class="cw-sim-scenario baixa" style="margin-bottom:.4rem">
+        <span class="label">${c.nome}</span>
+        <span class="val">${fmt(novoPat)} <small style="font-weight:400">(${fmt(impacto)})</small></span>
+      </div>`;
+    }).join('');
+  }
+
+  // Rebalanceamento
+  renderRebalance();
+}
+
+function cwSelecionarPerfil(perfil, el) {
+  perfilSelecionado = perfil;
+  document.querySelectorAll('#perfil-conservador,#perfil-moderado,#perfil-arrojado').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  renderRebalance();
+  salvar();
+}
+
+function renderRebalance() {
+  const rEl = document.getElementById('cw-rebalance');
+  const total = calcPatrimonio() + saldoDisponivel;
+  if (!carteira.length) {
+    rEl.innerHTML = '<div style="color:var(--text-muted);font-size:.85rem;padding:.5rem">Adicione ativos para ver sugestões.</div>';
+    return;
+  }
+
+  const alvos = {
+    conservador: { renda_fixa: 60, acoes: 20, fii: 10, etf: 5, exterior: 5, crypto: 0 },
+    moderado:    { renda_fixa: 30, acoes: 35, fii: 15, etf: 10, exterior: 8, crypto: 2 },
+    arrojado:    { renda_fixa: 10, acoes: 45, fii: 10, etf: 10, exterior: 20, crypto: 5 },
+  };
+  const alvo = alvos[perfilSelecionado];
+  const tipoCores = { acoes:'#1565C0', fii:'#2E7D32', renda_fixa:'#F57F17', crypto:'#6A1B9A', exterior:'#AD1457', etf:'#00695C' };
+
+  rEl.innerHTML = Object.entries(alvo).map(([tipo, pctAlvo]) => {
+    const atualVal = carteira.filter(a => a.tipo === tipo).reduce((s,a) => s + a.precoAtual*a.qtd, 0);
+    const atualPct = (atualVal / total) * 100;
+    const diff = pctAlvo - atualPct;
+    const diffVal = (diff / 100) * total;
+    const acao = diff > 3 ? `<span style="color:#2e7d32;font-size:.75rem">Comprar ${fmt(diffVal)}</span>`
+      : diff < -3 ? `<span style="color:#c62828;font-size:.75rem">Reduzir ${fmt(-diffVal)}</span>`
+      : `<span style="color:var(--text-muted);font-size:.75rem">✅ OK</span>`;
+    return `<div class="cw-indicator-row">
+      <span style="font-size:.82rem;display:flex;align-items:center;gap:.4rem">
+        <span style="width:10px;height:10px;border-radius:50%;background:${tipoCores[tipo]||'#555'};display:inline-block"></span>
+        ${TIPOS_LABEL[tipo]}
+      </span>
+      <span style="font-size:.78rem;color:var(--text-muted)">${atualPct.toFixed(0)}% → ${pctAlvo}%</span>
+      ${acao}
+    </div>`;
+  }).join('');
+}
+
+window.cwSimularAporte = function() {
+  const aporte = parseFloat(document.getElementById('sim-aporte').value);
+  const anos = parseInt(document.getElementById('sim-anos').value);
+  const taxa = parseFloat(document.getElementById('sim-taxa').value) / 100;
+  const result = document.getElementById('sim-result');
+
+  if (!aporte || !anos || !taxa) { showToast('⚠️ Preencha todos os campos.', '#f59e0b'); return; }
+
+  const patrimAtual = calcPatrimonio() + saldoDisponivel;
+  const taxaMensal = Math.pow(1 + taxa, 1/12) - 1;
+  const meses = anos * 12;
+
+  // Fórmula de juros compostos com aportes mensais
+  let total = patrimAtual * Math.pow(1 + taxaMensal, meses);
+  total += aporte * ((Math.pow(1 + taxaMensal, meses) - 1) / taxaMensal);
+
+  const totalAportes = aporte * meses;
+  const juros = total - patrimAtual - totalAportes;
+
+  document.getElementById('sim-result-anos').textContent = anos;
+  document.getElementById('sim-result-val').textContent = fmt(total);
+  document.getElementById('sim-result-aportes').textContent = fmt(totalAportes);
+  document.getElementById('sim-result-juros').textContent = fmt(juros);
+  result.style.display = 'block';
+};
+
+/* ══════════════════════════════════════════════════════
+   RENDER GERAL
+══════════════════════════════════════════════════════ */
+function renderTudo() {
+  atualizarResumo();
+  renderTabela();
+  renderPie();
+  renderLine();
+  renderAnalise();
+  renderSimulacoes();
+  renderLog();
+}
+
+/* ══════════════════════════════════════════════════════
+   TABS
+══════════════════════════════════════════════════════ */
+document.querySelectorAll('.cw-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cw-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.cw-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+    // Re-render charts when switching to tabs that have them
+    if (btn.dataset.tab === 'analise') renderAnalise();
+    if (btn.dataset.tab === 'historico') renderLine();
+  });
+});
+
+/* ══════════════════════════════════════════════════════
+   DARK MODE
+══════════════════════════════════════════════════════ */
+const darkBtn = document.getElementById('darkModeToggle');
+const html = document.documentElement;
+const savedTheme = localStorage.getItem('finwise_theme') || localStorage.getItem('theme');
+if (savedTheme) html.setAttribute('data-theme', savedTheme);
+darkBtn?.addEventListener('click', () => {
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('finwise_theme', next);
+  localStorage.setItem('theme', next);
+});
+
+/* ══════════════════════════════════════════════════════
+   USERNAME E LOGOUT
+══════════════════════════════════════════════════════ */
+const usernameDisplay = document.getElementById('username-display');
+if (usernameDisplay) {
+  usernameDisplay.textContent = localStorage.getItem('finwise_username') || localStorage.getItem('username') || '';
+}
+document.getElementById('logout-btn')?.addEventListener('click', () => {
+  localStorage.removeItem('finwise_username');
+  localStorage.removeItem('username');
+  window.location.href = '../login/login.html';
+});
+
+/* ══════════════════════════════════════════════════════
+   ALERTAS
+══════════════════════════════════════════════════════ */
+const alertsPanel = document.getElementById('alerts-panel');
+const alertsOverlay = document.getElementById('alerts-overlay');
+document.getElementById('alerts-toggle-btn')?.addEventListener('click', () => {
+  alertsPanel?.classList.toggle('open');
+  alertsOverlay?.classList.toggle('open');
+});
+document.getElementById('alerts-close-btn')?.addEventListener('click', () => {
+  alertsPanel?.classList.remove('open');
+  alertsOverlay?.classList.remove('open');
+});
+alertsOverlay?.addEventListener('click', () => {
+  alertsPanel?.classList.remove('open');
+  alertsOverlay?.classList.remove('open');
+});
+
+/* ══════════════════════════════════════════════════════
+   SIDEBAR
+══════════════════════════════════════════════════════ */
+(function() {
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  window.openSidebar = openSidebar;
+  window.closeSidebar = closeSidebar;
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+})();
+
+/* ══════════════════════════════════════════════════════
+   COTAÇÕES HEADER TICKERS
+══════════════════════════════════════════════════════ */
+(function(){
+  const BASE = {
+    dolar:   { valor:5.74 },
+    bitcoin: { valor:102340 },
+    ibov:    { valor:133850 },
+    ouro:    { valor:19840 },
+  };
+  function gerar() {
+    const r = {};
+    Object.entries(BASE).forEach(([k,b]) => {
+      const varDia = (Math.random()-0.48)*b.valor*0.018;
+      r[k] = { val: b.valor+varDia, pct: (varDia/b.valor)*100 };
+    });
+    return r;
+  }
+  function fmtTicker(v, prefix) {
+    const s = v>=10000 ? v.toLocaleString('pt-BR',{maximumFractionDigits:0})
+                       : v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return prefix+s;
+  }
+  function render(dados) {
+    [['ht-dolar','dolar','R$'],['ht-btc','bitcoin','R$'],['ht-ibov','ibov',''],['ht-ouro','ouro','R$']]
+    .forEach(([id,k,pre]) => {
+      const el = document.getElementById(id); if(!el||!dados[k]) return;
+      const d = dados[k];
+      el.textContent = fmtTicker(d.val,pre)+' ('+(d.pct>=0?'+':'')+d.pct.toFixed(1)+'%)';
+      el.className = 'ticker-val '+(d.pct>=0?'up':'down');
+    });
+  }
+  function gerarDados() { return gerar(); }
+  let dados = gerarDados();
+  render(dados);
+  setInterval(()=>{ dados=gerarDados(); render(dados); }, 30000);
+})();
+
+/* ══════════════════════════════════════════════════════
+   PERFIL INICIAL
+══════════════════════════════════════════════════════ */
+// Restore selected profile button
+document.getElementById('perfil-' + perfilSelecionado)?.classList.add('active');
+
+/* ══════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════ */
+cwAtualizarSugestoes();
+renderTudo();
+</script>
+</body>
+</html>

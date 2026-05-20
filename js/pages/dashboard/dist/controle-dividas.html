@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinWise — Controle de Dívidas</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard-style.css">
+ <script src="pwa-init.js"></script>
+ <style>
+  .page-hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    padding: 2.5rem 1.5rem 2rem;
+    color: #fff;
+  }
+  .page-hero h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: .4rem; }
+  .page-hero h1 span { color: #f59e0b; }
+  .page-hero p { color: rgba(255,255,255,.75); font-size: .95rem; }
+
+  .dividas-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; margin-bottom:1.4rem; }
+  @media(max-width:768px){ .dividas-grid { grid-template-columns:1fr; } }
+  .divida-table { width:100%; border-collapse:collapse; font-size:.88rem; }
+  .divida-table th { background:var(--surface-alt); padding:.6rem .8rem; text-align:left; font-weight:600; color:var(--text-secondary); font-size:.8rem; text-transform:uppercase; letter-spacing:.03em; }
+  .divida-table td { padding:.6rem .8rem; border-bottom:1px solid var(--border); vertical-align:middle; }
+  .divida-table tr:last-child td { border-bottom:none; }
+  .divida-table .btn-icon { background:none;border:none;cursor:pointer;color:var(--red-500);padding:.2rem .4rem; font-size:.9rem; }
+  .estrategia-card { border:2px solid var(--border); border-radius:var(--radius-md); padding:1rem; }
+  .estrategia-card.active-strat { border-color:var(--green-500); background:var(--green-50); }
+  [data-theme="dark"] .estrategia-card.active-strat { background:rgba(16,185,129,.08); }
+  .strat-badge { display:inline-block; padding:.15rem .5rem; border-radius:20px; font-size:.75rem; font-weight:600; }
+  .strat-badge--snow { background:#dbeafe; color:#1d4ed8; }
+  .strat-badge--aval { background:#fee2e2; color:#b91c1c; }
+  [data-theme="dark"] .strat-badge--snow { background:#1e3a5f; color:#93c5fd; }
+  [data-theme="dark"] .strat-badge--aval { background:#4b1c1c; color:#fca5a5; }
+  .ordem-item { display:flex; align-items:center; gap:.6rem; padding:.5rem .7rem; border-radius:var(--radius-sm); border:1px solid var(--border); margin-bottom:.5rem; font-size:.85rem; }
+  .ordem-num { width:22px; height:22px; border-radius:50%; background:var(--brand-primary); color:#fff; display:flex;align-items:center;justify-content:center; font-size:.72rem; font-weight:700; flex-shrink:0; }
+  .ordem-item.first-pay { border-color:var(--green-500); background:var(--green-50); }
+  [data-theme="dark"] .ordem-item.first-pay { background:rgba(16,185,129,.08); }
+  .resultado-box { display:grid; grid-template-columns:repeat(3,1fr); gap:.8rem; margin-top:1rem; }
+  @media(max-width:600px){ .resultado-box { grid-template-columns:1fr 1fr; } }
+  .res-stat { text-align:center; padding:.8rem; background:var(--surface-alt); border-radius:var(--radius-sm); }
+  .res-stat strong { display:block; font-size:1.05rem; color:var(--text-primary); margin-top:.2rem; }
+  .res-stat span { font-size:.76rem; color:var(--text-secondary); }
+  .progresso-divida { height:8px; background:var(--border); border-radius:4px; overflow:hidden; margin-top:.3rem; }
+  .progresso-divida-fill { height:100%; border-radius:4px; background:var(--brand-primary); transition:width .5s; }
+
+  .info-banner { background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border: 1px solid #bae6fd; border-radius: var(--radius-md); padding: 1rem 1.2rem; margin-bottom: 1.4rem; display: flex; gap: 1rem; align-items: flex-start; }
+  [data-theme="dark"] .info-banner { background: rgba(14,165,233,.1); border-color: rgba(14,165,233,.25); }
+  .info-banner i { color: #0ea5e9; font-size: 1.2rem; margin-top: .1rem; flex-shrink: 0; }
+  .info-banner p { font-size: .85rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+  .info-banner strong { color: var(--text-primary); }
+  </style>
+  <link rel="icon" type="image/x-icon" href="../../../../favicon.ico">
+</head>
+<body>
+<div class="dashboard-container">
+
+  <!-- SIDEBAR NAV -->
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside id="sidebar" class="sidebar-nav">
+    <div class="sidebar-header">
+      <div class="logo sidebar-logo">Fin<span>Wise</span></div>
+      <button class="sidebar-close-btn" onclick="closeSidebar()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="sidebar-group-label">Principal</div>
+      <a href="dashboard.html#resumo" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-house"></i><span>Início</span></a>
+      <a href="dashboard.html#metas" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-bullseye"></i><span>Metas</span></a>
+      <a href="dashboard.html#graficos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-chart-line"></i><span>Gráficos</span></a>
+      <a href="dashboard.html#relatorio" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-file-invoice"></i><span>Relatório</span></a>
+      <div class="sidebar-group-label">Investimentos</div>
+      <a href="dashboard.html#investimentos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-seedling"></i><span>Simulador de Renda Fixa</span></a>
+      <a href="carteira-ficticia.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-briefcase"></i><span>Carteira Fictícia</span></a>
+      <a href="cotacoes.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-globe"></i><span>Cotações ao Vivo</span></a>
+      <div class="sidebar-group-label">Finanças Pessoais</div>
+      <a href="controle-dividas.html" class="sidebar-link active"><i class="fas fa-hand-holding-dollar"></i><span>Controle de Dívidas</span></a>
+     <a href="regra-50-30-20.html" class="sidebar-link"><i class="fas fa-chart-pie"></i><span>Regra 50-30-20</span></a>
+     <a href="dashboard.html#comparador-credito" class="sidebar-link"><i class="fas fa-scale-balanced"></i><span>Comparador de Crédito</span></a> 
+     <a href="desafio-grupo.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-fire"></i><span>Desafio em Grupo</span></a>
+      <div class="sidebar-group-label">Aprendizado</div>
+      <a href="educacao-financeira.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-graduation-cap"></i><span>Educação Financeira</span></a>
+      <a href="jogos.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-gamepad"></i><span>Jogos</span></a>
+      <a href="finwise-kids.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-child"></i><span>FinWise Kids</span></a>
+    </nav>
+  </aside>
+
+  <!-- HEADER -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <button class="header-icon-btn menu-toggle-btn" onclick="openSidebar()" title="Menu"><i class="fas fa-bars"></i></button>
+      <div class="logo">Fin<span>Wise</span></div>
+    </div>
+    <div class="header-tickers" id="header-tickers">
+      <span class="ticker-item"><span class="ticker-label">USD</span><span id="ht-dolar" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">BTC</span><span id="ht-btc" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">IBOV</span><span id="ht-ibov" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">OURO</span><span id="ht-ouro" class="ticker-val">—</span></span>
+    </div>
+    <div class="header-right">
+      <button id="darkModeToggle" class="header-icon-btn dark-mode-toggle" title="Alternar tema">
+        <span class="dark-mode-icon">🌙</span>
+        <span class="light-mode-icon">☀️</span>
+      </button>
+      <div class="user-chip">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <span id="username-display"></span>
+      </div>
+      <button id="logout-btn" class="btn btn--danger btn--sm" title="Sair">
+        <i class="fas fa-right-from-bracket"></i>
+        <span class="btn-label">Sair</span>
+      </button>
+    </div>
+    <button id="pwa-install-btn" style="display:none" class="btn btn--ghost btn--sm">
+  <i class="fas fa-download"></i> <span>Instalar app</span>
+</button>
+  </header>
+
+  <main class="dashboard-main">
+
+    <!-- Page Hero -->
+    <div class="page-hero">
+      <h1>Controle de <span>Dívidas</span></h1>
+      <p>Compare as estratégias Bola de Neve e Avalanche para quitar suas dívidas mais rápido e com menos juros</p>
+    </div>
+
+    <div style="padding:1.5rem">
+
+      <!-- Info Banner -->
+      <div class="info-banner">
+        <i class="fas fa-lightbulb"></i>
+        <p>
+          <strong>Bola de Neve ❄️</strong>: quite a menor dívida primeiro — gera vitórias rápidas e mantém motivação. &nbsp;|&nbsp;
+          <strong>Avalanche 🔥</strong>: quite a maior taxa de juros primeiro — economiza mais dinheiro no longo prazo.
+          Adicione suas dívidas abaixo e deixe o FinWise calcular a melhor estratégia para você!
+        </p>
+      </div>
+
+      <!-- Adicionar Dívida -->
+      <div class="card" style="margin-bottom:1.4rem">
+        <div class="card-head">
+          <h3><i class="fas fa-plus-circle"></i> Adicionar Dívida</h3>
+        </div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:.8rem;align-items:end">
+          <div class="input-group" style="flex-direction:column;align-items:flex-start;gap:.3rem">
+            <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500">Nome da dívida</label>
+            <input type="text" id="dv-nome" placeholder="Ex: Cartão Nubank" style="width:100%">
+          </div>
+          <div class="input-group" style="flex-direction:column;align-items:flex-start;gap:.3rem">
+            <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500">Saldo devedor (R$)</label>
+            <input type="number" id="dv-saldo" placeholder="5000" min="0" step="0.01" style="width:100%">
+          </div>
+          <div class="input-group" style="flex-direction:column;align-items:flex-start;gap:.3rem">
+            <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500">Juros mensal (%)</label>
+            <input type="number" id="dv-juros" placeholder="3.5" min="0" step="0.01" style="width:100%">
+          </div>
+          <div class="input-group" style="flex-direction:column;align-items:flex-start;gap:.3rem">
+            <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500">Parcela mínima (R$)</label>
+            <input type="number" id="dv-parcela" placeholder="200" min="0" step="0.01" style="width:100%">
+          </div>
+          <button class="btn btn--primary" onclick="adicionarDivida()" style="white-space:nowrap;height:40px">
+            <i class="fas fa-plus"></i> Adicionar
+          </button>
+        </div>
+        <p style="font-size:.76rem;color:var(--text-muted);margin-top:.6rem"><i class="fas fa-info-circle"></i> Os dados são salvos localmente no seu navegador.</p>
+      </div>
+
+      <!-- Tabela de dívidas -->
+      <div class="card" style="margin-bottom:1.4rem">
+        <div class="card-head">
+          <h3><i class="fas fa-list"></i> Suas Dívidas</h3>
+          <div style="display:flex;gap:.6rem;align-items:center">
+            <label style="font-size:.82rem;color:var(--text-secondary);font-weight:500">Pagamento extra/mês: R$</label>
+            <input type="number" id="dv-extra" value="0" min="0" step="10" style="width:100px" oninput="calcularEstrategias()">
+          </div>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="divida-table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Saldo (R$)</th>
+                <th>Juros/mês</th>
+                <th>Parcela mín.</th>
+                <th>Progresso</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="dividas-tbody">
+              <tr id="dividas-empty"><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted)"><i class="fas fa-info-circle"></i> Nenhuma dívida cadastrada. Adicione uma acima!</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Comparativo estratégias -->
+      <div class="dividas-grid">
+        <!-- Bola de Neve -->
+        <div class="card estrategia-card" id="card-bola-neve">
+          <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem">
+            <span class="strat-badge strat-badge--snow">❄️ Bola de Neve</span>
+            <span style="font-size:.78rem;color:var(--text-secondary)">Menor saldo primeiro</span>
+          </div>
+          <p style="font-size:.82rem;color:var(--text-secondary);margin-bottom:.8rem">
+            Quita a dívida com <strong>menor saldo</strong> primeiro. Gera vitórias rápidas e mantém a motivação.
+          </p>
+          <div id="ordem-bola-neve" style="margin-bottom:.8rem"></div>
+          <div class="resultado-box" id="res-bola-neve">
+            <div class="res-stat"><span>Total de juros</span><strong id="bn-juros">—</strong></div>
+            <div class="res-stat"><span>Meses para quitar</span><strong id="bn-meses">—</strong></div>
+            <div class="res-stat"><span>Total pago</span><strong id="bn-total">—</strong></div>
+          </div>
+        </div>
+
+        <!-- Avalanche -->
+        <div class="card estrategia-card" id="card-avalanche">
+          <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.8rem">
+            <span class="strat-badge strat-badge--aval">🔥 Avalanche</span>
+            <span style="font-size:.78rem;color:var(--text-secondary)">Maior juros primeiro</span>
+          </div>
+          <p style="font-size:.82rem;color:var(--text-secondary);margin-bottom:.8rem">
+            Quita a dívida com <strong>maior taxa de juros</strong> primeiro. Economiza mais dinheiro no longo prazo.
+          </p>
+          <div id="ordem-avalanche" style="margin-bottom:.8rem"></div>
+          <div class="resultado-box" id="res-avalanche">
+            <div class="res-stat"><span>Total de juros</span><strong id="av-juros">—</strong></div>
+            <div class="res-stat"><span>Meses para quitar</span><strong id="av-meses">—</strong></div>
+            <div class="res-stat"><span>Total pago</span><strong id="av-total">—</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comparativo final -->
+      <div class="card" id="div-comparativo" style="display:none;margin-top:1rem">
+        <div class="card-head"><h3><i class="fas fa-balance-scale"></i> Comparativo Final</h3></div>
+        <div id="div-comparativo-content" style="font-size:.9rem;line-height:1.7"></div>
+      </div>
+
+    </div><!-- /padding -->
+  </main>
+</div>
+
+<script>
+(function(){
+  let dividas = JSON.parse(localStorage.getItem('fw_dividas') || '[]');
+
+  function salvar(){ localStorage.setItem('fw_dividas', JSON.stringify(dividas)); }
+  function fmt(v){ return 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+  window.adicionarDivida = function(){
+    const nome = document.getElementById('dv-nome').value.trim();
+    const saldo = parseFloat(document.getElementById('dv-saldo').value);
+    const juros = parseFloat(document.getElementById('dv-juros').value);
+    const parcela = parseFloat(document.getElementById('dv-parcela').value);
+    if(!nome || isNaN(saldo)||saldo<=0 || isNaN(juros)||juros<0 || isNaN(parcela)||parcela<=0){
+      alert('Preencha todos os campos corretamente.'); return;
+    }
+    dividas.push({id:Date.now(), nome, saldo, saldoOriginal:saldo, juros, parcela});
+    salvar();
+    document.getElementById('dv-nome').value='';
+    document.getElementById('dv-saldo').value='';
+    document.getElementById('dv-juros').value='';
+    document.getElementById('dv-parcela').value='';
+    renderTabela(); calcularEstrategias();
+  };
+
+  window.removerDivida = function(id){
+    dividas = dividas.filter(d=>d.id!==id);
+    salvar(); renderTabela(); calcularEstrategias();
+  };
+
+  function renderTabela(){
+    const tbody = document.getElementById('dividas-tbody');
+    const empty = document.getElementById('dividas-empty');
+    if(dividas.length===0){ tbody.innerHTML=''; tbody.appendChild(empty); return; }
+    tbody.innerHTML = dividas.map(d=>{
+      const pct = Math.max(0,Math.min(100, (1 - d.saldo/d.saldoOriginal)*100));
+      return `<tr>
+        <td><strong>${d.nome}</strong></td>
+        <td>${fmt(d.saldo)}</td>
+        <td>${d.juros.toFixed(2)}%</td>
+        <td>${fmt(d.parcela)}</td>
+        <td style="min-width:100px">
+          <div class="progresso-divida"><div class="progresso-divida-fill" style="width:${pct}%"></div></div>
+          <span style="font-size:.72rem;color:var(--text-muted)">${pct.toFixed(0)}% quitado</span>
+        </td>
+        <td><button class="btn-icon" onclick="removerDivida(${d.id})" title="Remover"><i class="fas fa-trash"></i></button></td>
+      </tr>`;
+    }).join('');
+  }
+
+  function simularEstrategia(ordem, extra){
+    let dvs = ordem.map(d=>({...d, saldo:d.saldo}));
+    let totalJuros=0, meses=0;
+    const MAX_MESES=600;
+    while(dvs.some(d=>d.saldo>0) && meses<MAX_MESES){
+      meses++;
+      let sobra = extra;
+      dvs.forEach(d=>{
+        if(d.saldo<=0) return;
+        const j = d.saldo * (d.juros/100);
+        totalJuros+=j;
+        d.saldo += j;
+        const pag = Math.min(d.saldo, d.parcela);
+        d.saldo -= pag;
+      });
+      for(let d of dvs){
+        if(d.saldo<=0) continue;
+        const pagExtra = Math.min(d.saldo, sobra);
+        d.saldo -= pagExtra;
+        sobra -= pagExtra;
+        break;
+      }
+      dvs.forEach(d=>{ if(d.saldo<0.01) d.saldo=0; });
+    }
+    const totalPago = dvs.reduce((s,d)=>s+d.saldoOriginal,0) + totalJuros;
+    return {totalJuros, meses, totalPago};
+  }
+
+  window.calcularEstrategias = function(){
+    if(dividas.length===0){
+      ['ordem-bola-neve','ordem-avalanche'].forEach(id=>document.getElementById(id).innerHTML='');
+      ['bn-juros','bn-meses','bn-total','av-juros','av-meses','av-total'].forEach(id=>document.getElementById(id).textContent='—');
+      document.getElementById('div-comparativo').style.display='none';
+      return;
+    }
+    const extra = parseFloat(document.getElementById('dv-extra').value)||0;
+    const ordemNeve = [...dividas].sort((a,b)=>a.saldo-b.saldo);
+    const ordemAval = [...dividas].sort((a,b)=>b.juros-a.juros);
+
+    function renderOrdem(containerId, ordem){
+      document.getElementById(containerId).innerHTML = ordem.map((d,i)=>
+        `<div class="ordem-item ${i===0?'first-pay':''}">
+          <div class="ordem-num">${i+1}</div>
+          <div style="flex:1">
+            <strong>${d.nome}</strong>
+            <span style="color:var(--text-muted);font-size:.78rem;margin-left:.4rem">R$ ${d.saldo.toLocaleString('pt-BR',{maximumFractionDigits:0})} · ${d.juros}%/mês</span>
+          </div>
+          ${i===0?'<span style="font-size:.72rem;background:var(--green-500);color:#fff;padding:.1rem .4rem;border-radius:10px">Foco aqui</span>':''}
+        </div>`
+      ).join('');
+    }
+    renderOrdem('ordem-bola-neve', ordemNeve);
+    renderOrdem('ordem-avalanche', ordemAval);
+
+    const rNeve = simularEstrategia(ordemNeve, extra);
+    const rAval = simularEstrategia(ordemAval, extra);
+
+    document.getElementById('bn-juros').textContent = fmt(rNeve.totalJuros);
+    document.getElementById('bn-meses').textContent = rNeve.meses + ' meses';
+    document.getElementById('bn-total').textContent = fmt(rNeve.totalPago);
+    document.getElementById('av-juros').textContent = fmt(rAval.totalJuros);
+    document.getElementById('av-meses').textContent = rAval.meses + ' meses';
+    document.getElementById('av-total').textContent = fmt(rAval.totalPago);
+
+    document.getElementById('card-bola-neve').classList.toggle('active-strat', rNeve.totalJuros <= rAval.totalJuros);
+    document.getElementById('card-avalanche').classList.toggle('active-strat', rAval.totalJuros < rNeve.totalJuros);
+
+    const economia = Math.abs(rNeve.totalJuros - rAval.totalJuros);
+    const mesesDif = Math.abs(rNeve.meses - rAval.meses);
+    const melhor = rAval.totalJuros < rNeve.totalJuros ? 'Avalanche 🔥' : 'Bola de Neve ❄️';
+    const motivo = rAval.totalJuros < rNeve.totalJuros
+      ? `economizará ${fmt(economia)} em juros`
+      : `te dará vitórias psicológicas mais rápidas`;
+    document.getElementById('div-comparativo').style.display='';
+    document.getElementById('div-comparativo-content').innerHTML = `
+      <p>✅ Para o seu perfil, a estratégia <strong>${melhor}</strong> é a mais vantajosa, pois ${motivo}.</p>
+      ${mesesDif>0?`<p>A diferença entre as estratégias é de <strong>${mesesDif} mês(es)</strong> no tempo total de quitação.</p>`:''}
+      <p style="margin-top:.6rem;color:var(--text-muted);font-size:.82rem">💡 Dica: com R$ ${extra.toLocaleString('pt-BR')} de pagamento extra por mês, você acelera significativamente a quitação. Tente aumentar esse valor!</p>
+    `;
+  };
+
+  renderTabela();
+  calcularEstrategias();
+})();
+</script>
+
+<!-- Dark mode toggle -->
+<script>
+(function(){
+  const btn = document.getElementById('darkModeToggle');
+  const saved = localStorage.getItem('fw_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  btn && btn.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('fw_theme', next);
+  });
+})();
+</script>
+
+<!-- Header tickers -->
+<script>
+(function(){
+  const BASE = {
+    dolar:   { valor:5.74,   },
+    bitcoin: { valor:102340, },
+    ibov:    { valor:133850, },
+    ouro:    { valor:19840,  },
+  };
+  function gerar() {
+    const r = {};
+    Object.entries(BASE).forEach(([k,b]) => {
+      const varDia = (Math.random()-0.48)*b.valor*0.018;
+      r[k] = { val: b.valor+varDia, pct: (varDia/b.valor)*100 };
+    });
+    return r;
+  }
+  function fmt(v,prefix) {
+    const s = v>=10000 ? v.toLocaleString('pt-BR',{maximumFractionDigits:0})
+                       : v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return prefix+s;
+  }
+  function render(dados) {
+    [['ht-dolar','dolar','R$'],['ht-btc','bitcoin','R$'],['ht-ibov','ibov',''],['ht-ouro','ouro','R$']]
+    .forEach(([id,k,pre]) => {
+      const el = document.getElementById(id); if(!el||!dados[k]) return;
+      const d = dados[k];
+      el.textContent = fmt(d.val,pre)+' ('+(d.pct>=0?'+':'')+d.pct.toFixed(1)+'%)';
+      el.className = 'ticker-val '+(d.pct>=0?'up':'down');
+    });
+  }
+  let dados = gerar();
+  render(dados);
+  setInterval(()=>{ dados=gerar(); render(dados); }, 30000);
+})();
+</script>
+
+<!-- Sidebar open/close -->
+<script>
+(function() {
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  window.openSidebar = openSidebar;
+  window.closeSidebar = closeSidebar;
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+})();
+</script>
+</body>
+</html>

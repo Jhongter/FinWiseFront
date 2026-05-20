@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinWise — Cotações ao Vivo</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard-style.css">
+  <script src="pwa-init.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <style>
+    .cot-hero {
+      background: linear-gradient(135deg, var(--header-bg,#0a1628) 0%, #003366 100%);
+      padding: 2rem 1.5rem 1.5rem;
+      color: #fff;
+    }
+    .cot-hero h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: .3rem; }
+    .cot-hero h1 span { color: #4ade80; }
+    .cot-hero p { color: rgba(255,255,255,.7); font-size: .9rem; }
+    .cot-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 1.5rem; background: var(--surface); border-bottom: 1px solid var(--border);
+      position: sticky; top: 60px; z-index: 90;
+    }
+    .cot-bar-left { display: flex; align-items: center; gap: .8rem; }
+    .cot-search {
+      padding: .4rem .85rem; border-radius: 20px; border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--text); font-size: .85rem; width: 180px;
+    }
+    .cot-filter-btns { display: flex; gap: .4rem; }
+    .cot-filter-btn {
+      padding: .35rem .85rem; border-radius: 20px; border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--text-muted); font-size: .8rem; cursor: pointer; transition: all .2s;
+    }
+    .cot-filter-btn.active, .cot-filter-btn:hover {
+      background: var(--green-500,#22c55e); color: #fff; border-color: var(--green-500,#22c55e);
+    }
+    .cot-layout { display: grid; grid-template-columns: 1fr 340px; gap: 1.5rem; padding: 1.5rem; max-width: 1400px; margin: 0 auto; }
+    @media (max-width: 900px) { .cot-layout { grid-template-columns: 1fr; } }
+    .cot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 1rem; }
+    .cot-card {
+      background: var(--bg-card,#fff); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1rem; cursor: pointer; transition: transform .15s, box-shadow .15s, border-color .2s;
+    }
+    .cot-card:hover { transform: translateY(-3px); box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+    .cot-card.selected { border-color: var(--green-500,#22c55e); box-shadow: 0 0 0 2px rgba(34,197,94,.2); }
+    .cot-card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: .5rem; }
+    .cot-emoji { font-size: 1.4rem; }
+    .cot-badge { font-size: .75rem; font-weight: 700; padding: .15rem .45rem; border-radius: 20px; }
+    .cot-badge.up { background: rgba(34,197,94,.12); color: #16a34a; }
+    .cot-badge.down { background: rgba(239,68,68,.12); color: #dc2626; }
+    .cot-name { font-size: .73rem; color: var(--text-muted); margin-bottom: .15rem; }
+    .cot-val { font-size: 1.25rem; font-weight: 700; color: var(--text); }
+    .cot-sub { font-size: .72rem; color: var(--text-muted); margin-top: .2rem; }
+    .cot-sub span { font-weight: 600; }
+
+    /* Sidebar panel */
+    .cot-panel { position: sticky; top: 120px; }
+    .cot-panel .card { margin-bottom: 1rem; }
+    .cot-chart-wrap { height: 200px; margin-top: .8rem; }
+
+    /* Table */
+    .cot-table-wrap { overflow-x: auto; margin-top: 1.5rem; }
+    .cot-table { width: 100%; border-collapse: collapse; font-size: .86rem; }
+    .cot-table th { text-align: left; padding: .5rem .7rem; color: var(--text-muted); font-weight: 600; border-bottom: 2px solid var(--border); white-space: nowrap; }
+    .cot-table th:not(:first-child) { text-align: right; }
+    .cot-table td { padding: .55rem .7rem; border-bottom: 1px solid var(--border); }
+    .cot-table td:not(:first-child) { text-align: right; }
+    .cot-table tr:hover td { background: var(--surface); }
+
+    /* Category labels */
+    .cot-cat-label {
+      font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+      color: var(--text-muted); padding: .2rem .55rem; border-radius: 8px;
+      background: var(--border); display: inline-block;
+    }
+
+    /* Ticker bar */
+    .cot-ticker-bar {
+      overflow: hidden; background: var(--header-bg,#0a1628); color: #fff;
+      padding: .35rem 0; font-size: .78rem; font-family: 'DM Mono', monospace;
+    }
+    .cot-ticker-inner {
+      display: flex; gap: 2.5rem; animation: tickerScroll 40s linear infinite;
+      width: max-content;
+    }
+    @keyframes tickerScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .cot-ticker-inner:hover { animation-play-state: paused; }
+    .ticker-up   { color: #4ade80; }
+    .ticker-down { color: #f87171; }
+  </style>
+  <link rel="icon" type="image/x-icon" href="../../../../favicon.ico">
+</head>
+<body>
+
+<div class="dashboard-container">
+
+  <!-- SIDEBAR NAV -->
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside id="sidebar" class="sidebar-nav">
+    <div class="sidebar-header">
+      <div class="logo sidebar-logo">Fin<span>Wise</span></div>
+      <button class="sidebar-close-btn" onclick="closeSidebar()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="sidebar-group-label">Principal</div>
+      <a href="dashboard.html#resumo" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-house"></i><span>Início</span></a>
+      <a href="dashboard.html#metas" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-bullseye"></i><span>Metas</span></a>
+      <a href="dashboard.html#graficos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-chart-line"></i><span>Gráficos</span></a>
+      <a href="dashboard.html#relatorio" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-file-invoice"></i><span>Relatório</span></a>
+      <div class="sidebar-group-label">Investimentos</div>
+      <a href="dashboard.html#investimentos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-seedling"></i><span>Simulador de Renda Fixa</span></a>
+      <a href="carteira-ficticia.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-briefcase"></i><span>Carteira Fictícia</span></a>
+      <a href="cotacoes.html" class="sidebar-link active"><i class="fas fa-globe"></i><span>Cotações ao Vivo</span></a>
+      <div class="sidebar-group-label">Finanças Pessoais</div>
+      <a href="controle-dividas.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-hand-holding-dollar"></i><span>Controle de Dívidas</span></a>
+      <a href="regra-50-30-20.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-chart-pie"></i><span>Regra 50-30-20</span></a>
+      <a href="dashboard.html#comparador-credito" class="sidebar-link"><i class="fas fa-scale-balanced"></i><span>Comparador de Crédito</span></a>
+      <a href="desafio-grupo.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-fire"></i><span>Desafio em Grupo</span></a>
+            <div class="sidebar-group-label">Aprendizado</div>
+      <a href="educacao-financeira.html" class="sidebar-link"><i class="fas fa-graduation-cap"></i><span>Educação Financeira</span></a>
+      <a href="jogos.html" class="sidebar-link"><i class="fas fa-gamepad"></i><span>Jogos</span></a>
+      <a href="finwise-kids.html" class="sidebar-link"><i class="fas fa-child"></i><span>FinWise Kids</span></a>
+    </nav>
+  </aside>
+
+  <!-- HEADER -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <button class="header-icon-btn menu-toggle-btn" onclick="openSidebar()" title="Menu"><i class="fas fa-bars"></i></button>
+      <div class="logo">Fin<span>Wise</span></div>
+    </div>
+    <!-- Ticker bar compacto no header -->
+    <div class="header-tickers" id="header-tickers">
+      <span class="ticker-item"><span class="ticker-label">USD</span><span id="ht-dolar" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">BTC</span><span id="ht-btc" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">IBOV</span><span id="ht-ibov" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">OURO</span><span id="ht-ouro" class="ticker-val">—</span></span>
+    </div>
+    <div class="header-right">
+      <button id="darkModeToggle" class="header-icon-btn dark-mode-toggle" title="Alternar tema">
+        <span class="dark-mode-icon">🌙</span>
+        <span class="light-mode-icon">☀️</span>
+      </button>
+      <div class="user-chip">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <span id="username-display"></span>
+      </div>
+      <button id="logout-btn" class="btn btn--danger btn--sm" title="Sair" onclick="history.back()">
+        <i class="fas fa-arrow-left"></i><span class="btn-label">Voltar</span>
+      </button>
+    </div>
+    <button id="pwa-install-btn" style="display:none" class="btn btn--ghost btn--sm">
+  <i class="fas fa-download"></i> <span>Instalar app</span>
+</button>
+  </header>
+
+  <main class="dashboard-main" style="padding:0">
+
+    <!-- Hero -->
+    <div class="cot-hero">
+      <a href="dashboard.html" style="color:rgba(255,255,255,.6);font-size:.82rem;text-decoration:none;display:inline-flex;align-items:center;gap:.35rem;margin-bottom:.8rem">
+        <i class="fas fa-arrow-left"></i> Voltar ao Dashboard
+      </a>
+      <h1>Cotações <span>ao Vivo</span></h1>
+      <p>Acompanhe moedas, criptomoedas, ações e índices em tempo real. Atualização automática a cada 30 segundos.</p>
+    </div>
+
+    <!-- Barra de filtros + busca -->
+    <div class="cot-bar">
+      <div class="cot-bar-left">
+        <input type="text" class="cot-search" id="cot-search" placeholder="🔍 Buscar ativo...">
+        <div class="cot-filter-btns">
+          <button class="cot-filter-btn active" data-cat="todos" onclick="filtrar('todos',this)">Todos</button>
+          <button class="cot-filter-btn" data-cat="moeda" onclick="filtrar('moeda',this)">💱 Moedas</button>
+          <button class="cot-filter-btn" data-cat="crypto" onclick="filtrar('crypto',this)">₿ Crypto</button>
+          <button class="cot-filter-btn" data-cat="indice" onclick="filtrar('indice',this)">📊 Índices</button>
+          <button class="cot-filter-btn" data-cat="acao" onclick="filtrar('acao',this)">📈 Ações</button>
+          <button class="cot-filter-btn" data-cat="commodity" onclick="filtrar('commodity',this)">🥇 Commodities</button>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.6rem">
+        <span style="font-size:.8rem;color:var(--text-muted)"><i class="fas fa-clock"></i> <span id="cotacao-hora">—</span></span>
+        <button class="btn btn--ghost" style="font-size:.8rem;padding:.3rem .8rem" onclick="atualizar()">
+          <i class="fas fa-sync-alt" id="spin"></i> Atualizar
+        </button>
+      </div>
+    </div>
+
+    <!-- Layout principal -->
+    <div class="cot-layout">
+      <!-- Cards grid -->
+      <div>
+        <div class="cot-grid" id="cot-grid"></div>
+
+        <!-- Tabela detalhada -->
+        <div class="card cot-table-wrap" style="margin-top:1.5rem">
+          <div class="card-head"><h3><i class="fas fa-table"></i> Comparativo Detalhado</h3></div>
+          <table class="cot-table">
+            <thead>
+              <tr>
+                <th>Ativo</th>
+                <th>Categoria</th>
+                <th>Valor atual</th>
+                <th>Dia</th>
+                <th>7 dias</th>
+                <th>30 dias</th>
+              </tr>
+            </thead>
+            <tbody id="cot-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Painel lateral: gráfico + destaque -->
+      <div class="cot-panel">
+        <div class="card">
+          <div class="card-head" style="flex-wrap:wrap;gap:.5rem">
+            <h3 id="chart-title"><i class="fas fa-chart-area"></i> Tendência 7 dias</h3>
+            <select id="cot-sel" onchange="selecionarAtivo(this.value)" style="font-size:.8rem;padding:.3rem .6rem;border-radius:8px;border:1px solid var(--border);background:var(--bg-card);color:var(--text)">
+            </select>
+          </div>
+          <div class="cot-chart-wrap"><canvas id="cot-chart"></canvas></div>
+          <div id="chart-stats" style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:.8rem;font-size:.82rem"></div>
+        </div>
+
+        <!-- Top movers -->
+        <div class="card">
+          <div class="card-head"><h3>🚀 Maiores altas do dia</h3></div>
+          <div id="top-alta" style="display:flex;flex-direction:column;gap:.5rem;margin-top:.4rem"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>📉 Maiores baixas do dia</h3></div>
+          <div id="top-baixa" style="display:flex;flex-direction:column;gap:.5rem;margin-top:.4rem"></div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ====== DADOS DE MERCADO ======
+const BASE = {
+  // Moedas
+  dolar:     { nome:'Dólar (USD/BRL)',    emoji:'🇺🇸', cat:'moeda',     valor:5.74,    var7:[-0.8,-0.4,+0.2,+0.5,-0.3,+0.1,-0.2], var30:-1.2 },
+  euro:      { nome:'Euro (EUR/BRL)',     emoji:'🇪🇺', cat:'moeda',     valor:6.21,    var7:[-0.5,+0.3,+0.6,-0.2,+0.1,-0.4,+0.2], var30:+0.8 },
+  libra:     { nome:'Libra (GBP/BRL)',    emoji:'🇬🇧', cat:'moeda',     valor:7.28,    var7:[+0.2,-0.1,+0.4,-0.3,+0.5,-0.2,+0.1], var30:+1.5 },
+  iene:      { nome:'Iene (JPY/BRL)',     emoji:'🇯🇵', cat:'moeda',     valor:0.0378,  var7:[-0.3,+0.1,-0.2,+0.4,-0.1,+0.2,-0.3], var30:-2.1 },
+  cad:       { nome:'Dólar CAD/BRL',      emoji:'🇨🇦', cat:'moeda',     valor:4.18,    var7:[+0.1,-0.2,+0.3,-0.1,+0.2,-0.3,+0.1], var30:+0.4 },
+  // Crypto
+  bitcoin:   { nome:'Bitcoin (BTC)',      emoji:'₿',   cat:'crypto',    valor:102340,  var7:[-2.1,+3.4,-1.5,+5.2,-0.8,+1.9,-0.6], var30:+18.4 },
+  ethereum:  { nome:'Ethereum (ETH)',     emoji:'⟠',   cat:'crypto',    valor:3210,    var7:[-3.1,+4.2,-1.8,+2.9,+0.6,-1.2,+2.1], var30:+22.1 },
+  bnb:       { nome:'BNB',               emoji:'🔶',  cat:'crypto',    valor:3640,    var7:[+1.2,-0.9,+2.3,-1.1,+0.8,-0.4,+1.5], var30:+12.3 },
+  solana:    { nome:'Solana (SOL)',       emoji:'◎',   cat:'crypto',    valor:946,     var7:[-4.2,+6.1,-2.3,+3.8,-1.1,+2.7,-0.9], var30:+31.2 },
+  xrp:       { nome:'XRP (Ripple)',       emoji:'💧',  cat:'crypto',    valor:14.82,   var7:[+2.1,-1.4,+3.2,-2.1,+1.6,-0.8,+1.1], var30:+8.9 },
+  // Índices
+  ibov:      { nome:'Ibovespa',           emoji:'🇧🇷', cat:'indice',    valor:133850,  var7:[-0.4,+0.7,-0.2,+1.1,-0.5,+0.3,+0.8], var30:+4.6 },
+  sp500:     { nome:'S&P 500',            emoji:'🇺🇸', cat:'indice',    valor:5892,    var7:[-0.3,+0.5,+0.1,-0.4,+0.7,-0.2,+0.3], var30:+3.8 },
+  nasdaq:    { nome:'Nasdaq 100',         emoji:'🖥️', cat:'indice',    valor:20840,   var7:[-0.5,+0.9,-0.3,+0.6,+0.4,-0.3,+0.5], var30:+5.2 },
+  dax:       { nome:'DAX (Alemanha)',     emoji:'🇩🇪', cat:'indice',    valor:23450,   var7:[+0.3,-0.4,+0.7,-0.2,+0.5,-0.1,+0.4], var30:+6.1 },
+  // Ações BR
+  petrobras: { nome:'PETR4',             emoji:'🛢️', cat:'acao',      valor:39.82,   var7:[+1.2,-0.8,+2.1,-1.4,+0.5,+1.8,-0.9], var30:+5.3 },
+  vale:      { nome:'VALE3',             emoji:'⛏️', cat:'acao',      valor:58.14,   var7:[-0.6,+1.1,-1.2,+2.3,-0.4,+0.9,-0.7], var30:+3.1 },
+  itub:      { nome:'ITUB4',             emoji:'🏦', cat:'acao',      valor:34.60,   var7:[+0.5,-0.3,+0.8,-0.5,+1.2,-0.2,+0.4], var30:+6.8 },
+  bbas:      { nome:'BBAS3 (Banco do Brasil)',emoji:'🏛️',cat:'acao',  valor:27.30,   var7:[-0.2,+0.6,-0.4,+0.9,-0.3,+0.5,-0.1], var30:+4.2 },
+  wege:      { nome:'WEGE3 (WEG)',       emoji:'⚙️', cat:'acao',      valor:52.80,   var7:[+0.8,-0.5,+1.3,-0.7,+0.4,+1.1,-0.3], var30:+7.5 },
+  // Commodities
+  ouro:      { nome:'Ouro (XAU/USD)',    emoji:'🥇',  cat:'commodity', valor:19840,   var7:[+0.3,-0.2,+0.5,+0.8,-0.1,+0.2,-0.3], var30:+7.2 },
+  prata:     { nome:'Prata (XAG/USD)',   emoji:'🪙',  cat:'commodity', valor:1058,    var7:[-0.4,+0.7,-0.3,+1.1,-0.2,+0.5,-0.1], var30:+5.8 },
+  petroleo:  { nome:'Petróleo (WTI)',    emoji:'🛢️', cat:'commodity', valor:430,     var7:[+1.5,-2.1,+0.8,-1.3,+0.9,+1.2,-0.6], var30:-3.4 },
+  soja:      { nome:'Soja (bushel BRL)', emoji:'🌱',  cat:'commodity', valor:244,     var7:[-0.8,+1.2,-0.5,+0.7,-0.3,+0.9,-0.4], var30:+2.1 },
+};
+
+const PREFIX = {
+  moeda: 'R$ ', crypto: 'R$ ', acao: 'R$ ', commodity: 'R$ ',
+  indice: '',
+};
+
+let dados = {};
+let filtroAtual = 'todos';
+let selecionado = 'bitcoin';
+let chartObj = null;
+
+function gerarDados() {
+  dados = {};
+  Object.entries(BASE).forEach(([k, b]) => {
+    const varDia = (Math.random() - 0.48) * b.valor * 0.018;
+    const valor = b.valor + varDia;
+    const varDiaPct = (varDia / b.valor) * 100;
+    dados[k] = { ...b, valorAtual: valor, varDiaPct, var7Pct: b.var7.reduce((s,v)=>s+v,0), var30Pct: b.var30 };
+  });
+}
+
+function fmt(v, cat) {
+  if (cat === 'indice' && v > 1000) return v.toLocaleString('pt-BR', {maximumFractionDigits:0});
+  if (v < 0.1) return v.toLocaleString('pt-BR', {minimumFractionDigits:4, maximumFractionDigits:4});
+  if (v >= 10000) return v.toLocaleString('pt-BR', {minimumFractionDigits:0, maximumFractionDigits:0});
+  return v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtPct(v) { return (v>=0?'+':'')+v.toFixed(2)+'%'; }
+function cor(v) { return v>=0 ? '#16a34a' : '#dc2626'; }
+function corBg(v) { return v>=0 ? 'rgba(34,197,94,.1)' : 'rgba(239,68,68,.1)'; }
+
+function renderCards() {
+  const busca = document.getElementById('cot-search').value.toLowerCase();
+  const entries = Object.entries(dados).filter(([k, d]) => {
+    if (filtroAtual !== 'todos' && d.cat !== filtroAtual) return false;
+    if (busca && !d.nome.toLowerCase().includes(busca) && !k.toLowerCase().includes(busca)) return false;
+    return true;
+  });
+
+  document.getElementById('cot-grid').innerHTML = entries.map(([k, d]) => `
+    <div class="cot-card${selecionado===k?' selected':''}" onclick="selecionarAtivo('${k}')">
+      <div class="cot-card-top">
+        <span class="cot-emoji">${d.emoji}</span>
+        <span class="cot-badge ${d.varDiaPct>=0?'up':'down'}">${fmtPct(d.varDiaPct)}</span>
+      </div>
+      <div class="cot-name">${d.nome}</div>
+      <div class="cot-val">${PREFIX[d.cat]||''}${fmt(d.valorAtual, d.cat)}</div>
+      <div class="cot-sub">7d: <span style="color:${cor(d.var7Pct)}">${fmtPct(d.var7Pct)}</span>
+        &nbsp;|&nbsp; 30d: <span style="color:${cor(d.var30Pct)}">${fmtPct(d.var30Pct)}</span></div>
+    </div>
+  `).join('');
+}
+
+function renderTabela() {
+  const catLabel = { moeda:'💱 Moeda', crypto:'₿ Cripto', indice:'📊 Índice', acao:'📈 Ação', commodity:'🥇 Commodity' };
+  document.getElementById('cot-tbody').innerHTML = Object.entries(dados).map(([k, d]) => `
+    <tr style="cursor:pointer" onclick="selecionarAtivo('${k}')">
+      <td><strong>${d.emoji} ${d.nome}</strong></td>
+      <td><span class="cot-cat-label">${catLabel[d.cat]||d.cat}</span></td>
+      <td><strong>${PREFIX[d.cat]||''}${fmt(d.valorAtual, d.cat)}</strong></td>
+      <td style="font-weight:700;color:${cor(d.varDiaPct)}">${fmtPct(d.varDiaPct)}</td>
+      <td style="font-weight:700;color:${cor(d.var7Pct)}">${fmtPct(d.var7Pct)}</td>
+      <td style="font-weight:700;color:${cor(d.var30Pct)}">${fmtPct(d.var30Pct)}</td>
+    </tr>
+  `).join('');
+}
+
+function renderTopMovers() {
+  const sorted = Object.entries(dados).sort((a,b) => b[1].varDiaPct - a[1].varDiaPct);
+  const item = ([k,d]) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:.3rem .4rem;border-radius:8px;transition:background .15s" onclick="selecionarAtivo('${k}')" onmouseover="this.style.background='var(--surface)'" onmouseout="this.style.background=''">
+      <span style="font-size:.85rem">${d.emoji} <strong>${d.nome.split(' ')[0]}</strong></span>
+      <span style="font-weight:700;font-size:.85rem;color:${cor(d.varDiaPct)}">${fmtPct(d.varDiaPct)}</span>
+    </div>`;
+  document.getElementById('top-alta').innerHTML  = sorted.slice(0,4).map(item).join('');
+  document.getElementById('top-baixa').innerHTML = sorted.slice(-4).reverse().map(item).join('');
+}
+
+function renderSelectOptions() {
+  const sel = document.getElementById('cot-sel');
+  sel.innerHTML = Object.entries(dados).map(([k,d]) =>
+    `<option value="${k}"${k===selecionado?' selected':''}>${d.emoji} ${d.nome}</option>`
+  ).join('');
+}
+
+window.selecionarAtivo = function(key) {
+  selecionado = key;
+  const d = dados[key];
+  if (!d) return;
+
+  document.getElementById('chart-title').innerHTML = `<i class="fas fa-chart-area"></i> ${d.nome}`;
+  document.getElementById('cot-sel').value = key;
+
+  // Chart
+  const ctx = document.getElementById('cot-chart');
+  const dias = ['Seg','Ter','Qua','Qui','Sex','Sáb','Dom','Hoje'];
+  let val = d.valorAtual;
+  const pts = [...d.var7].reverse().map(v => { val = val / (1 + v/100); return val; }).reverse();
+  pts.push(d.valorAtual);
+
+  const c = d.var7Pct >= 0 ? '#16a34a' : '#dc2626';
+  if (chartObj) chartObj.destroy();
+  chartObj = new Chart(ctx, {
+    type: 'line',
+    data: { labels: dias, datasets: [{ label: d.nome, data: pts, borderColor: c, backgroundColor: c+'18', fill: true, tension: 0.4, pointRadius: 4, pointBackgroundColor: c }] },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+      scales: { y: { ticks: { callback: v => (PREFIX[d.cat]||'')+fmt(v,d.cat) } } } }
+  });
+
+  // Stats
+  document.getElementById('chart-stats').innerHTML = `
+    <div style="background:var(--surface);padding:.6rem;border-radius:8px;text-align:center">
+      <div style="font-size:.7rem;color:var(--text-muted)">Variação 7d</div>
+      <div style="font-weight:700;color:${cor(d.var7Pct)}">${fmtPct(d.var7Pct)}</div>
+    </div>
+    <div style="background:var(--surface);padding:.6rem;border-radius:8px;text-align:center">
+      <div style="font-size:.7rem;color:var(--text-muted)">Variação 30d</div>
+      <div style="font-weight:700;color:${cor(d.var30Pct)}">${fmtPct(d.var30Pct)}</div>
+    </div>`;
+
+  // Update cards highlight
+  renderCards();
+};
+
+window.filtrar = function(cat, btn) {
+  filtroAtual = cat;
+  document.querySelectorAll('.cot-filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCards();
+};
+
+window.atualizar = function() {
+  const spin = document.getElementById('spin');
+  spin.classList.add('fa-spin');
+  setTimeout(() => {
+    gerarDados();
+    renderCards(); renderTabela(); renderSelectOptions(); renderTopMovers();
+    selecionarAtivo(selecionado);
+    atualizarHeaderTickers();
+    document.getElementById('cotacao-hora').textContent = new Date().toLocaleTimeString('pt-BR');
+    spin.classList.remove('fa-spin');
+  }, 600);
+};
+
+function atualizarHeaderTickers() {
+  function setT(id, val, pct, prefix) {
+    const el = document.getElementById(id); if (!el) return;
+    el.textContent = prefix + fmt(val, 'moeda') + ' (' + (pct>=0?'+':'') + pct.toFixed(1) + '%)';
+    el.className = 'ticker-val ' + (pct >= 0 ? 'up' : 'down');
+  }
+  if (dados.dolar)  setT('ht-dolar', dados.dolar.valorAtual,  dados.dolar.varDiaPct,  'R$');
+  if (dados.bitcoin) setT('ht-btc',  dados.bitcoin.valorAtual, dados.bitcoin.varDiaPct, 'R$');
+  if (dados.ibov)   setT('ht-ibov',  dados.ibov.valorAtual,   dados.ibov.varDiaPct,   '');
+  if (dados.ouro)   setT('ht-ouro',  dados.ouro.valorAtual,   dados.ouro.varDiaPct,   'R$');
+}
+
+// Dark mode
+(function(){
+  const saved = localStorage.getItem('fw_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  const btn = document.getElementById('darkModeToggle');
+  if (btn) btn.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('fw_theme', next);
+  });
+})();
+
+// Sidebar
+(function(){
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  window.openSidebar = openSidebar;
+  window.closeSidebar = closeSidebar;
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+})();
+
+// Busca em tempo real
+document.getElementById('cot-search').addEventListener('input', renderCards);
+
+// Init
+gerarDados();
+renderCards();
+renderTabela();
+renderSelectOptions();
+renderTopMovers();
+selecionarAtivo('bitcoin');
+atualizarHeaderTickers();
+document.getElementById('cotacao-hora').textContent = new Date().toLocaleTimeString('pt-BR');
+
+// Auto-refresh 30s
+setInterval(() => { atualizar(); }, 30000);
+</script>
+</body>
+</html>

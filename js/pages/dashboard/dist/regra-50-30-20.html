@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FinWise — Regra 50-30-20</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard-style.css">
+  <script src="pwa-init.js"></script>
+  <style>
+  .page-hero {
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    padding: 2.5rem 1.5rem 2rem;
+    color: #fff;
+  }
+  .page-hero h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: .4rem; }
+  .page-hero h1 span { color: #10b981; }
+  .page-hero p { color: rgba(255,255,255,.75); font-size: .95rem; }
+
+  .regra-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; }
+  @media(max-width:768px){ .regra-grid { grid-template-columns:1fr; } }
+  .bucket-card { border-radius:var(--radius-md); padding:1.2rem; border:1px solid var(--border); }
+  .bucket-card--needs { border-left:4px solid #3b82f6; }
+  .bucket-card--wants { border-left:4px solid #f59e0b; }
+  .bucket-card--savings { border-left:4px solid #10b981; }
+  .bucket-header { display:flex; align-items:center; gap:.6rem; margin-bottom:.8rem; }
+  .bucket-emoji { font-size:1.4rem; }
+  .bucket-title { font-weight:700; font-size:.95rem; }
+  .bucket-pct { margin-left:auto; font-size:1.1rem; font-weight:700; }
+  .bucket-bar { height:10px; border-radius:5px; background:var(--border); overflow:hidden; margin:.4rem 0 .6rem; }
+  .bucket-bar-fill { height:100%; border-radius:5px; transition:width .5s; }
+  .bucket-bar-fill--needs { background:#3b82f6; }
+  .bucket-bar-fill--wants { background:#f59e0b; }
+  .bucket-bar-fill--savings { background:#10b981; }
+  .bucket-values { display:flex; justify-content:space-between; font-size:.8rem; color:var(--text-secondary); }
+  .bucket-status { font-size:.78rem; padding:.15rem .5rem; border-radius:10px; font-weight:600; display:inline-block; margin-top:.4rem; }
+  .bucket-status--ok { background:var(--green-50); color:var(--green-600); }
+  .bucket-status--over { background:#fee2e2; color:#b91c1c; }
+  .bucket-status--under { background:#fef3c7; color:#92400e; }
+  [data-theme="dark"] .bucket-status--ok { background:rgba(16,185,129,.15); }
+  [data-theme="dark"] .bucket-status--over { background:rgba(239,68,68,.15); color:#fca5a5; }
+  [data-theme="dark"] .bucket-status--under { background:rgba(245,158,11,.15); color:#fcd34d; }
+  .regra-renda-box { background:var(--surface-alt); border-radius:var(--radius-md); padding:1rem; margin-bottom:1.2rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap; }
+
+  .donut-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1rem 0; }
+  .donut-wrap canvas { max-width:220px; max-height:220px; }
+  .donut-legend { display:flex; flex-direction:column; gap:.4rem; margin-top:.8rem; width:100%; }
+  .donut-legend-item { display:flex; align-items:center; gap:.5rem; font-size:.82rem; }
+  .donut-dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+
+  .info-banner { background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 1px solid #bbf7d0; border-radius: var(--radius-md); padding: 1rem 1.2rem; margin-bottom: 1.4rem; display: flex; gap: 1rem; align-items: flex-start; }
+  [data-theme="dark"] .info-banner { background: rgba(16,185,129,.1); border-color: rgba(16,185,129,.25); }
+  .info-banner i { color: #10b981; font-size: 1.2rem; margin-top: .1rem; flex-shrink: 0; }
+  .info-banner p { font-size: .85rem; color: var(--text-secondary); line-height: 1.6; margin: 0; }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  <link rel="icon" type="image/x-icon" href="../../../../favicon.ico">
+</head>
+<body>
+<div class="dashboard-container">
+
+  <!-- SIDEBAR NAV -->
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+  <aside id="sidebar" class="sidebar-nav">
+    <div class="sidebar-header">
+      <div class="logo sidebar-logo">Fin<span>Wise</span></div>
+      <button class="sidebar-close-btn" onclick="closeSidebar()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <nav class="sidebar-menu">
+      <div class="sidebar-group-label">Principal</div>
+      <a href="dashboard.html#resumo" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-house"></i><span>Início</span></a>
+      <a href="dashboard.html#metas" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-bullseye"></i><span>Metas</span></a>
+      <a href="dashboard.html#graficos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-chart-line"></i><span>Gráficos</span></a>
+      <a href="dashboard.html#relatorio" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-file-invoice"></i><span>Relatório</span></a>
+      <div class="sidebar-group-label">Investimentos</div>
+      <a href="dashboard.html#investimentos" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-seedling"></i><span>Simulador de Renda Fixa</span></a>
+      <a href="carteira-ficticia.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-briefcase"></i><span>Carteira Fictícia</span></a>
+      <a href="cotacoes.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-globe"></i><span>Cotações ao Vivo</span></a>
+      <div class="sidebar-group-label">Finanças Pessoais</div>
+      <a href="controle-dividas.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-hand-holding-dollar"></i><span>Controle de Dívidas</span></a>
+     <a href="regra-50-30-20.html" class="sidebar-link active"><i class="fas fa-chart-pie"></i><span>Regra 50-30-20</span></a>
+     <a href="dashboard.html#comparador-credito" class="sidebar-link"><i class="fas fa-scale-balanced"></i><span>Comparador de Crédito</span></a> 
+     <a href="desafio-grupo.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-fire"></i><span>Desafio em Grupo</span></a>
+      <div class="sidebar-group-label">Aprendizado</div>
+      <a href="educacao-financeira.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-graduation-cap"></i><span>Educação Financeira</span></a>
+      <a href="jogos.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-gamepad"></i><span>Jogos</span></a>
+      <a href="finwise-kids.html" class="sidebar-link" onclick="closeSidebar()"><i class="fas fa-child"></i><span>FinWise Kids</span></a>
+    </nav>
+  </aside>
+
+  <!-- HEADER -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <button class="header-icon-btn menu-toggle-btn" onclick="openSidebar()" title="Menu"><i class="fas fa-bars"></i></button>
+      <div class="logo">Fin<span>Wise</span></div>
+    </div>
+    <div class="header-tickers" id="header-tickers">
+      <span class="ticker-item"><span class="ticker-label">USD</span><span id="ht-dolar" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">BTC</span><span id="ht-btc" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">IBOV</span><span id="ht-ibov" class="ticker-val">—</span></span>
+      <span class="ticker-sep">·</span>
+      <span class="ticker-item"><span class="ticker-label">OURO</span><span id="ht-ouro" class="ticker-val">—</span></span>
+    </div>
+    <div class="header-right">
+      <button id="darkModeToggle" class="header-icon-btn dark-mode-toggle" title="Alternar tema">
+        <span class="dark-mode-icon">🌙</span>
+        <span class="light-mode-icon">☀️</span>
+      </button>
+      <div class="user-chip">
+        <div class="user-avatar"><i class="fas fa-user"></i></div>
+        <span id="username-display"></span>
+      </div>
+      <button id="logout-btn" class="btn btn--danger btn--sm" title="Sair">
+        <i class="fas fa-right-from-bracket"></i>
+        <span class="btn-label">Sair</span>
+      </button>
+    </div>
+    <button id="pwa-install-btn" style="display:none" class="btn btn--ghost btn--sm">
+  <i class="fas fa-download"></i> <span>Instalar app</span>
+</button>
+  </header>
+
+  <main class="dashboard-main">
+
+    <!-- Page Hero -->
+    <div class="page-hero">
+      <h1>Regra <span>50-30-20</span></h1>
+      <p>Distribua sua renda de forma equilibrada entre necessidades, desejos e poupança</p>
+    </div>
+
+    <div style="padding:1.5rem">
+
+      <!-- Info Banner -->
+      <div class="info-banner">
+        <i class="fas fa-lightbulb"></i>
+        <p>
+          A regra 50-30-20 foi popularizada pela senadora americana Elizabeth Warren: destine
+          <strong>50% para necessidades</strong> (aluguel, contas, alimentação),
+          <strong>30% para desejos</strong> (lazer, restaurantes, assinaturas) e
+          <strong>20% para poupança e investimentos</strong>. Insira sua renda e registre seus gastos para ver como está seu equilíbrio!
+        </p>
+      </div>
+
+      <!-- Input renda -->
+      <div class="regra-renda-box">
+        <i class="fas fa-wallet" style="color:var(--brand-primary);font-size:1.2rem"></i>
+        <div style="flex:1">
+          <label style="font-size:.8rem;color:var(--text-secondary);font-weight:600;display:block;margin-bottom:.3rem">Sua renda mensal líquida (R$)</label>
+          <input type="number" id="regra-renda" placeholder="Ex: 4500" min="0" step="100" style="max-width:200px" oninput="atualizarRegra()">
+        </div>
+        <div style="font-size:.82rem;color:var(--text-muted);max-width:300px">
+          Insira sua renda após descontos (salário líquido, freelances, etc.)
+        </div>
+      </div>
+
+      <div class="regra-grid">
+        <!-- Coluna esquerda: buckets + gráfico -->
+        <div style="display:flex;flex-direction:column;gap:1rem">
+
+          <!-- Necessidades 50% -->
+          <div class="card bucket-card bucket-card--needs" id="bucket-needs">
+            <div class="bucket-header">
+              <span class="bucket-emoji">🏠</span>
+              <div>
+                <div class="bucket-title">Necessidades</div>
+                <div style="font-size:.76rem;color:var(--text-secondary)">Aluguel, mercado, contas, transporte</div>
+              </div>
+              <span class="bucket-pct" style="color:#3b82f6">50%</span>
+            </div>
+            <div class="bucket-bar"><div class="bucket-bar-fill bucket-bar-fill--needs" id="bar-needs" style="width:0%"></div></div>
+            <div class="bucket-values">
+              <span>Limite: <strong id="lim-needs">R$ 0</strong></span>
+              <span>Gasto: <strong id="gasto-needs">R$ 0</strong></span>
+            </div>
+            <span class="bucket-status bucket-status--ok" id="status-needs">Configure sua renda</span>
+          </div>
+
+          <!-- Desejos 30% -->
+          <div class="card bucket-card bucket-card--wants" id="bucket-wants">
+            <div class="bucket-header">
+              <span class="bucket-emoji">🎬</span>
+              <div>
+                <div class="bucket-title">Desejos</div>
+                <div style="font-size:.76rem;color:var(--text-secondary)">Lazer, restaurantes, streaming, compras</div>
+              </div>
+              <span class="bucket-pct" style="color:#f59e0b">30%</span>
+            </div>
+            <div class="bucket-bar"><div class="bucket-bar-fill bucket-bar-fill--wants" id="bar-wants" style="width:0%"></div></div>
+            <div class="bucket-values">
+              <span>Limite: <strong id="lim-wants">R$ 0</strong></span>
+              <span>Gasto: <strong id="gasto-wants">R$ 0</strong></span>
+            </div>
+            <span class="bucket-status bucket-status--ok" id="status-wants">Configure sua renda</span>
+          </div>
+
+          <!-- Poupança 20% -->
+          <div class="card bucket-card bucket-card--savings" id="bucket-savings">
+            <div class="bucket-header">
+              <span class="bucket-emoji">💰</span>
+              <div>
+                <div class="bucket-title">Poupança & Investimentos</div>
+                <div style="font-size:.76rem;color:var(--text-secondary)">Reserva de emergência, aposentadoria, metas</div>
+              </div>
+              <span class="bucket-pct" style="color:#10b981">20%</span>
+            </div>
+            <div class="bucket-bar"><div class="bucket-bar-fill bucket-bar-fill--savings" id="bar-savings" style="width:0%"></div></div>
+            <div class="bucket-values">
+              <span>Meta: <strong id="lim-savings">R$ 0</strong></span>
+              <span>Guardado: <strong id="gasto-savings">R$ 0</strong></span>
+            </div>
+            <span class="bucket-status bucket-status--ok" id="status-savings">Configure sua renda</span>
+          </div>
+
+          <!-- Gráfico donut -->
+          <div class="card">
+            <div class="card-head"><h3><i class="fas fa-chart-pie"></i> Distribuição Atual</h3></div>
+            <div class="donut-wrap">
+              <canvas id="donutChart"></canvas>
+              <div class="donut-legend">
+                <div class="donut-legend-item"><div class="donut-dot" style="background:#3b82f6"></div><span>🏠 Necessidades</span><strong id="leg-needs" style="margin-left:auto">0%</strong></div>
+                <div class="donut-legend-item"><div class="donut-dot" style="background:#f59e0b"></div><span>🎬 Desejos</span><strong id="leg-wants" style="margin-left:auto">0%</strong></div>
+                <div class="donut-legend-item"><div class="donut-dot" style="background:#10b981"></div><span>💰 Poupança</span><strong id="leg-savings" style="margin-left:auto">0%</strong></div>
+                <div class="donut-legend-item"><div class="donut-dot" style="background:#e5e7eb"></div><span>⬜ Não alocado</span><strong id="leg-free" style="margin-left:auto">100%</strong></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Coluna direita: lançamentos -->
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="card">
+            <div class="card-head"><h3><i class="fas fa-plus-circle"></i> Lançar Gasto / Poupança</h3></div>
+            <div style="display:flex;flex-direction:column;gap:.7rem">
+              <div>
+                <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500;display:block;margin-bottom:.2rem">Categoria</label>
+                <select id="regra-cat" style="width:100%">
+                  <option value="needs">🏠 Necessidade</option>
+                  <option value="wants">🎬 Desejo</option>
+                  <option value="savings">💰 Poupança/Investimento</option>
+                </select>
+              </div>
+              <div>
+                <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500;display:block;margin-bottom:.2rem">Descrição</label>
+                <input type="text" id="regra-desc" placeholder="Ex: Aluguel, Netflix, Tesouro…" style="width:100%">
+              </div>
+              <div>
+                <label style="font-size:.8rem;color:var(--text-secondary);font-weight:500;display:block;margin-bottom:.2rem">Valor (R$)</label>
+                <input type="number" id="regra-valor" placeholder="0,00" min="0" step="0.01" style="width:100%">
+              </div>
+              <button class="btn btn--primary" onclick="lancarRegra()"><i class="fas fa-check"></i> Registrar</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-head"><h3><i class="fas fa-clock-rotate-left"></i> Histórico do Mês</h3></div>
+            <div id="regra-historico" style="max-height:300px;overflow-y:auto;font-size:.84rem">
+              <p style="color:var(--text-muted);text-align:center;padding:1rem">Nenhum lançamento ainda.</p>
+            </div>
+            <button class="btn btn--ghost btn--sm" style="margin-top:.6rem;width:100%" onclick="limparRegra()">
+              <i class="fas fa-trash"></i> Limpar mês
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Análise final -->
+      <div class="card" style="margin-top:1.2rem" id="regra-resumo-card">
+        <div class="card-head"><h3><i class="fas fa-lightbulb"></i> Análise do Mês</h3></div>
+        <div id="regra-analise" style="font-size:.9rem;line-height:1.8;color:var(--text-secondary)">
+          Configure sua renda e comece a lançar para ver a análise aqui.
+        </div>
+      </div>
+
+    </div><!-- /padding -->
+  </main>
+</div>
+
+<script>
+(function(){
+  let lancamentos = JSON.parse(localStorage.getItem('fw_503020') || '[]');
+  function salvar(){ localStorage.setItem('fw_503020', JSON.stringify(lancamentos)); }
+  function fmt(v){ return 'R$ ' + v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+
+  // Chart
+  let donutChart = null;
+  function initChart(){
+    const ctx = document.getElementById('donutChart').getContext('2d');
+    donutChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Necessidades','Desejos','Poupança','Não alocado'],
+        datasets: [{ data:[0,0,0,100], backgroundColor:['#3b82f6','#f59e0b','#10b981','#e5e7eb'], borderWidth:2, borderColor:'var(--surface)' }]
+      },
+      options: {
+        cutout:'65%',
+        plugins:{ legend:{ display:false }, tooltip:{ callbacks:{ label: ctx => ctx.label+': '+ctx.parsed+'%' } } },
+        responsive: true
+      }
+    });
+  }
+
+  window.atualizarRegra = function(){ renderRegra(); };
+
+  window.lancarRegra = function(){
+    const cat = document.getElementById('regra-cat').value;
+    const desc = document.getElementById('regra-desc').value.trim() || '(sem descrição)';
+    const valor = parseFloat(document.getElementById('regra-valor').value);
+    if(isNaN(valor)||valor<=0){ alert('Informe um valor válido.'); return; }
+    lancamentos.push({id:Date.now(), cat, desc, valor});
+    salvar();
+    document.getElementById('regra-desc').value='';
+    document.getElementById('regra-valor').value='';
+    renderRegra();
+  };
+
+  window.removerLancamento = function(id){
+    lancamentos = lancamentos.filter(l=>l.id!==id);
+    salvar(); renderRegra();
+  };
+
+  window.limparRegra = function(){
+    if(confirm('Limpar todos os lançamentos do mês?')){ lancamentos=[]; salvar(); renderRegra(); }
+  };
+
+  function renderRegra(){
+    const renda = parseFloat(document.getElementById('regra-renda').value)||0;
+    const limites = { needs: renda*.50, wants: renda*.30, savings: renda*.20 };
+    const gastos = { needs:0, wants:0, savings:0 };
+    lancamentos.forEach(l=>{ gastos[l.cat] = (gastos[l.cat]||0) + l.valor; });
+
+    ['needs','wants','savings'].forEach(cat=>{
+      const lim = limites[cat];
+      const gasto = gastos[cat];
+      const pct = lim>0 ? Math.min(120, (gasto/lim)*100) : 0;
+      document.getElementById('lim-'+cat).textContent = fmt(lim);
+      document.getElementById('gasto-'+cat).textContent = fmt(gasto);
+      document.getElementById('bar-'+cat).style.width = pct+'%';
+      const st = document.getElementById('status-'+cat);
+      if(renda===0){ st.className='bucket-status bucket-status--ok'; st.textContent='Configure sua renda'; }
+      else if(gasto > lim){ st.className='bucket-status bucket-status--over'; st.textContent='⚠️ Acima do limite'; }
+      else if(gasto >= lim*.85){ st.className='bucket-status bucket-status--under'; st.textContent='⚡ Perto do limite'; }
+      else { st.className='bucket-status bucket-status--ok'; st.textContent='✅ Dentro do orçamento'; }
+    });
+
+    // Donut
+    if(donutChart && renda>0){
+      const total = renda;
+      const pcts = [
+        Math.min(100, (gastos.needs/total)*100),
+        Math.min(100, (gastos.wants/total)*100),
+        Math.min(100, (gastos.savings/total)*100),
+      ];
+      const used = pcts.reduce((a,b)=>a+b,0);
+      const free = Math.max(0, 100 - used);
+      donutChart.data.datasets[0].data = [...pcts.map(p=>parseFloat(p.toFixed(1))), parseFloat(free.toFixed(1))];
+      donutChart.update();
+      document.getElementById('leg-needs').textContent = pcts[0].toFixed(1)+'%';
+      document.getElementById('leg-wants').textContent = pcts[1].toFixed(1)+'%';
+      document.getElementById('leg-savings').textContent = pcts[2].toFixed(1)+'%';
+      document.getElementById('leg-free').textContent = free.toFixed(1)+'%';
+    }
+
+    // Histórico
+    const hist = document.getElementById('regra-historico');
+    if(lancamentos.length===0){
+      hist.innerHTML='<p style="color:var(--text-muted);text-align:center;padding:1rem">Nenhum lançamento ainda.</p>';
+    } else {
+      const catInfo = {needs:{emoji:'🏠',label:'Necessidade',cor:'#3b82f6'}, wants:{emoji:'🎬',label:'Desejo',cor:'#f59e0b'}, savings:{emoji:'💰',label:'Poupança',cor:'#10b981'}};
+      hist.innerHTML = [...lancamentos].reverse().map(l=>`
+        <div style="display:flex;align-items:center;gap:.5rem;padding:.4rem .2rem;border-bottom:1px solid var(--border)">
+          <span style="font-size:1rem">${catInfo[l.cat].emoji}</span>
+          <div style="flex:1">
+            <span style="font-weight:500">${l.desc}</span>
+            <span style="font-size:.74rem;color:${catInfo[l.cat].cor};margin-left:.3rem">${catInfo[l.cat].label}</span>
+          </div>
+          <strong style="color:var(--text-primary)">${fmt(l.valor)}</strong>
+          <button onclick="removerLancamento(${l.id})" style="background:none;border:none;cursor:pointer;color:var(--red-500);font-size:.85rem"><i class="fas fa-times"></i></button>
+        </div>
+      `).join('');
+    }
+
+    // Análise
+    if(renda>0){
+      const totalGasto = gastos.needs+gastos.wants+gastos.savings;
+      const sobra = renda - totalGasto;
+      const linhas = [];
+      if(gastos.needs > limites.needs) linhas.push(`🏠 <strong>Necessidades:</strong> você gastou ${fmt(gastos.needs - limites.needs)} a mais do que o limite de 50%. Revise contas fixas e considere reduzir despesas essenciais.`);
+      else linhas.push(`🏠 <strong>Necessidades:</strong> dentro do limite. Bom trabalho! Sobram ${fmt(limites.needs - gastos.needs)} nessa categoria.`);
+      if(gastos.wants > limites.wants) linhas.push(`🎬 <strong>Desejos:</strong> acima do orçamento em ${fmt(gastos.wants - limites.wants)}. Considere cortar lazer ou gastos supérfluos.`);
+      else linhas.push(`🎬 <strong>Desejos:</strong> dentro do limite. Você ainda pode gastar ${fmt(limites.wants - gastos.wants)} em lazer.`);
+      if(gastos.savings < limites.savings) linhas.push(`💰 <strong>Poupança:</strong> você guardou ${fmt(gastos.savings)} de ${fmt(limites.savings)} recomendados (20%). Tente aumentar os investimentos!`);
+      else linhas.push(`💰 <strong>Poupança:</strong> parabéns! Você guardou ${fmt(gastos.savings)}, superando a meta de 20%.`);
+      if(sobra>0) linhas.push(`💵 <strong>Saldo não alocado:</strong> ${fmt(sobra)} — considere direcionar para poupança ou investimentos.`);
+      document.getElementById('regra-analise').innerHTML = linhas.map(l=>`<p>${l}</p>`).join('');
+    } else {
+      document.getElementById('regra-analise').textContent = 'Configure sua renda e comece a lançar para ver a análise aqui.';
+    }
+  }
+
+  initChart();
+  renderRegra();
+})();
+</script>
+
+<!-- Dark mode toggle -->
+<script>
+(function(){
+  const btn = document.getElementById('darkModeToggle');
+  const saved = localStorage.getItem('fw_theme') || 'light';
+  document.documentElement.setAttribute('data-theme', saved);
+  btn && btn.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('fw_theme', next);
+  });
+})();
+</script>
+
+<!-- Header tickers -->
+<script>
+(function(){
+  const BASE = { dolar:{valor:5.74}, bitcoin:{valor:102340}, ibov:{valor:133850}, ouro:{valor:19840} };
+  function gerar() {
+    const r = {};
+    Object.entries(BASE).forEach(([k,b]) => {
+      const varDia = (Math.random()-0.48)*b.valor*0.018;
+      r[k] = { val: b.valor+varDia, pct: (varDia/b.valor)*100 };
+    });
+    return r;
+  }
+  function fmtT(v,prefix) {
+    const s = v>=10000 ? v.toLocaleString('pt-BR',{maximumFractionDigits:0})
+                       : v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+    return prefix+s;
+  }
+  function render(dados) {
+    [['ht-dolar','dolar','R$'],['ht-btc','bitcoin','R$'],['ht-ibov','ibov',''],['ht-ouro','ouro','R$']]
+    .forEach(([id,k,pre]) => {
+      const el = document.getElementById(id); if(!el||!dados[k]) return;
+      const d = dados[k];
+      el.textContent = fmtT(d.val,pre)+' ('+(d.pct>=0?'+':'')+d.pct.toFixed(1)+'%)';
+      el.className = 'ticker-val '+(d.pct>=0?'up':'down');
+    });
+  }
+  let dados = gerar(); render(dados);
+  setInterval(()=>{ dados=gerar(); render(dados); }, 30000);
+})();
+</script>
+
+<!-- Sidebar open/close -->
+<script>
+(function() {
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  window.openSidebar = openSidebar;
+  window.closeSidebar = closeSidebar;
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSidebar(); });
+})();
+</script>
+</body>
+</html>
